@@ -1,0 +1,40 @@
+package com.github.simplemocks.web.app.mocks.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.Date;
+
+/**
+ * @author sibmaks
+ * @since 0.0.1
+ */
+@Entity(name = "web_app_mocks_http_mock")
+@Getter
+@Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(schema = "web_app_mocks", name = "http_mock")
+public class HttpMockEntity {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @Column(name = "method", nullable = false)
+    private String method;
+    @Column(name = "ant_pattern", nullable = false)
+    private String antPattern;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "service_id")
+    private HttpServiceEntity service;
+    @Column(name = "type", nullable = false)
+    private String type;
+    @Column(name = "storage_type", nullable = false)
+    private String storageType;
+    @Column(name = "storage_id", nullable = false)
+    private String storageId;
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+}
