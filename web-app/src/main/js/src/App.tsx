@@ -2,27 +2,30 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'hugeicons-react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { JoltTransformer } from './componenets';
-
-import 'ace-builds/src-noconflict/mode-json';
-import 'ace-builds/src-noconflict/mode-xml';
-import 'ace-builds/src-noconflict/mode-html';
-import 'ace-builds/src-noconflict/mode-javascript';
-
-import 'ace-builds/src-noconflict/theme-monokai';
-import 'ace-builds/src-noconflict/theme-github';
-import 'ace-builds/src-noconflict/theme-tomorrow';
-import 'ace-builds/src-noconflict/theme-kuroir';
-import 'ace-builds/src-noconflict/theme-twilight';
-import 'ace-builds/src-noconflict/theme-xcode';
-import 'ace-builds/src-noconflict/theme-textmate';
-import 'ace-builds/src-noconflict/theme-solarized_dark';
-import 'ace-builds/src-noconflict/theme-solarized_light';
-import 'ace-builds/src-noconflict/theme-terminal';
-
-import 'ace-builds/src-noconflict/ext-language_tools';
+//
+// import 'ace-builds/src-noconflict/mode-json';
+// import 'ace-builds/src-noconflict/mode-xml';
+// import 'ace-builds/src-noconflict/mode-html';
+// import 'ace-builds/src-noconflict/mode-javascript';
+// import 'ace-builds/src-min-noconflict/mode-json.js'
+//
+// import 'ace-builds/src-noconflict/theme-monokai';
+// import 'ace-builds/src-noconflict/theme-github';
+// import 'ace-builds/src-noconflict/theme-tomorrow';
+// import 'ace-builds/src-noconflict/theme-kuroir';
+// import 'ace-builds/src-noconflict/theme-twilight';
+// import 'ace-builds/src-noconflict/theme-xcode';
+// import 'ace-builds/src-noconflict/theme-textmate';
+// import 'ace-builds/src-noconflict/theme-solarized_dark';
+// import 'ace-builds/src-noconflict/theme-solarized_light';
+// import 'ace-builds/src-noconflict/theme-terminal';
+//
+// import 'ace-builds/src-noconflict/ext-language_tools';
 
 import { ThemeProvider } from './theme/ThemeContext';
+import ServiceListPage from './pages/service/ServiceListPage';
+import AddServiceForm from './pages/service/AddServicePage';
+import EditServicePage from './pages/service/EditServicePage';
 
 
 const App: React.FC = () => {
@@ -30,9 +33,15 @@ const App: React.FC = () => {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<JoltTransformer />}>
-            <Route index element={<JoltTransformer />} />
-            <Route path="apps/*" element={<JoltTransformer />} />
+          <Route path="/web/app/mocks/">
+            <Route index element={<ServiceListPage />} />
+            <Route path="service">
+              <Route path={'add'} element={<AddServiceForm />} />
+              <Route path={':serviceId'} element={<>Service Id</>} />
+              <Route path="edit">
+                <Route path={':serviceId'} element={<EditServicePage />} />
+              </Route>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

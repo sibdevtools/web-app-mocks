@@ -4,9 +4,10 @@ SET SCHEMA web_app_mocks;
 
 CREATE TABLE IF NOT EXISTS http_service
 (
-    id         bigint       NOT NULL AUTO_INCREMENT,
-    code       varchar(128) NOT NULL UNIQUE,
-    created_at timestamp    NOT NULL,
+    id          bigint       NOT NULL AUTO_INCREMENT,
+    code        varchar(128) NOT NULL UNIQUE,
+    created_at  timestamp    NOT NULL,
+    modified_at timestamp    NOT NULL,
     CONSTRAINT http_service_pk PRIMARY KEY (id)
 );
 
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS http_mock
     storage_type varchar(64)   NOT NULL,
     storage_id   varchar(128)  NOT NULL,
     created_at   timestamp     NOT NULL,
+    modified_at  timestamp     NOT NULL,
     CONSTRAINT http_mock_pk PRIMARY KEY (id),
     FOREIGN KEY (service_id) references http_service (id)
 );

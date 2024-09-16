@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class WebAppMockService {
+public class WebAppMocksService {
     private final Set<String> mockTypes;
     private final HttpServiceEntityRepository serviceEntityRepository;
     private final HttpMockEntityRepository httpMockEntityRepository;
@@ -38,12 +39,12 @@ public class WebAppMockService {
     private String bucketCode;
 
     @Autowired
-    public WebAppMockService(List<RequestHandler> handlers,
-                             HttpServiceEntityRepository httpServiceEntityRepository,
-                             HttpMockEntityRepository httpMockEntityRepository,
-                             StorageService storageService,
-                             @Qualifier("webAppMocksAntPathMatcher")
-                             AntPathMatcher antPathMatcher) {
+    public WebAppMocksService(List<RequestHandler> handlers,
+                              HttpServiceEntityRepository httpServiceEntityRepository,
+                              HttpMockEntityRepository httpMockEntityRepository,
+                              StorageService storageService,
+                              @Qualifier("webAppMocksAntPathMatcher")
+                              AntPathMatcher antPathMatcher) {
         this.mockTypes = handlers.stream()
                 .map(RequestHandler::getType)
                 .collect(Collectors.toSet());
@@ -87,7 +88,8 @@ public class WebAppMockService {
                 .type(type)
                 .storageType("LOCAL")
                 .storageId(contentId)
-                .createdAt(new Date())
+                .createdAt(ZonedDateTime.now())
+                .modifiedAt(ZonedDateTime.now())
                 .build();
         return httpMockEntityRepository.save(httpMockEntity);
     }
@@ -138,10 +140,17 @@ public class WebAppMockService {
         return new HttpMockDto(httpMockEntity, bucketFile);
     }
 
+    /**
+     * Create service
+     *
+     * @param code service code
+     * @return service instance
+     */
     public HttpServiceEntity createService(String code) {
         var serviceEntity = HttpServiceEntity.builder()
                 .code(code)
-                .createdAt(new Date())
+                .createdAt(ZonedDateTime.now())
+                .modifiedAt(ZonedDateTime.now())
                 .build();
         return serviceEntityRepository.save(serviceEntity);
     }
@@ -153,13 +162,35 @@ public class WebAppMockService {
         return new HttpServiceDto(serviceEntity, httpMockEntities);
     }
 
-    public List<HttpServiceDto> getAllServices() {
+    /**
+     * Get all services
+     *
+     * @return list of all services
+     */
+    public List<com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto> getAllServices() {
         return serviceEntityRepository.findAll()
                 .stream()
-                .map(it -> {
-                    var mocks = httpMockEntityRepository.findAllByServiceId(it.getId());
-                    return new HttpServiceDto(it, mocks);
-                })
+                .map(com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto::new)
                 .toList();
+    }
+
+    /**
+     * Delete service by id
+     *
+     * @param serviceId service identifier
+     */
+    public void deleteById(long serviceId) {
+        serviceEntityRepository.deleteById(serviceId);
+    }
+
+    /**
+     * Update service code
+     *
+     * @param id   service identifier
+     * @param code service code
+     */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void updateService(long id, String code) {
+        serviceEntityRepository.updateCodeById(id, code, ZonedDateTime.now());
     }
 }

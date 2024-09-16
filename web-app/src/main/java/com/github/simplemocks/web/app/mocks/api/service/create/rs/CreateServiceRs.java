@@ -1,4 +1,4 @@
-package com.github.simplemocks.web.app.mocks.api.rs;
+package com.github.simplemocks.web.app.mocks.api.service.create.rs;
 
 import com.github.simplemocks.common.api.rs.StandardBodyRs;
 

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 public class WebAppMocksWebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/web/app/mocks/**")
+        registry.addResourceHandler("/static/web/app/mocks/**")
                 .addResourceLocations("classpath:/web/app/mocks/static/")
                 .resourceChain(true)
                 .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
@@ -24,7 +24,9 @@ public class WebAppMocksWebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/web/app/mocks/")
-                .setViewName("forward:/web/app/mocks/index.html");
+        registry.addViewController("/web/app/mocks/bundle.js")
+                .setViewName("forward:/static/web/app/mocks/bundle.js");
+        registry.addViewController("/web/app/mocks/**")
+                .setViewName("forward:/static/web/app/mocks/index.html");
     }
 }

@@ -6,7 +6,7 @@ import com.github.simplemocks.web.app.mocks.api.rq.UpdateMockRq;
 import com.github.simplemocks.web.app.mocks.api.rs.CreateMockRs;
 import com.github.simplemocks.web.app.mocks.api.rs.GetMockRs;
 import com.github.simplemocks.web.app.mocks.api.rs.UpdateMockRs;
-import com.github.simplemocks.web.app.mocks.service.WebAppMockService;
+import com.github.simplemocks.web.app.mocks.service.WebAppMocksService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,17 +27,17 @@ import java.util.Base64;
 public class WebAppMocksRestController {
     private static final Base64.Decoder B64_DECODER = Base64.getDecoder();
 
-    private final WebAppMockService webAppMockService;
+    private final WebAppMocksService webAppMocksService;
 
     @Autowired
-    public WebAppMocksRestController(WebAppMockService webAppMockService) {
-        this.webAppMockService = webAppMockService;
+    public WebAppMocksRestController(WebAppMocksService webAppMocksService) {
+        this.webAppMocksService = webAppMocksService;
     }
 
     @PostMapping("/v1/create")
     public CreateMockRs create(@RequestBody CreateMockRq rq) {
         var content = rq.getContent();
-        var httpMockEntity = webAppMockService.create(
+        var httpMockEntity = webAppMocksService.create(
                 rq.getServiceId(),
                 rq.getMethod(),
                 rq.getAntPattern(),
@@ -51,7 +51,7 @@ public class WebAppMocksRestController {
     @PostMapping("/v1/update")
     public UpdateMockRs update(@RequestBody UpdateMockRq rq) {
         var content = rq.getContent();
-        var httpMockEntity = webAppMockService.update(rq.getMockId(),
+        var httpMockEntity = webAppMocksService.update(rq.getMockId(),
                 rq.getMethod(),
                 rq.getAntPattern(),
                 rq.getType(),
@@ -62,7 +62,7 @@ public class WebAppMocksRestController {
 
     @PostMapping("/v1/get")
     public GetMockRs get(@RequestBody GetMockRq rq) {
-        var mockDto = webAppMockService.get(rq.getMockId());
+        var mockDto = webAppMocksService.get(rq.getMockId());
         return new GetMockRs(mockDto);
     }
 

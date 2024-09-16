@@ -3,7 +3,7 @@ package com.github.simplemocks.web.app.mocks.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * @author sibmaks
@@ -25,5 +25,7 @@ public class HttpServiceEntity {
     @Column(name = "code", nullable = false, unique = true)
     private String code;
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private ZonedDateTime createdAt;
+    @Column(name = "modified_at", nullable = false)
+    private ZonedDateTime modifiedAt;
 }
