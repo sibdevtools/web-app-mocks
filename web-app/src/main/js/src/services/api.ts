@@ -19,13 +19,13 @@ export const updateService = (rq: { serviceId: number, code: string }) => api.pu
 export const deleteService = (serviceId: number) => api.delete(`/services/${serviceId}`);
 
 // Fetch mocks for a service
-export const getMocksByService = (serviceId: number) => api.post('/mocks/v1/get', { serviceId });
+export const getMocksByService = (serviceId: number) => api.post('/mocks/get', { serviceId });
 
 // Create a new mock
-export const createMock = (mockData: any) => api.post('/mocks/v1/create', mockData);
+export const createMock = (mockData: any) => api.post('/mocks/', mockData);
 
 // Update a mock
-export const updateMock = (mockData: any) => api.post('/mocks/v1/update', mockData);
+export const updateMock = (mockData: any) => api.put('/mocks/', mockData);
 
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
-export const deleteMock = (mockId: number) => api.post(`/mocks/v1/delete`, { mockId });
+export const deleteMock = (mockId: number) => api.post(`/mocks/delete`, { mockId });

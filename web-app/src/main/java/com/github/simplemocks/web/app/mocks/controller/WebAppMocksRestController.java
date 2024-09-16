@@ -1,7 +1,6 @@
 package com.github.simplemocks.web.app.mocks.controller;
 
 import com.github.simplemocks.web.app.mocks.api.rq.CreateMockRq;
-import com.github.simplemocks.web.app.mocks.api.rq.GetMockRq;
 import com.github.simplemocks.web.app.mocks.api.rq.UpdateMockRq;
 import com.github.simplemocks.web.app.mocks.api.rs.CreateMockRs;
 import com.github.simplemocks.web.app.mocks.api.rs.GetMockRs;
@@ -10,10 +9,7 @@ import com.github.simplemocks.web.app.mocks.service.WebAppMocksService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 
@@ -34,7 +30,7 @@ public class WebAppMocksRestController {
         this.webAppMocksService = webAppMocksService;
     }
 
-    @PostMapping("/v1/create")
+    @PostMapping("/")
     public CreateMockRs create(@RequestBody CreateMockRq rq) {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.create(
@@ -48,7 +44,7 @@ public class WebAppMocksRestController {
         return new CreateMockRs(httpMockEntity.getId());
     }
 
-    @PostMapping("/v1/update")
+    @PutMapping("/")
     public UpdateMockRs update(@RequestBody UpdateMockRq rq) {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.update(rq.getMockId(),
@@ -60,9 +56,9 @@ public class WebAppMocksRestController {
         return new UpdateMockRs(httpMockEntity.getId());
     }
 
-    @PostMapping("/v1/get")
-    public GetMockRs get(@RequestBody GetMockRq rq) {
-        var mockDto = webAppMocksService.get(rq.getMockId());
+    @PostMapping("/{mockId}")
+    public GetMockRs get(@PathVariable("mockId") long mockId) {
+        var mockDto = webAppMocksService.get(mockId);
         return new GetMockRs(mockDto);
     }
 

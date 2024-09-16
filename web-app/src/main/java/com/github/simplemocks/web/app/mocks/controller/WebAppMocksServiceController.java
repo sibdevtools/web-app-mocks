@@ -22,11 +22,22 @@ import org.springframework.web.bind.annotation.*;
 public class WebAppMocksServiceController {
     private final WebAppMocksService mockService;
 
+    /**
+     * Constructor web app mocks service controller
+     *
+     * @param mockService mock service
+     */
     @Autowired
     public WebAppMocksServiceController(WebAppMocksService mockService) {
         this.mockService = mockService;
     }
 
+    /**
+     * Create service Rest handler
+     *
+     * @param rq creation request
+     * @return creation response
+     */
     @PostMapping(
             name = "/",
             consumes = MediaType.APPLICATION_JSON_VALUE
@@ -37,6 +48,12 @@ public class WebAppMocksServiceController {
         return new CreateServiceRs(serviceMockEntity.getId());
     }
 
+    /**
+     * Update existing service Rest handler
+     *
+     * @param rq updating request
+     * @return updating response
+     */
     @PutMapping(
             name = "/",
             consumes = MediaType.APPLICATION_JSON_VALUE
@@ -48,18 +65,34 @@ public class WebAppMocksServiceController {
         return new StandardRs();
     }
 
+    /**
+     * Get service information by identifier
+     *
+     * @param serviceId service identifier
+     * @return service information
+     */
     @GetMapping("/{serviceId}")
     public GetServiceRs getById(@PathVariable("serviceId") long serviceId) {
         var service = this.mockService.getService(serviceId);
         return new GetServiceRs(service);
     }
 
+    /**
+     * Get all services
+     *
+     * @return all services
+     */
     @GetMapping("/")
     public GetServicesRs getAll() {
         var services = mockService.getAllServices();
         return new GetServicesRs(services);
     }
 
+    /**
+     * Delete service by id
+     *
+     * @param serviceId service identifier
+     */
     @DeleteMapping("/{serviceId}")
     public void deleteById(@PathVariable("serviceId") long serviceId) {
         this.mockService.deleteById(serviceId);

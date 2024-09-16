@@ -11,6 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Mocked request dispatcher controller. Handle incoming requests and call dispatcher for delivery.
+ *
+ * @author sibmaks
+ * @since 0.0.1
+ */
 @Slf4j
 @Controller
 @RequestMapping("${web.app.mocks.uri.mock.path}")
