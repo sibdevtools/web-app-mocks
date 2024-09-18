@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllServices, deleteService } from '../../services/api';
 import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
+import { contextPath } from '../../const/common.const';
 
 interface Service {
   serviceId: number;
@@ -40,7 +41,7 @@ const ServiceListPage: React.FC = () => {
   };
 
   const handleEdit = async (service: Service) => {
-    navigate(`/web/app/mocks/service/edit/${service.serviceId}`, {
+    navigate(`${contextPath}service/edit/${service.serviceId}`, {
       state: {
         code: service.code
       }
@@ -75,7 +76,7 @@ const ServiceListPage: React.FC = () => {
               <span className={'h2'}>HTTP Services</span>
             </div>
             <div className="col-md-1 offset-md-1">
-              <button className="btn btn-outline-success" onClick={() => navigate('/web/app/mocks/service/add')}>
+              <button className="btn btn-outline-success" onClick={() => navigate(`${contextPath}service/add`)}>
                 <PlusSignIcon />
               </button>
             </div>
@@ -84,7 +85,9 @@ const ServiceListPage: React.FC = () => {
             {filteredServices.map((service) => (
               <li key={service.serviceId} className="list-group-item d-flex row">
                 <div className="col-md-10">
-                  {service.code}
+                  <a href={`service/${service.serviceId}/mocks`} className="list-group-item list-group-item-action">
+                    {service.code}
+                  </a>
                 </div>
                 <div className="col-md-2">
                   <div className={'row'}>

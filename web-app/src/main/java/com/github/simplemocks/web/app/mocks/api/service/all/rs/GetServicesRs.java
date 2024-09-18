@@ -1,7 +1,7 @@
-package com.github.simplemocks.web.app.mocks.api.service.get.rs;
+package com.github.simplemocks.web.app.mocks.api.service.all.rs;
 
 import com.github.simplemocks.common.api.rs.StandardBodyRs;
-import com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto;
+import com.github.simplemocks.web.app.mocks.api.service.all.dto.HttpServiceDto;
 
 import java.util.ArrayList;
 import java.util.List;

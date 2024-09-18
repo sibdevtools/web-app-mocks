@@ -37,7 +37,7 @@ public class WebAppMocks implements WebApplication {
     @Nonnull
     @Override
     public String getFrontendUrl() {
-        return "/web/app/mocks/";
+        return "/web/app/mocks/ui/";
     }
 
     @Nonnull

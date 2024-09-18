@@ -1,4 +1,4 @@
-package com.github.simplemocks.web.app.mocks.api.dto;
+package com.github.simplemocks.web.app.mocks.api.service.mocks.dto;
 
 import com.github.simplemocks.web.app.mocks.entity.HttpMockEntity;
 import lombok.AllArgsConstructor;

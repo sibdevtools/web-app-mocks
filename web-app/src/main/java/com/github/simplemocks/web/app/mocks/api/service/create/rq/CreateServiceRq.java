@@ -1,7 +1,7 @@
 package com.github.simplemocks.web.app.mocks.api.service.create.rq;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class CreateServiceRq implements Serializable {
     @NotNull
-    @Size(min = 1, max = 128)
+    @Pattern(regexp = "^[a-zA-Z0-9\\-.]{1,128}$")
     private String code;
 }

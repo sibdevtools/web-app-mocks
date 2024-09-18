@@ -1,7 +1,7 @@
-package com.github.simplemocks.web.app.mocks.api.rs;
+package com.github.simplemocks.web.app.mocks.api.service.get.rs;
 
 import com.github.simplemocks.common.api.rs.StandardBodyRs;
-import com.github.simplemocks.web.app.mocks.api.dto.HttpServiceDto;
+import com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto;
 
 /**
  * @author sibmaks

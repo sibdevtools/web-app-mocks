@@ -26,6 +26,8 @@ import { ThemeProvider } from './theme/ThemeContext';
 import ServiceListPage from './pages/service/ServiceListPage';
 import AddServiceForm from './pages/service/AddServicePage';
 import EditServicePage from './pages/service/EditServicePage';
+import ServiceMocksListPage from './pages/service/ServiceMocksListPage';
+import { contextPath } from './const/common.const';
 
 
 const App: React.FC = () => {
@@ -33,13 +35,15 @@ const App: React.FC = () => {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/web/app/mocks/">
+          <Route path={contextPath}>
             <Route index element={<ServiceListPage />} />
             <Route path="service">
               <Route path={'add'} element={<AddServiceForm />} />
-              <Route path={':serviceId'} element={<>Service Id</>} />
-              <Route path="edit">
+              <Route path={'edit'}>
                 <Route path={':serviceId'} element={<EditServicePage />} />
+              </Route>
+              <Route path={':serviceId'}>
+                <Route path={'mocks'} element={<ServiceMocksListPage />} />
               </Route>
             </Route>
           </Route>

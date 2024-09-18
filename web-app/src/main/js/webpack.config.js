@@ -22,7 +22,7 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    publicPath: '/web/app/mocks/',
+    publicPath: '/web/app/mocks/ui/',
     path: path.resolve(__dirname, '../resources/web/app/mocks/static'),
   },
   devServer: {

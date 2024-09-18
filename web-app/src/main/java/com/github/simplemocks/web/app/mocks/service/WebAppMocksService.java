@@ -3,7 +3,7 @@ package com.github.simplemocks.web.app.mocks.service;
 import com.github.simplemocks.storage.api.rq.SaveFileRq;
 import com.github.simplemocks.storage.api.service.StorageService;
 import com.github.simplemocks.web.app.mocks.api.dto.HttpMockDto;
-import com.github.simplemocks.web.app.mocks.api.dto.HttpServiceDto;
+import com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto;
 import com.github.simplemocks.web.app.mocks.entity.HttpMockEntity;
 import com.github.simplemocks.web.app.mocks.entity.HttpServiceEntity;
 import com.github.simplemocks.web.app.mocks.repository.HttpMockEntityRepository;
@@ -19,7 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -155,11 +158,32 @@ public class WebAppMocksService {
         return serviceEntityRepository.save(serviceEntity);
     }
 
+    /**
+     * Get service info by id
+     *
+     * @param serviceId service identifier
+     * @return service information
+     */
     public HttpServiceDto getService(long serviceId) {
         var serviceEntity = serviceEntityRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
+        return new HttpServiceDto(serviceEntity);
+    }
+
+    /**
+     * Get service's mocks by id
+     *
+     * @param serviceId service identifier
+     * @return service information with mocks
+     */
+    public com.github.simplemocks.web.app.mocks.api.service.mocks.dto.HttpServiceDto getServiceMocks(long serviceId) {
+        var serviceEntity = serviceEntityRepository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
         var httpMockEntities = httpMockEntityRepository.findAllByServiceId(serviceId);
-        return new HttpServiceDto(serviceEntity, httpMockEntities);
+        return new com.github.simplemocks.web.app.mocks.api.service.mocks.dto.HttpServiceDto(
+                serviceEntity,
+                httpMockEntities
+        );
     }
 
     /**
@@ -167,10 +191,10 @@ public class WebAppMocksService {
      *
      * @return list of all services
      */
-    public List<com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto> getAllServices() {
+    public List<com.github.simplemocks.web.app.mocks.api.service.all.dto.HttpServiceDto> getAllServices() {
         return serviceEntityRepository.findAll()
                 .stream()
-                .map(com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto::new)
+                .map(com.github.simplemocks.web.app.mocks.api.service.all.dto.HttpServiceDto::new)
                 .toList();
     }
 

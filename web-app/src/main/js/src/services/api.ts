@@ -19,7 +19,7 @@ export const updateService = (rq: { serviceId: number, code: string }) => api.pu
 export const deleteService = (serviceId: number) => api.delete(`/services/${serviceId}`);
 
 // Fetch mocks for a service
-export const getMocksByService = (serviceId: number) => api.post('/mocks/get', { serviceId });
+export const getMocksByService = (serviceId: number) => api.get(`/services/${serviceId}/mocks`);
 
 // Create a new mock
 export const createMock = (mockData: any) => api.post('/mocks/', mockData);

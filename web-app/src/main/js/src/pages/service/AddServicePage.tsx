@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createService } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
+import { contextPath } from '../../const/common.const';
 
 const AddServicePage: React.FC = () => {
   const [code, setCode] = useState('');
@@ -11,7 +12,7 @@ const AddServicePage: React.FC = () => {
     e.preventDefault();
     try {
       await createService({ code });
-      navigate('/web/app/mocks/');
+      navigate(contextPath);
     } catch (error) {
       console.error('Failed to create service:', error);
     }
@@ -21,7 +22,7 @@ const AddServicePage: React.FC = () => {
     <div className="container mt-4">
       <div className={'row'}>
         <div className={'col-md-1 offset-md-2 mb-2'}>
-          <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/web/app/mocks/')}>
+          <button type="button" className="btn btn-outline-primary" onClick={() => navigate(contextPath)}>
             <ArrowLeft01Icon />
           </button>
         </div>

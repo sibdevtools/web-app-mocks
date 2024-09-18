@@ -1,10 +1,11 @@
 package com.github.simplemocks.web.app.mocks.controller;
 
 import com.github.simplemocks.common.api.rs.StandardRs;
-import com.github.simplemocks.web.app.mocks.api.rs.GetServiceRs;
+import com.github.simplemocks.web.app.mocks.api.service.all.rs.GetServicesRs;
 import com.github.simplemocks.web.app.mocks.api.service.create.rq.CreateServiceRq;
 import com.github.simplemocks.web.app.mocks.api.service.create.rs.CreateServiceRs;
-import com.github.simplemocks.web.app.mocks.api.service.get.rs.GetServicesRs;
+import com.github.simplemocks.web.app.mocks.api.service.get.rs.GetServiceRs;
+import com.github.simplemocks.web.app.mocks.api.service.mocks.rs.GetServiceMocksRs;
 import com.github.simplemocks.web.app.mocks.api.service.update.rq.UpdateServiceRq;
 import com.github.simplemocks.web.app.mocks.service.WebAppMocksService;
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +97,17 @@ public class WebAppMocksServiceController {
     @DeleteMapping("/{serviceId}")
     public void deleteById(@PathVariable("serviceId") long serviceId) {
         this.mockService.deleteById(serviceId);
+    }
+
+    /**
+     * Get all mocks for service by id
+     *
+     * @param serviceId service identifier
+     */
+    @GetMapping("/{serviceId}/mocks")
+    public GetServiceMocksRs getAllMocks(@PathVariable("serviceId") long serviceId) {
+        var service = this.mockService.getServiceMocks(serviceId);
+        return new GetServiceMocksRs(service);
     }
 
 }

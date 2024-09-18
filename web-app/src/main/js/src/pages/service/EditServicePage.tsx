@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { updateService } from '../../services/api';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
+import { contextPath } from '../../const/common.const';
 
 interface EditServiceState {
   code: string
@@ -10,19 +11,19 @@ interface EditServiceState {
 const AddServicePage: React.FC = () => {
   const navigate = useNavigate();
   const { serviceId } = useParams();
-  const { state } = useLocation();
 
   if (!serviceId) {
-    navigate('/web/app/mocks/');
+    navigate(contextPath);
     return;
   }
 
+  const { state } = useLocation();
   const editServiceState = state as EditServiceState | null;
 
   const [code, setCode] = useState(editServiceState?.code);
 
   if (!code) {
-    navigate('/web/app/mocks/');
+    navigate(contextPath);
     return;
   }
 
@@ -30,7 +31,7 @@ const AddServicePage: React.FC = () => {
     e.preventDefault();
     try {
       await updateService({ serviceId: +serviceId, code });
-      navigate('/web/app/mocks/');
+      navigate(contextPath);
     } catch (error) {
       console.error('Failed to create service:', error);
     }
@@ -40,7 +41,7 @@ const AddServicePage: React.FC = () => {
     <div className="container mt-4">
       <div className={'row'}>
         <div className={'col-md-1 offset-md-2 mb-2'}>
-          <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/web/app/mocks/')}>
+          <button type="button" className="btn btn-outline-primary" onClick={() => navigate(contextPath)}>
             <ArrowLeft01Icon />
           </button>
         </div>
