@@ -1,5 +1,6 @@
 package com.github.simplemocks.web.app.mocks.controller;
 
+import com.github.simplemocks.common.api.rs.StandardRs;
 import com.github.simplemocks.web.app.mocks.api.rq.CreateMockRq;
 import com.github.simplemocks.web.app.mocks.api.rq.UpdateMockRq;
 import com.github.simplemocks.web.app.mocks.api.rs.CreateMockRs;
@@ -17,7 +18,6 @@ import java.util.Base64;
 @RestController
 @RequestMapping(
         path = "${web.app.mocks.uri.rest.mocks.path}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
 )
 public class WebAppMocksRestController {
@@ -30,11 +30,15 @@ public class WebAppMocksRestController {
         this.webAppMocksService = webAppMocksService;
     }
 
-    @PostMapping("/")
-    public CreateMockRs create(@RequestBody CreateMockRq rq) {
+    @PostMapping(
+            path = "/",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public CreateMockRs create(@PathVariable("serviceId") long serviceId,
+                               @RequestBody CreateMockRq rq) {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.create(
-                rq.getServiceId(),
+                serviceId,
                 rq.getMethod(),
                 rq.getAntPattern(),
                 rq.getType(),
@@ -44,7 +48,10 @@ public class WebAppMocksRestController {
         return new CreateMockRs(httpMockEntity.getId());
     }
 
-    @PutMapping("/")
+    @PutMapping(
+            path = "/",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
     public UpdateMockRs update(@RequestBody UpdateMockRq rq) {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.update(rq.getMockId(),
@@ -54,6 +61,12 @@ public class WebAppMocksRestController {
                 rq.getMeta(),
                 B64_DECODER.decode(content));
         return new UpdateMockRs(httpMockEntity.getId());
+    }
+
+    @DeleteMapping("/{mockId}")
+    public StandardRs delete(@PathVariable("mockId") long mockId) {
+        webAppMocksService.deleteMockById(mockId);
+        return new StandardRs();
     }
 
     @PostMapping("/{mockId}")

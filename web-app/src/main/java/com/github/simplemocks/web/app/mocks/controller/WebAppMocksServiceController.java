@@ -96,7 +96,7 @@ public class WebAppMocksServiceController {
      */
     @DeleteMapping("/{serviceId}")
     public void deleteById(@PathVariable("serviceId") long serviceId) {
-        this.mockService.deleteById(serviceId);
+        this.mockService.deleteServiceById(serviceId);
     }
 
     /**

@@ -47,7 +47,7 @@ const ServiceMocksListPage: React.FC = () => {
       return;
     }
     try {
-      await deleteMock(mockId);
+      await deleteMock(service.serviceId, mockId);
       fetchService();
     } catch (error) {
       console.error('Failed to delete mock:', error);

@@ -17,7 +17,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateMockRq implements Serializable {
-    private long serviceId;
     private String method;
     private String antPattern;
     private String type;

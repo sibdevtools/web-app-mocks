@@ -28,4 +28,4 @@ export const createMock = (mockData: any) => api.post('/mocks/', mockData);
 export const updateMock = (mockData: any) => api.put('/mocks/', mockData);
 
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
-export const deleteMock = (mockId: number) => api.post(`/mocks/delete`, { mockId });
+export const deleteMock = (serviceId: number, mockId: number) => api.delete(`/services/${serviceId}/mocks/${mockId}`);

@@ -203,7 +203,7 @@ public class WebAppMocksService {
      *
      * @param serviceId service identifier
      */
-    public void deleteById(long serviceId) {
+    public void deleteServiceById(long serviceId) {
         serviceEntityRepository.deleteById(serviceId);
     }
 
@@ -216,5 +216,14 @@ public class WebAppMocksService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void updateService(long id, String code) {
         serviceEntityRepository.updateCodeById(id, code, ZonedDateTime.now());
+    }
+
+    /**
+     * Delete mock by id
+     *
+     * @param mockId mock identifier
+     */
+    public void deleteMockById(long mockId) {
+        httpMockEntityRepository.deleteById(mockId);
     }
 }
