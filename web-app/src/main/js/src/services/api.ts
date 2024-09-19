@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Method } from '../const/common.const';
+import { Method, MockType } from '../const/common.const';
 
 const api = axios.create({
   baseURL: '/web/app/mocks/rest/api',
@@ -21,9 +21,6 @@ export const deleteService = (serviceId: number) => api.delete(`/services/${serv
 
 // Fetch mocks for a service
 export const getMocksByService = (serviceId: number) => api.get(`/services/${serviceId}/mocks`);
-
-// Create a new mock
-export type MockType = 'STATIC' | 'JS'
 
 export interface MockMeta {
   [key: string]: string

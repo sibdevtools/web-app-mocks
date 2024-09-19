@@ -1,29 +1,31 @@
 import React, { useState } from 'react';
 import { createMock } from '../../services/api';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft01Icon, FloppyDiskIcon, TextWrapIcon } from 'hugeicons-react';
+import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
 import {
-  ContentType,
-  contentTypes,
   contextPath,
   Method,
-  methods,
+  methods, MockType, mockTypes,
   StatusCode,
   statusCodes
 } from '../../const/common.const';
-import AceEditor from 'react-ace';
-import { useTheme } from '../../theme/ThemeContext';
 import { encodeTextToBase64 } from '../../utils/base.64converters';
+import StaticMockContent from '../../componenets/StaticMockContent';
+import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 
-
-export interface StaticMeta {
-  statusCode: StatusCode
-  contentType: ContentType
-}
 
 const AddMockPage: React.FC = () => {
   const navigate = useNavigate();
   const { serviceId } = useParams();
+
+  const [mockName, setMockName] = useState('');
+  const [method, setMethod] = useState<Method>(methods[0]);
+  const [antPattern, setAntPattern] = useState('');
+  const [mockType, setMockType] = useState<MockType>('STATIC');
+  const [meta, setMeta] = useState<{ [key: string]: string }>({
+    STATUS_CODE: '200'
+  });
+  const [inputText, setInputText] = useState('');
 
   if (!serviceId) {
     navigate(contextPath);
@@ -34,17 +36,6 @@ const AddMockPage: React.FC = () => {
     navigate(`${contextPath}service/${serviceId}/mocks`);
   }
 
-  const [mockName, setMockName] = useState('');
-  const [method, setMethod] = useState<Method>(methods[0]);
-  const [antPattern, setAntPattern] = useState('');
-  const [meta, setMeta] = useState<StaticMeta>({
-    statusCode: 200,
-    contentType: 'application/json'
-  });
-  const { theme } = useTheme();
-  const [inputText, setInputText] = useState('');
-  const [isWordWrapEnabled, setWordWrapEnabled] = useState(true);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -52,13 +43,8 @@ const AddMockPage: React.FC = () => {
         name: mockName,
         method: method,
         antPattern: antPattern,
-        type: 'STATIC',
-        meta: {
-          STATUS_CODE: `${meta.statusCode}`,
-          HTTP_HEADERS: JSON.stringify({
-            'Content-Type': meta.contentType
-          })
-        },
+        type: mockType,
+        meta: meta,
         content: encodeTextToBase64(inputText, 'UTF-8')
       });
       toServicePage();
@@ -71,15 +57,15 @@ const AddMockPage: React.FC = () => {
     const newValue = +e.target.value;
     const newStatusCode = newValue as StatusCode;
     if (newStatusCode) {
-      setMeta({ ...meta, statusCode: newStatusCode })
+      setMeta({ ...meta, STATUS_CODE: `${newStatusCode}` })
     }
   }
 
-  const onContentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onMockTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
-    const newContentType = newValue as ContentType;
-    if (newContentType) {
-      setMeta({ ...meta, contentType: newContentType })
+    const newMockType = newValue as MockType;
+    if (newMockType) {
+      setMockType(newMockType)
     }
   }
 
@@ -110,7 +96,7 @@ const AddMockPage: React.FC = () => {
               />
             </div>
             <div className={'row mb-3'}>
-              <div className="col">
+              <div className="col-md-2">
                 <label htmlFor="httpMethodSelect" className="form-label">HTTP Method</label>
                 <select
                   id={'httpMethodSelect'}
@@ -127,12 +113,25 @@ const AddMockPage: React.FC = () => {
                   }
                 </select>
               </div>
-              <div className="col">
+              <div className="col-md-10">
+                <label htmlFor="antPatternInput" className="form-label">Ant Pattern</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="antPatternInput"
+                  value={antPattern}
+                  onChange={(e) => setAntPattern(e.target.value)}
+                  required={true}
+                />
+              </div>
+            </div>
+            <div className={'row mb-3'}>
+              <div className="col-md-8">
                 <label htmlFor="statusSelect" className="form-label">Status</label>
                 <select
                   id={'statusSelect'}
                   className={'form-select'}
-                  value={meta.statusCode}
+                  value={meta['STATUS_CODE']}
                   onChange={(e) => onStatusChange(e)}
                   required={true}
                 >
@@ -144,82 +143,40 @@ const AddMockPage: React.FC = () => {
                   }
                 </select>
               </div>
-            </div>
-            <div className={'row mb-3'}>
-              <div className="col-md-9">
-                <label htmlFor="antPatternInput" className="form-label">Ant Pattern</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="antPatternInput"
-                  value={antPattern}
-                  onChange={(e) => setAntPattern(e.target.value)}
-                  required={true}
-                />
-              </div>
-              <div className={'col-md-3'}>
-                <label htmlFor="contentTypeSelect" className="form-label">Content Type</label>
+              <div className={'col-md-2'}>
+                <label htmlFor="mockTypeSelect" className="form-label">Type</label>
                 <select
-                  id={'contentTypeSelect'}
+                  id={'mockTypeSelect'}
                   className={'form-select'}
-                  value={meta.contentType}
-                  onChange={(e) => onContentTypeChange(e)}
+                  value={mockType}
+                  onChange={(e) => onMockTypeChange(e)}
                   required={true}
                 >
                   {
-                    [...contentTypes.keys()].map(it => (
-                        <option value={it}>{contentTypes.get(it)?.caption}</option>
+                    mockTypes.map(it => (
+                        <option value={it}>{it}</option>
                       )
                     )
                   }
                 </select>
               </div>
             </div>
-            <div className={'mb-3'}>
-              <label htmlFor={`contentTextArea`} className="form-label">Content</label>
-              <div className={' position-relative'}>
-                <div className="btn-group position-absolute" role="group"
-                     style={{ top: '-20px', right: '-8px', zIndex: 3 }}>
-                  <button
-                    className={`btn btn-primary ${(isWordWrapEnabled ? 'active' : '')}`}
-                    title={isWordWrapEnabled ? 'Unwrap' : 'Wrap'}
-                    type={'button'}
-                    onClick={_ => setWordWrapEnabled((prev) => !prev)}
-                  >
-                    <TextWrapIcon />
-                  </button>
-                </div>
-                <div id={`contentTextArea`}
-                     style={{ position: 'relative' }}
-                     aria-describedby={`contentTextAreaFeedback`}
-                     className={`form-control`}
-                >
-                  <AceEditor
-                    mode={contentTypes.get(meta.contentType)?.aceType}
-                    theme={theme}
-                    name={`contentAceEditor`}
-                    onChange={setInputText}
-                    value={inputText}
-                    fontSize={14}
-                    width="100%"
-                    height="480px"
-                    showPrintMargin={true}
-                    showGutter={true}
-                    highlightActiveLine={true}
-                    wrapEnabled={isWordWrapEnabled}
-                    setOptions={{
-                      enableBasicAutocompletion: true,
-                      enableLiveAutocompletion: true,
-                      showLineNumbers: true,
-                      enableSnippets: true,
-                      wrap: isWordWrapEnabled,
-                      useWorker: false
-                    }}
-                    editorProps={{ $blockScrolling: true }}
+            {
+              (mockType === 'STATIC') ? (
+                  <StaticMockContent
+                    content={inputText}
+                    setContent={setInputText}
+                    meta={meta}
+                    setMeta={setMeta}
                   />
-                </div>
-              </div>
-            </div>
+                ) :
+                <JavaScriptMockContent
+                  content={inputText}
+                  setContent={setInputText}
+                  meta={meta}
+                  setMeta={setMeta}
+                />
+            }
             <div className={'col-md-1 offset-md-11'}>
               <button type="submit" className="btn btn-primary">
                 <FloppyDiskIcon />

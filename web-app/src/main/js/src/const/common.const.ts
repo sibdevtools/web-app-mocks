@@ -97,3 +97,10 @@ export const contentTypes = new Map<string, ContentTypeValue>([
 )
 
 export type ContentType = MapKey<typeof contentTypes>
+
+export const mockTypes = [
+  'STATIC',
+  'JS',
+] as const;
+
+export type MockType = typeof mockTypes[number];
