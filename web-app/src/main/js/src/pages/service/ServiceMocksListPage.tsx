@@ -3,6 +3,7 @@ import { deleteMock, getMocksByService } from '../../services/api';
 import { ArrowLeft01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
+import CustomTable from '../../componenets/CustomTable';
 
 interface Mock {
   mockId: number;
@@ -63,29 +64,10 @@ const ServiceMocksListPage: React.FC = () => {
     });
   };
 
-  const [filter, setFilter] = useState('');
-
-  const filteredMocks = service.mocks.filter((mock) =>
-    mock.antPattern.includes(filter)
-  );
-
   return (
     <div className="container mt-4">
       <div className={'row'}>
         <div className="col-md-10 offset-md-1">
-          <div className="row g-3">
-            <div className="col-md-10">
-              <label htmlFor="filterInput" className="h2">Filter</label>
-              <input
-                id={'filterInput'}
-                type="text"
-                placeholder="Ant path"
-                className="form-control mb-3"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              />
-            </div>
-          </div>
           <div className={'row mb-2'}>
             <div className={'col-md-1 offset-md-2 mb-2'}>
               <button type="button" className="btn btn-outline-primary" onClick={() => navigate(contextPath)}>
@@ -102,50 +84,33 @@ const ServiceMocksListPage: React.FC = () => {
               </button>
             </div>
           </div>
-          <ul className="row list-group">
-            {filteredMocks.map((mock) => (
-              <li key={mock.mockId} className="list-group-item d-flex row">
-                <div className="col-md-2 text-center">
-                  <span className={'badge text-bg-primary align-middle'}>
-                  {mock.method}
-                  </span>
+          <CustomTable
+            columns={[
+              { key: 'method', label: 'Method' },
+              { key: 'name', label: 'Name' },
+              { key: 'antPattern', label: 'Ant Pattern' },
+              { key: 'type', label: 'Type' },
+              { key: 'actions', label: 'Actions' },
+            ]}
+            data={service.mocks.map(mock => {
+              return {
+                method: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
+                name: `${mock.name}`,
+                antPattern: `${mock.antPattern}`,
+                type: `${mock.type}`,
+                actions: <div className="btn-group" role="group">
+                  <button className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
+                    <PencilEdit01Icon />
+                  </button>
+                  <button className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
+                    <Delete01Icon />
+                  </button>
                 </div>
-                <div className="col-md-2 text-center">
-                  <span className={'align-middle'}>
-                    {mock.name}
-                  </span>
-                </div>
-                <div className="col-md-4 text-center">
-                  <span className={'align-middle'}>
-                  <pre>
-                    <code>
-                    {mock.antPattern}
-                    </code>
-                  </pre>
-                  </span>
-                </div>
-                <div className="col-md-2 text-center">
-                  <span className={'align-middle'}>
-                  {mock.type}
-                  </span>
-                </div>
-                <div className="col-md-2">
-                  <div className={'row'}>
-                    <div className={'col-md-6'}>
-                      <button className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
-                        <PencilEdit01Icon />
-                      </button>
-                    </div>
-                    <div className={'col-md-6'}>
-                      <button className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
-                        <Delete01Icon />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+              }
+            })}
+            sortableColumns={['method', 'name', 'antPattern', 'type']}
+            filterableColumns={['method', 'name', 'antPattern', 'type']}
+          />
         </div>
       </div>
     </div>
