@@ -7,7 +7,8 @@ export interface TableColumn {
 }
 
 export interface StyleProps {
-  centerHeaders: boolean
+  centerHeaders: boolean,
+  textCenterValues: boolean,
 }
 
 export interface CustomTableProps {
@@ -24,7 +25,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                                    sortableColumns = [],
                                                    filterableColumns = [],
                                                    styleProps = {
-                                                     centerHeaders: true
+                                                     centerHeaders: true,
+                                                     textCenterValues: false,
                                                    }
                                                  }) => {
   const [filter, setFilter] = useState<{ [key: string]: string }>({});
@@ -125,7 +127,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
         {sortedData.map((item, index) => (
           <tr key={index}>
             {columns.map((column) => (
-              <td key={column.key}>{item[column.key]}</td>
+              <td className={`${styleProps.textCenterValues ? 'text-center' : ''}`}
+                  key={column.key}>{item[column.key]}</td>
             ))}
           </tr>
         ))}

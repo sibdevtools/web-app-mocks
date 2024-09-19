@@ -3,6 +3,7 @@ import { getAllServices, deleteService } from '../../services/api';
 import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
+import CustomTable from '../../componenets/CustomTable';
 
 interface Service {
   serviceId: number;
@@ -48,64 +49,47 @@ const ServiceListPage: React.FC = () => {
     });
   };
 
-  const [filter, setFilter] = useState('');
-
-  const filteredServices = services.filter((service) =>
-    service.code.includes(filter)
-  );
-
   return (
     <div className="container mt-4">
       <div className={'row'}>
+        <div className="col-md-8 offset-md-1 text-center">
+          <span className={'h2'}>HTTP Services</span>
+        </div>
+        <div className="col-md-1 offset-md-1">
+          <button className="btn btn-outline-success" onClick={() => navigate(`${contextPath}service/add`)}>
+            <PlusSignIcon />
+          </button>
+        </div>
+      </div>
+      <div className={'row'}>
         <div className="col-md-10 offset-md-1">
-          <div className="row g-3">
-            <div className="col-md-10">
-              <label htmlFor="filterInput" className="h2">Filter</label>
-              <input
-                id={'filterInput'}
-                type="text"
-                placeholder="Filter..."
-                className="form-control mb-3"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="row mb-2">
-            <div className="col-md-10">
-              <span className={'h2'}>HTTP Services</span>
-            </div>
-            <div className="col-md-1 offset-md-1">
-              <button className="btn btn-outline-success" onClick={() => navigate(`${contextPath}service/add`)}>
-                <PlusSignIcon />
-              </button>
-            </div>
-          </div>
-          <ul className="row list-group">
-            {filteredServices.map((service) => (
-              <li key={service.serviceId} className="list-group-item d-flex row">
-                <div className="col-md-10">
-                  <a href={`service/${service.serviceId}/mocks`} className="list-group-item list-group-item-action">
-                    {service.code}
-                  </a>
+          <CustomTable
+            columns={[
+              { key: 'code', label: 'Code' },
+              { key: 'actions', label: 'Actions' },
+            ]}
+            data={services.map(service => {
+              return {
+                code: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
+                  {service.code}
+                </a>,
+                actions: <div className="btn-group" role="group">
+                  <button className="btn btn-primary" onClick={() => handleEdit(service)}>
+                    <PencilEdit01Icon />
+                  </button>
+                  <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
+                    <Delete01Icon />
+                  </button>
                 </div>
-                <div className="col-md-2">
-                  <div className={'row'}>
-                    <div className={'col-md-6'}>
-                      <button className="btn btn-primary" onClick={() => handleEdit(service)}>
-                        <PencilEdit01Icon />
-                      </button>
-                    </div>
-                    <div className={'col-md-6'}>
-                      <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
-                        <Delete01Icon />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+              }
+            })}
+            sortableColumns={['code']}
+            filterableColumns={['code']}
+            styleProps={{
+              centerHeaders: true,
+              textCenterValues: true,
+            }}
+          />
         </div>
       </div>
     </div>
