@@ -40,6 +40,7 @@ public class WebAppMocksRestController {
         var httpMockEntity = webAppMocksService.create(
                 serviceId,
                 rq.getMethod(),
+                rq.getName(),
                 rq.getAntPattern(),
                 rq.getType(),
                 rq.getMeta(),
@@ -56,6 +57,7 @@ public class WebAppMocksRestController {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.update(rq.getMockId(),
                 rq.getMethod(),
+                rq.getName(),
                 rq.getAntPattern(),
                 rq.getType(),
                 rq.getMeta(),

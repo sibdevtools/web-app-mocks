@@ -60,6 +60,7 @@ public class WebAppMocksService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public HttpMockEntity create(long serviceId,
                                  String method,
+                                 String name,
                                  String antPattern,
                                  String type,
                                  Map<String, String> meta,
@@ -86,6 +87,7 @@ public class WebAppMocksService {
 
         var httpMockEntity = HttpMockEntity.builder()
                 .method(method)
+                .name(name)
                 .antPattern(antPattern)
                 .service(serviceEntity)
                 .type(type)
@@ -100,6 +102,7 @@ public class WebAppMocksService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public HttpMockEntity update(long mockId,
                                  String method,
+                                 String name,
                                  String antPattern,
                                  String type,
                                  Map<String, String> meta,
@@ -126,6 +129,7 @@ public class WebAppMocksService {
         var contentId = saveFileRs.getBody();
 
         httpMockEntity.setMethod(method);
+        httpMockEntity.setName(name);
         httpMockEntity.setAntPattern(antPattern);
         httpMockEntity.setType(type);
         httpMockEntity.setStorageType("LOCAL");

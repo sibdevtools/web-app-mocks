@@ -57,7 +57,7 @@ const ServiceListPage: React.FC = () => {
   return (
     <div className="container mt-4">
       <div className={'row'}>
-        <div className="col-md-8 offset-md-2">
+        <div className="col-md-10 offset-md-1">
           <div className="row g-3">
             <div className="col-md-10">
               <label htmlFor="filterInput" className="h2">Filter</label>

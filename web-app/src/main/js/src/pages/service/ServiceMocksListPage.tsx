@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { deleteMock, getMocksByService } from '../../services/api';
-import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import { ArrowLeft01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 
 interface Mock {
   mockId: number;
   method: string;
+  name: string;
   antPattern: string;
   type: string;
 }
@@ -71,7 +72,7 @@ const ServiceMocksListPage: React.FC = () => {
   return (
     <div className="container mt-4">
       <div className={'row'}>
-        <div className="col-md-8 offset-md-2">
+        <div className="col-md-10 offset-md-1">
           <div className="row g-3">
             <div className="col-md-10">
               <label htmlFor="filterInput" className="h2">Filter</label>
@@ -85,8 +86,13 @@ const ServiceMocksListPage: React.FC = () => {
               />
             </div>
           </div>
-          <div className="row mb-2">
-            <div className="col-md-10">
+          <div className={'row mb-2'}>
+            <div className={'col-md-1 offset-md-2 mb-2'}>
+              <button type="button" className="btn btn-outline-primary" onClick={() => navigate(contextPath)}>
+                <ArrowLeft01Icon />
+              </button>
+            </div>
+            <div className={'col-md-7'}>
               <span className={'h2'}>HTTP Service {service.code} Mocks</span>
             </div>
             <div className="col-md-1 offset-md-1">
@@ -104,7 +110,12 @@ const ServiceMocksListPage: React.FC = () => {
                   {mock.method}
                   </span>
                 </div>
-                <div className="col-md-6 text-center">
+                <div className="col-md-2 text-center">
+                  <span className={'align-middle'}>
+                    {mock.name}
+                  </span>
+                </div>
+                <div className="col-md-4 text-center">
                   <span className={'align-middle'}>
                   <pre>
                     <code>

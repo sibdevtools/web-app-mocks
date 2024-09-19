@@ -24,12 +24,7 @@ public class HttpServiceDto implements Serializable {
         this.serviceId = serviceEntity.getId();
         this.code = serviceEntity.getCode();
         this.mocks = httpMockEntities.stream()
-                .map(it -> HttpServiceMockDto.builder()
-                        .mockId(it.getId())
-                        .method(it.getMethod())
-                        .antPattern(it.getAntPattern())
-                        .type(it.getType())
-                        .build())
+                .map(HttpServiceMockDto::new)
                 .toList();
     }
 }

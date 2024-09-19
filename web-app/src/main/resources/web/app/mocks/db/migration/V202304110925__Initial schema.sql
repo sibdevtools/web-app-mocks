@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS http_mock
 (
     id           bigint        NOT NULL AUTO_INCREMENT,
     method       varchar(16)   NOT NULL,
+    name         varchar(256)  NOT NULL,
     ant_pattern  varchar(2048) NOT NULL,
     service_id   bigint        NOT NULL,
     type         varchar(64)   NOT NULL,

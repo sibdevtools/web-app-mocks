@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Method } from '../const/common.const';
 
 const api = axios.create({
   baseURL: '/web/app/mocks/rest/api',
@@ -22,10 +23,34 @@ export const deleteService = (serviceId: number) => api.delete(`/services/${serv
 export const getMocksByService = (serviceId: number) => api.get(`/services/${serviceId}/mocks`);
 
 // Create a new mock
-export const createMock = (mockData: any) => api.post('/mocks/', mockData);
+export type MockType = 'STATIC' | 'JS'
 
-// Update a mock
-export const updateMock = (mockData: any) => api.put('/mocks/', mockData);
+export interface MockMeta {
+  [key: string]: string
+}
+
+export interface CreateMockRq {
+  name: string
+  method: Method
+  antPattern: string
+  type: MockType,
+  meta: MockMeta
+  content: string
+}
+
+export const createMock = (serviceId: number, rq: CreateMockRq) => api.post(`/services/${serviceId}/mocks/`, rq);
+
+export interface UpdateMockRq {
+  mockId: number
+  name: string
+  method: Method
+  antPattern: string
+  type: MockType
+  meta: MockMeta
+  content: string
+}
+
+export const updateMock = (serviceId: number, rq: UpdateMockRq) => api.put(`/services/${serviceId}/mocks`, rq);
 
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
 export const deleteMock = (serviceId: number, mockId: number) => api.delete(`/services/${serviceId}/mocks/${mockId}`);

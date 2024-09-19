@@ -17,11 +17,13 @@ import java.io.Serializable;
 public class HttpServiceMockDto implements Serializable {
     private long mockId;
     private String method;
+    private String name;
     private String antPattern;
     private String type;
 
     public HttpServiceMockDto(HttpMockEntity httpMockEntity) {
         this.mockId = httpMockEntity.getId();
+        this.name = httpMockEntity.getName();
         this.method = httpMockEntity.getMethod();
         this.antPattern = httpMockEntity.getAntPattern();
         this.type = httpMockEntity.getType();

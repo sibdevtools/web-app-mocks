@@ -19,6 +19,7 @@ import java.util.Map;
 public class UpdateMockRq implements Serializable {
     private long mockId;
     private String method;
+    private String name;
     private String antPattern;
     private String type;
     private Map<String, String> meta;
