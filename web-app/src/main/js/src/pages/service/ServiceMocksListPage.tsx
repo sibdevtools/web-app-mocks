@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { deleteMock, getMocksByService, setEnabledMock } from '../../services/api';
-import { ArrowLeft01Icon, Copy01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import { ArrowLeft01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
@@ -25,14 +25,17 @@ const ServiceMocksListPage: React.FC = () => {
   const navigate = useNavigate();
   const { serviceId } = useParams();
 
+  useEffect(() => {
+    if (!serviceId) {
+      return;
+    }
+    fetchMocks();
+  }, []);
+
   if (!serviceId) {
     navigate(contextPath);
     return;
   }
-
-  useEffect(() => {
-    fetchMocks();
-  }, []);
 
   const fetchMocks = async () => {
     try {

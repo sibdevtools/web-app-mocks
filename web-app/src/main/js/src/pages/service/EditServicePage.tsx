@@ -12,17 +12,12 @@ const AddServicePage: React.FC = () => {
   const navigate = useNavigate();
   const { serviceId } = useParams();
 
-  if (!serviceId) {
-    navigate(contextPath);
-    return;
-  }
-
   const { state } = useLocation();
   const editServiceState = state as EditServiceState | null;
 
   const [code, setCode] = useState(editServiceState?.code);
 
-  if (!code) {
+  if (!serviceId || !code) {
     navigate(contextPath);
     return;
   }

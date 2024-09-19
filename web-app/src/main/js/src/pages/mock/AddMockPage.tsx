@@ -107,7 +107,7 @@ const AddMockPage: React.FC = () => {
                 >
                   {
                     methods.map((it) => (
-                        <option value={it}>{it}</option>
+                        <option key={it} value={it}>{it}</option>
                       )
                     )
                   }
@@ -137,7 +137,7 @@ const AddMockPage: React.FC = () => {
                 >
                   {
                     [...statusCodes.keys()].map(it => (
-                        <option value={it}>{it}: {statusCodes.get(it)}</option>
+                        <option key={it} value={it}>{it}: {statusCodes.get(it)}</option>
                       )
                     )
                   }
@@ -154,7 +154,7 @@ const AddMockPage: React.FC = () => {
                 >
                   {
                     mockTypes.map(it => (
-                        <option value={it}>{it}</option>
+                        <option key={it} value={it}>{it}</option>
                       )
                     )
                   }
