@@ -73,3 +73,9 @@ export const updateMock = (serviceId: number, mockId: number, rq: UpdateMockRq) 
 export const deleteMock = (serviceId: number, mockId: number) => api.delete(`/services/${serviceId}/mocks/${mockId}`);
 
 
+export interface SetEnabledMockRq {
+  enabled: boolean
+}
+
+export const setEnabledMock = (serviceId: number, mockId: number, rq: SetEnabledMockRq) => api.put(`/services/${serviceId}/mocks/${mockId}/enabled`, rq);
+

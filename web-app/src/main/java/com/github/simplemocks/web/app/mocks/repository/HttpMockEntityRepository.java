@@ -20,7 +20,7 @@ public interface HttpMockEntityRepository extends JpaRepository<HttpMockEntity, 
      * @param serviceCode http service code
      * @return list of mocks
      */
-    List<HttpMockEntity> findAllByMethodAndServiceCode(String method, String serviceCode);
+    List<HttpMockEntity> findAllByMethodAndServiceCodeAndEnabledIsTrue(String method, String serviceCode);
 
     /**
      * Find all mocks by service id

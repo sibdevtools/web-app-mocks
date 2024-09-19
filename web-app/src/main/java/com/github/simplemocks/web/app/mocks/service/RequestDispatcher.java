@@ -46,7 +46,7 @@ public class RequestDispatcher {
                          @Nonnull String path,
                          @Nonnull HttpServletRequest rq,
                          @Nonnull HttpServletResponse rs) {
-        var httpMocks = httpMockEntityRepository.findAllByMethodAndServiceCode(method, serviceCode);
+        var httpMocks = httpMockEntityRepository.findAllByMethodAndServiceCodeAndEnabledIsTrue(method, serviceCode);
         for (var httpMock : httpMocks) {
             var antPattern = httpMock.getAntPattern();
             if (!antPathMatcher.match(antPattern, path)) {

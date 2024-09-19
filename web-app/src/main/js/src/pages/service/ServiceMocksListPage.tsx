@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { deleteMock, getMocksByService } from '../../services/api';
-import { ArrowLeft01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import { deleteMock, getMocksByService, setEnabledMock } from '../../services/api';
+import { ArrowLeft01Icon, Copy01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
@@ -11,6 +11,7 @@ interface Mock {
   name: string;
   antPattern: string;
   type: string;
+  enabled: boolean;
 }
 
 interface Service {
@@ -30,10 +31,10 @@ const ServiceMocksListPage: React.FC = () => {
   }
 
   useEffect(() => {
-    fetchService();
+    fetchMocks();
   }, []);
 
-  const fetchService = async () => {
+  const fetchMocks = async () => {
     try {
       const response = await getMocksByService(+serviceId);
       if (response.data.success) {
@@ -50,7 +51,7 @@ const ServiceMocksListPage: React.FC = () => {
     }
     try {
       await deleteMock(service.serviceId, mockId);
-      fetchService();
+      fetchMocks();
     } catch (error) {
       console.error('Failed to delete mock:', error);
     }
@@ -64,10 +65,19 @@ const ServiceMocksListPage: React.FC = () => {
     });
   };
 
+  const handleSetEnabled = async (service: Service, mock: Mock, e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      await setEnabledMock(service.serviceId, mock.mockId, { enabled: e.target.checked });
+      fetchMocks();
+    } catch (error) {
+      console.error('Failed to delete mock:', error);
+    }
+  };
+
   return (
     <div className="container mt-4">
       <div className={'row'}>
-        <div className="col-md-10 offset-md-1">
+        <div className="col-md-12 ">
           <div className={'row mb-2'}>
             <div className={'col-md-1 offset-md-2 mb-2'}>
               <button type="button" className="btn btn-outline-primary" onClick={() => navigate(contextPath)}>
@@ -90,6 +100,7 @@ const ServiceMocksListPage: React.FC = () => {
               { key: 'name', label: 'Name' },
               { key: 'antPattern', label: 'Ant Pattern' },
               { key: 'type', label: 'Type' },
+              { key: 'enabled', label: 'Enabled' },
               { key: 'actions', label: 'Actions' },
             ]}
             data={service.mocks.map(mock => {
@@ -98,11 +109,17 @@ const ServiceMocksListPage: React.FC = () => {
                 name: `${mock.name}`,
                 antPattern: `${mock.antPattern}`,
                 type: `${mock.type}`,
+                enabled: <div className="form-check form-switch">
+                  <input className="form-check-input"
+                         type="checkbox"
+                         checked={mock.enabled}
+                         onChange={e => handleSetEnabled(service, mock, e)} />
+                </div>,
                 actions: <div className="btn-group" role="group">
-                  <button className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
+                  <button type={'button'} className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
                     <PencilEdit01Icon />
                   </button>
-                  <button className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
+                  <button type={'button'} className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
                     <Delete01Icon />
                   </button>
                 </div>

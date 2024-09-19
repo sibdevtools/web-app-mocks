@@ -91,6 +91,7 @@ public class WebAppMocksService {
                 .antPattern(antPattern)
                 .service(serviceEntity)
                 .type(type)
+                .enabled(true)
                 .storageType("LOCAL")
                 .storageId(contentId)
                 .createdAt(ZonedDateTime.now())
@@ -134,6 +135,19 @@ public class WebAppMocksService {
         httpMockEntity.setType(type);
         httpMockEntity.setStorageType("LOCAL");
         httpMockEntity.setStorageId(contentId);
+        httpMockEntity.setModifiedAt(ZonedDateTime.now());
+
+        return httpMockEntityRepository.save(httpMockEntity);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public HttpMockEntity setEnabled(long mockId,
+                                     boolean enabled) {
+        var httpMockEntity = httpMockEntityRepository.findById(mockId)
+                .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
+
+        httpMockEntity.setEnabled(enabled);
+        httpMockEntity.setModifiedAt(ZonedDateTime.now());
 
         return httpMockEntityRepository.save(httpMockEntity);
     }

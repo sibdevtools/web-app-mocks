@@ -19,6 +19,7 @@ public class HttpServiceMockDto implements Serializable {
     private String method;
     private String name;
     private String antPattern;
+    private boolean enabled;
     private String type;
 
     public HttpServiceMockDto(HttpMockEntity httpMockEntity) {
@@ -26,6 +27,7 @@ public class HttpServiceMockDto implements Serializable {
         this.name = httpMockEntity.getName();
         this.method = httpMockEntity.getMethod();
         this.antPattern = httpMockEntity.getAntPattern();
+        this.enabled = httpMockEntity.isEnabled();
         this.type = httpMockEntity.getType();
     }
 }

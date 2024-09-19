@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS http_mock
     ant_pattern  varchar(2048) NOT NULL,
     service_id   bigint        NOT NULL,
     type         varchar(64)   NOT NULL,
+    enabled      boolean       NOT NULL,
     storage_type varchar(64)   NOT NULL,
     storage_id   varchar(128)  NOT NULL,
     created_at   timestamp     NOT NULL,

@@ -33,6 +33,8 @@ public class HttpMockEntity {
     private HttpServiceEntity service;
     @Column(name = "type", nullable = false)
     private String type;
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
     @Column(name = "storage_type", nullable = false)
     private String storageType;
     @Column(name = "storage_id", nullable = false)

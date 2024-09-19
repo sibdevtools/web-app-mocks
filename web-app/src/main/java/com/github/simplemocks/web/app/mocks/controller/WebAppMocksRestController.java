@@ -2,6 +2,7 @@ package com.github.simplemocks.web.app.mocks.controller;
 
 import com.github.simplemocks.common.api.rs.StandardRs;
 import com.github.simplemocks.web.app.mocks.api.rq.CreateMockRq;
+import com.github.simplemocks.web.app.mocks.api.rq.SetEnabledMockRq;
 import com.github.simplemocks.web.app.mocks.api.rq.UpdateMockRq;
 import com.github.simplemocks.web.app.mocks.api.rs.CreateMockRs;
 import com.github.simplemocks.web.app.mocks.api.rs.GetMockRs;
@@ -63,6 +64,18 @@ public class WebAppMocksRestController {
                 rq.getType(),
                 rq.getMeta(),
                 B64_DECODER.decode(content)
+        );
+        return new UpdateMockRs(httpMockEntity.getId());
+    }
+
+    @PutMapping(
+            path = "/{mockId}/enabled",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public UpdateMockRs setEnabled(@PathVariable("mockId") long mockId, @RequestBody SetEnabledMockRq rq) {
+        var httpMockEntity = webAppMocksService.setEnabled(
+                mockId,
+                rq.isEnabled()
         );
         return new UpdateMockRs(httpMockEntity.getId());
     }
