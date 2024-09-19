@@ -50,18 +50,20 @@ public class WebAppMocksRestController {
     }
 
     @PutMapping(
-            path = "/",
+            path = "/{mockId}",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public UpdateMockRs update(@RequestBody UpdateMockRq rq) {
+    public UpdateMockRs update(@PathVariable("mockId") long mockId, @RequestBody UpdateMockRq rq) {
         var content = rq.getContent();
-        var httpMockEntity = webAppMocksService.update(rq.getMockId(),
+        var httpMockEntity = webAppMocksService.update(
+                mockId,
                 rq.getMethod(),
                 rq.getName(),
                 rq.getAntPattern(),
                 rq.getType(),
                 rq.getMeta(),
-                B64_DECODER.decode(content));
+                B64_DECODER.decode(content)
+        );
         return new UpdateMockRs(httpMockEntity.getId());
     }
 
@@ -71,7 +73,7 @@ public class WebAppMocksRestController {
         return new StandardRs();
     }
 
-    @PostMapping("/{mockId}")
+    @GetMapping("/{mockId}")
     public GetMockRs get(@PathVariable("mockId") long mockId) {
         var mockDto = webAppMocksService.get(mockId);
         return new GetMockRs(mockDto);

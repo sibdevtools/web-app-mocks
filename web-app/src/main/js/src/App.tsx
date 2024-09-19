@@ -32,6 +32,7 @@ import EditServicePage from './pages/service/EditServicePage';
 import ServiceMocksListPage from './pages/service/ServiceMocksListPage';
 import { contextPath } from './const/common.const';
 import AddMockPage from './pages/mock/AddMockPage';
+import EditMockPage from './pages/mock/EditMockPage';
 
 
 const App: React.FC = () => {
@@ -50,6 +51,9 @@ const App: React.FC = () => {
                 <Route path={'mocks'}>
                   <Route index element={<ServiceMocksListPage />} />
                   <Route path={'add'} element={<AddMockPage />} />
+                  <Route path={'edit'}>
+                    <Route path={':mockId'} element={<EditMockPage />} />
+                  </Route>
                 </Route>
               </Route>
             </Route>

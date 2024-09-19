@@ -40,8 +40,25 @@ export interface CreateMockRq {
 
 export const createMock = (serviceId: number, rq: CreateMockRq) => api.post(`/services/${serviceId}/mocks/`, rq);
 
+// Fetch mock
+export interface GetMockRs {
+  success: boolean
+  body: {
+    serviceId: number,
+    mockId: number,
+    method: Method
+    name: string,
+    antPattern: string,
+    type: MockType,
+    meta: MockMeta
+    content: string
+  }
+}
+
+
+export const getMock = (serviceId: number, mockId: number) => api.get<GetMockRs>(`/services/${serviceId}/mocks/${mockId}`);
+
 export interface UpdateMockRq {
-  mockId: number
   name: string
   method: Method
   antPattern: string
@@ -50,7 +67,9 @@ export interface UpdateMockRq {
   content: string
 }
 
-export const updateMock = (serviceId: number, rq: UpdateMockRq) => api.put(`/services/${serviceId}/mocks`, rq);
+export const updateMock = (serviceId: number, mockId: number, rq: UpdateMockRq) => api.put(`/services/${serviceId}/mocks/${mockId}`, rq);
 
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
 export const deleteMock = (serviceId: number, mockId: number) => api.delete(`/services/${serviceId}/mocks/${mockId}`);
+
+
