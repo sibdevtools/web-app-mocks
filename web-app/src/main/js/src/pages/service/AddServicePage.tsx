@@ -31,7 +31,7 @@ const AddServicePage: React.FC = () => {
         </div>
       </div>
       <div className={'row'}>
-        <div className="col-md-10 offset-md-1">
+        <div className="col-md-8 offset-md-2">
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="serviceCode" className="form-label">Service Code</label>
