@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextWrapIcon } from 'hugeicons-react';
 import {
   ContentType,
@@ -30,10 +30,15 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
   const contentType = basicHttpHeaderParsed ? basicHttpHeaderParsed['Content-Type'] : 'application/json';
 
   const [localMeta, setLocalMeta] = useState<StaticMeta>({
-    contentType: contentType
+    contentType: contentType as ContentType
   });
   const { theme } = useTheme();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
+  const [aceType, setAceType] = useState(contentTypes.get(localMeta.contentType)?.aceType);
+
+  useEffect(() => {
+    setAceType(contentTypes.get(localMeta.contentType)?.aceType);
+  }, [localMeta]);
 
   const onContentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newContentType = e.target.value;
@@ -42,7 +47,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
       setMeta({
         ...meta,
         HTTP_HEADERS: JSON.stringify({
-          'Content-Type': meta.contentType
+          'Content-Type': newContentType
         })
       })
     }
@@ -89,7 +94,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
                className={`form-control`}
           >
             <AceEditor
-              mode={contentTypes.get(localMeta.contentType)?.aceType}
+              mode={aceType}
               theme={theme}
               name={`contentAceEditor`}
               onChange={setContent}
