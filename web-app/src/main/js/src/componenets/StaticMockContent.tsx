@@ -7,6 +7,7 @@ import {
 import AceEditor from 'react-ace';
 import { useTheme } from '../theme/ThemeContext';
 
+import '../const/ace.imports'
 
 export interface StaticMeta {
   contentType: ContentType
@@ -25,20 +26,22 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
                                                                meta,
                                                                setMeta
                                                              }) => {
-  const basicHttpHeaders = meta['HTTP_HEADERS'];
-  const basicHttpHeaderParsed = basicHttpHeaders ? JSON.parse(basicHttpHeaders) : {};
-  const contentType = basicHttpHeaderParsed ? basicHttpHeaderParsed['Content-Type'] : 'application/json';
-
   const [localMeta, setLocalMeta] = useState<StaticMeta>({
-    contentType: contentType as ContentType
+    contentType: 'application/json'
   });
+  const [aceType, setAceType] = useState(contentTypes.get('application/json')?.aceType);
+
+  console.log("update");
+  useEffect(() => {
+    const basicHttpHeaders = meta['HTTP_HEADERS'];
+    const basicHttpHeaderParsed = basicHttpHeaders ? JSON.parse(basicHttpHeaders) : null;
+    const contentType = ((basicHttpHeaderParsed ? basicHttpHeaderParsed['Content-Type'] : null) || 'application/json') as ContentType;
+    setLocalMeta({ ...localMeta, contentType: contentType })
+    setAceType(contentTypes.get(contentType)?.aceType);
+  }, [meta]);
+
   const { theme } = useTheme();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
-  const [aceType, setAceType] = useState(contentTypes.get(localMeta.contentType)?.aceType);
-
-  useEffect(() => {
-    setAceType(contentTypes.get(localMeta.contentType)?.aceType);
-  }, [localMeta]);
 
   const onContentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newContentType = e.target.value;

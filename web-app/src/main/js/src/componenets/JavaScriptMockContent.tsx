@@ -3,6 +3,7 @@ import { TextWrapIcon } from 'hugeicons-react';
 import AceEditor from 'react-ace';
 import { useTheme } from '../theme/ThemeContext';
 
+import '../const/ace.imports'
 
 export interface JavaScriptMockContentProps {
   content: string,
