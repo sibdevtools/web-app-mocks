@@ -42,7 +42,7 @@ const ServiceMocksListPage: React.FC = () => {
     }
     try {
       await deleteMock(service.serviceId, mockId);
-      fetchMocks();
+      await fetchMocks();
     } catch (error) {
       console.error('Failed to delete mock:', error);
     }
@@ -59,14 +59,14 @@ const ServiceMocksListPage: React.FC = () => {
   const handleSetEnabled = async (service: Service, mock: Mock, e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       await setEnabledMock(service.serviceId, mock.mockId, { enabled: e.target.checked });
-      fetchMocks();
+      await fetchMocks();
     } catch (error) {
       console.error('Failed to delete mock:', error);
     }
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-4">
       <div className={'row'}>
         <div className="col-md-12 ">
           <div className={'row mb-2'}>
@@ -98,7 +98,7 @@ const ServiceMocksListPage: React.FC = () => {
               return {
                 method: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
                 name: `${mock.name}`,
-                antPattern: `${mock.antPattern}`,
+                antPattern: <code>{mock.antPattern}</code>,
                 type: `${mock.type}`,
                 enabled: <div className="form-check form-switch">
                   <input className="form-check-input"
@@ -118,6 +118,10 @@ const ServiceMocksListPage: React.FC = () => {
             })}
             sortableColumns={['method', 'name', 'antPattern', 'type']}
             filterableColumns={['method', 'name', 'antPattern', 'type']}
+            styleProps={{
+              centerHeaders: true,
+              textCenterValues: true,
+            }}
           />
         </div>
       </div>

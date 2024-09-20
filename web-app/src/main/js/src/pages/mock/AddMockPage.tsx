@@ -70,7 +70,7 @@ const AddMockPage: React.FC = () => {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-4">
       <div className={'row'}>
         <div className={'col-md-1 offset-md-2 mb-2'}>
           <button type="button" className="btn btn-outline-primary" onClick={() => toServicePage()}>
@@ -96,7 +96,7 @@ const AddMockPage: React.FC = () => {
               />
             </div>
             <div className={'row mb-3'}>
-              <div className="col-md-2">
+              <div className="col-md-2 col-sm-3">
                 <label htmlFor="httpMethodSelect" className="form-label">HTTP Method</label>
                 <select
                   id={'httpMethodSelect'}
@@ -113,7 +113,7 @@ const AddMockPage: React.FC = () => {
                   }
                 </select>
               </div>
-              <div className="col-md-10">
+              <div className="col-md-10 col-sm-9">
                 <label htmlFor="antPatternInput" className="form-label">Ant Pattern</label>
                 <input
                   type="text"
@@ -168,6 +168,7 @@ const AddMockPage: React.FC = () => {
                     setContent={setInputText}
                     meta={meta}
                     setMeta={setMeta}
+                    creation={true}
                   />
                 ) :
                 <JavaScriptMockContent

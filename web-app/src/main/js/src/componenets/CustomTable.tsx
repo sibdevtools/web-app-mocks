@@ -90,51 +90,49 @@ const CustomTable: React.FC<CustomTableProps> = ({
   });
 
   return (
-    <div className="container mt-4">
-      <table className="table table-striped table-bordered table-hover">
-        <thead className={'table-dark'}>
-        <tr className={`${styleProps.centerHeaders ? 'text-center' : ''}`}>
-          {columns.map((column) => (
-            <th
-              key={column.key}
-              onClick={() => handleSort(column.key)}
-              style={{ cursor: sortableColumns.includes(column.key) ? 'pointer' : 'default' }}
-            >
-              {column.label}
-              {sortableColumns.includes(column.key) && sortColumn === column.key && (
-                sortDirection === 'asc' ? ' ▲' : ' ▼'
-              )}
-            </th>
-          ))}
-        </tr>
-        <tr>
-          {columns.map((column) => (
-            <th key={`filter-${column.key}`}>
-              {filterableColumns.includes(column.key) && (
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder={`Filter ${column.label}`}
-                  value={filter[column.key] || ''}
-                  onChange={(e) => handleFilterChange(e, column.key)}
-                />
-              )}
-            </th>
-          ))}
-        </tr>
-        </thead>
-        <tbody>
-        {sortedData.map((item, index) => (
-          <tr key={index}>
-            {columns.map((column) => (
-              <td className={`${styleProps.textCenterValues ? 'text-center' : ''}`}
-                  key={column.key}>{item[column.key]}</td>
-            ))}
-          </tr>
+    <table className="table table-striped table-bordered table-hover">
+      <thead className={'table-dark'}>
+      <tr className={`${styleProps.centerHeaders ? 'text-center' : ''}`}>
+        {columns.map((column) => (
+          <th
+            key={column.key}
+            onClick={() => handleSort(column.key)}
+            style={{ cursor: sortableColumns.includes(column.key) ? 'pointer' : 'default' }}
+          >
+            {column.label}
+            {sortableColumns.includes(column.key) && sortColumn === column.key && (
+              sortDirection === 'asc' ? ' ▲' : ' ▼'
+            )}
+          </th>
         ))}
-        </tbody>
-      </table>
-    </div>
+      </tr>
+      <tr>
+        {columns.map((column) => (
+          <th key={`filter-${column.key}`}>
+            {filterableColumns.includes(column.key) && (
+              <input
+                type="text"
+                className="form-control"
+                placeholder={`Filter ${column.label}`}
+                value={filter[column.key] || ''}
+                onChange={(e) => handleFilterChange(e, column.key)}
+              />
+            )}
+          </th>
+        ))}
+      </tr>
+      </thead>
+      <tbody>
+      {sortedData.map((item, index) => (
+        <tr key={index}>
+          {columns.map((column) => (
+            <td className={`${styleProps.textCenterValues ? 'text-center' : ''}`}
+                key={column.key}>{item[column.key]}</td>
+          ))}
+        </tr>
+      ))}
+      </tbody>
+    </table>
   );
 };
 

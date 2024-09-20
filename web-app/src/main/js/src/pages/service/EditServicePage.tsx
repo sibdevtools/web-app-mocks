@@ -33,7 +33,7 @@ const AddServicePage: React.FC = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-4">
       <div className={'row'}>
         <div className={'col-md-1 offset-md-2 mb-2'}>
           <button type="button" className="btn btn-outline-primary" onClick={() => navigate(contextPath)}>

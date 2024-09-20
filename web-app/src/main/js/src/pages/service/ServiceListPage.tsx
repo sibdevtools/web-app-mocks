@@ -46,7 +46,7 @@ const ServiceListPage: React.FC = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-4">
       <div className={'row'}>
         <div className="col-md-8 offset-md-1 text-center">
           <span className={'h2'}>HTTP Services</span>
@@ -59,33 +59,35 @@ const ServiceListPage: React.FC = () => {
       </div>
       <div className={'row'}>
         <div className="col-md-10 offset-md-1">
-          <CustomTable
-            columns={[
-              { key: 'code', label: 'Code' },
-              { key: 'actions', label: 'Actions' },
-            ]}
-            data={services.map(service => {
-              return {
-                code: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
-                  {service.code}
-                </a>,
-                actions: <div className="btn-group" role="group">
-                  <button className="btn btn-primary" onClick={() => handleEdit(service)}>
-                    <PencilEdit01Icon />
-                  </button>
-                  <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
-                    <Delete01Icon />
-                  </button>
-                </div>
-              }
-            })}
-            sortableColumns={['code']}
-            filterableColumns={['code']}
-            styleProps={{
-              centerHeaders: true,
-              textCenterValues: true,
-            }}
-          />
+          <div className="container mt-4">
+            <CustomTable
+              columns={[
+                { key: 'code', label: 'Code' },
+                { key: 'actions', label: 'Actions' },
+              ]}
+              data={services.map(service => {
+                return {
+                  code: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
+                    {service.code}
+                  </a>,
+                  actions: <div className="btn-group" role="group">
+                    <button className="btn btn-primary" onClick={() => handleEdit(service)}>
+                      <PencilEdit01Icon />
+                    </button>
+                    <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
+                      <Delete01Icon />
+                    </button>
+                  </div>
+                }
+              })}
+              sortableColumns={['code']}
+              filterableColumns={['code']}
+              styleProps={{
+                centerHeaders: true,
+                textCenterValues: true,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -18,27 +18,56 @@ export interface StaticMockContentProps {
   setContent: (content: string) => void,
   meta: { [key: string]: string },
   setMeta: (meta: { [key: string]: string }) => void,
+  creation: boolean,
 }
 
 const StaticMockContent: React.FC<StaticMockContentProps> = ({
                                                                content,
                                                                setContent,
                                                                meta,
-                                                               setMeta
+                                                               setMeta,
+                                                               creation
                                                              }) => {
+  useEffect(() => {
+    if(!creation) {
+      return
+    }
+    setMeta({
+      ...meta,
+      HTTP_HEADERS: JSON.stringify({
+        'Content-Type': 'application/json'
+      })
+    })
+  }, []);
+  useEffect(() => {
+    if(creation) {
+      return
+    }
+    const basicHttpHeaders = meta['HTTP_HEADERS'];
+    const basicHttpHeaderParsed = basicHttpHeaders ? JSON.parse(basicHttpHeaders) : null;
+    const contentType = ((basicHttpHeaderParsed ? basicHttpHeaderParsed['Content-Type'] : null) || 'application/json') as ContentType;
+    changeLocalMeta(contentType);
+  }, [meta]);
+
   const [localMeta, setLocalMeta] = useState<StaticMeta>({
     contentType: 'application/json'
   });
   const [aceType, setAceType] = useState(contentTypes.get('application/json')?.aceType);
 
-  console.log("update");
-  useEffect(() => {
-    const basicHttpHeaders = meta['HTTP_HEADERS'];
-    const basicHttpHeaderParsed = basicHttpHeaders ? JSON.parse(basicHttpHeaders) : null;
-    const contentType = ((basicHttpHeaderParsed ? basicHttpHeaderParsed['Content-Type'] : null) || 'application/json') as ContentType;
+  console.log('update')
+  const changeLocalMeta = (contentType: ContentType) => {
+    if (localMeta.contentType === contentType) {
+      return;
+    }
     setLocalMeta({ ...localMeta, contentType: contentType })
     setAceType(contentTypes.get(contentType)?.aceType);
-  }, [meta]);
+    setMeta({
+      ...meta,
+      HTTP_HEADERS: JSON.stringify({
+        'Content-Type': contentType
+      })
+    })
+  }
 
   const { theme } = useTheme();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
@@ -46,13 +75,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
   const onContentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newContentType = e.target.value;
     if (newContentType) {
-      setLocalMeta({ ...localMeta, contentType: newContentType })
-      setMeta({
-        ...meta,
-        HTTP_HEADERS: JSON.stringify({
-          'Content-Type': newContentType
-        })
-      })
+      changeLocalMeta(newContentType);
     }
   }
 
@@ -70,7 +93,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
           >
             {
               [...contentTypes.keys()].map(it => (
-                  <option value={it}>{contentTypes.get(it)?.caption}</option>
+                  <option key={it} value={it}>{contentTypes.get(it)?.caption}</option>
                 )
               )
             }
