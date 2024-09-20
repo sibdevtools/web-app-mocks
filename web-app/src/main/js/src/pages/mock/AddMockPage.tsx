@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createMock } from '../../services/api';
+import { createMock } from '../../api/service';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
 import {

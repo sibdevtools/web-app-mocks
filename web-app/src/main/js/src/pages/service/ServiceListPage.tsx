@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { getAllServices, deleteService } from '../../services/api';
+import { getAllServices, deleteService, Service } from '../../api/service';
 import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
 
-interface Service {
-  serviceId: number;
-  code: string;
-}
 
 const ServiceListPage: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);

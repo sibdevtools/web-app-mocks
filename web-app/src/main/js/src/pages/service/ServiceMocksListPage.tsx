@@ -1,27 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { deleteMock, getMocksByService, setEnabledMock } from '../../services/api';
+import { deleteMock, getMocksByService, Mock, Service, ServiceV2, setEnabledMock } from '../../api/service';
 import { ArrowLeft01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
 
-interface Mock {
-  mockId: number;
-  method: string;
-  name: string;
-  antPattern: string;
-  type: string;
-  enabled: boolean;
-}
-
-interface Service {
-  serviceId: number;
-  code: string;
-  mocks: Mock[];
-}
 
 const ServiceMocksListPage: React.FC = () => {
-  const [service, setService] = useState<Service>({ code: '', mocks: [], serviceId: 0 });
+  const [service, setService] = useState<ServiceV2>(
+    { code: '', mocks: [], serviceId: 0 }
+  );
   const navigate = useNavigate();
   const { serviceId } = useParams();
 

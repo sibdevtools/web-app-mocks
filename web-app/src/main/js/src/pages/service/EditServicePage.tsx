@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { updateService } from '../../services/api';
+import { updateService } from '../../api/service';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
 import { contextPath } from '../../const/common.const';
