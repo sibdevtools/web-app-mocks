@@ -6,8 +6,10 @@ import com.github.simplemocks.web.app.mocks.api.rq.SetEnabledMockRq;
 import com.github.simplemocks.web.app.mocks.api.rq.UpdateMockRq;
 import com.github.simplemocks.web.app.mocks.api.rs.CreateMockRs;
 import com.github.simplemocks.web.app.mocks.api.rs.GetMockRs;
+import com.github.simplemocks.web.app.mocks.api.rs.GetMockUrlRs;
 import com.github.simplemocks.web.app.mocks.api.rs.UpdateMockRs;
 import com.github.simplemocks.web.app.mocks.service.WebAppMocksService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -90,6 +92,13 @@ public class WebAppMocksRestController {
     public GetMockRs get(@PathVariable("mockId") long mockId) {
         var mockDto = webAppMocksService.get(mockId);
         return new GetMockRs(mockDto);
+    }
+
+    @GetMapping("/{mockId}/url")
+    public GetMockUrlRs getUrl(@PathVariable("mockId") long mockId,
+                               HttpServletRequest rq) {
+        var mockUrl = webAppMocksService.getUrl(mockId, rq);
+        return new GetMockUrlRs(mockUrl);
     }
 
 }

@@ -4,11 +4,13 @@ import com.github.simplemocks.storage.api.rq.SaveFileRq;
 import com.github.simplemocks.storage.api.service.StorageService;
 import com.github.simplemocks.web.app.mocks.api.dto.HttpMockDto;
 import com.github.simplemocks.web.app.mocks.api.service.get.dto.HttpServiceDto;
+import com.github.simplemocks.web.app.mocks.api.service.mocks.dto.HttpServiceItemDto;
 import com.github.simplemocks.web.app.mocks.entity.HttpMockEntity;
 import com.github.simplemocks.web.app.mocks.entity.HttpServiceEntity;
 import com.github.simplemocks.web.app.mocks.repository.HttpMockEntityRepository;
 import com.github.simplemocks.web.app.mocks.repository.HttpServiceEntityRepository;
 import com.github.simplemocks.web.app.mocks.service.handler.RequestHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -40,6 +43,9 @@ public class WebAppMocksService {
 
     @Value("${web.app.mocks.props.bucket.code}")
     private String bucketCode;
+
+    @Value("${web.app.mocks.uri.mock.path}")
+    private String mockUriPath;
 
     @Autowired
     public WebAppMocksService(List<RequestHandler> handlers,
@@ -161,6 +167,31 @@ public class WebAppMocksService {
         return new HttpMockDto(httpMockEntity, bucketFile);
     }
 
+    public String getUrl(long mockId,
+                         HttpServletRequest rq) {
+        var httpMockEntity = httpMockEntityRepository.findById(mockId)
+                .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
+
+        var service = httpMockEntity.getService();
+
+        var antPattern = httpMockEntity.getAntPattern();
+
+        var scheme = rq.getScheme();
+        var serverName = rq.getServerName();
+        var serverPort = rq.getServerPort();
+        var contextPath = rq.getContextPath();
+
+        return UriComponentsBuilder.newInstance()
+                .scheme(scheme)
+                .host(serverName)
+                .port(serverPort)
+                .path(contextPath)
+                .path(mockUriPath)
+                .path(service.getCode())
+                .path(antPattern)
+                .toUriString();
+    }
+
     /**
      * Create service
      *
@@ -194,11 +225,11 @@ public class WebAppMocksService {
      * @param serviceId service identifier
      * @return service information with mocks
      */
-    public com.github.simplemocks.web.app.mocks.api.service.mocks.dto.HttpServiceDto getServiceMocks(long serviceId) {
+    public HttpServiceItemDto getServiceMocks(long serviceId) {
         var serviceEntity = serviceEntityRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
         var httpMockEntities = httpMockEntityRepository.findAllByServiceId(serviceId);
-        return new com.github.simplemocks.web.app.mocks.api.service.mocks.dto.HttpServiceDto(
+        return new HttpServiceItemDto(
                 serviceEntity,
                 httpMockEntities
         );

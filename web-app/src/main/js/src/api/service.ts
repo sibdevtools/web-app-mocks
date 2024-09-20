@@ -101,6 +101,12 @@ export const updateMock = (serviceId: number, mockId: number, rq: UpdateMockRq) 
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
 export const deleteMock = (serviceId: number, mockId: number) => service.delete(`/services/${serviceId}/mocks/${mockId}`);
 
+export interface GetMockUrlRs {
+  success: boolean
+  body: string
+}
+export const getMockUrl = (serviceId: number, mockId: number) => service.get<GetMockUrlRs>(`/services/${serviceId}/mocks/${mockId}/url`);
+
 
 export interface SetEnabledMockRq {
   enabled: boolean

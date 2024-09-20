@@ -14,13 +14,13 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
-public class HttpServiceDto implements Serializable {
+public class HttpServiceItemDto implements Serializable {
     private long serviceId;
     private String code;
     private List<HttpServiceMockDto> mocks;
 
-    public HttpServiceDto(HttpServiceEntity serviceEntity,
-                          List<HttpMockEntity> httpMockEntities) {
+    public HttpServiceItemDto(HttpServiceEntity serviceEntity,
+                              List<HttpMockEntity> httpMockEntities) {
         this.serviceId = serviceEntity.getId();
         this.code = serviceEntity.getCode();
         this.mocks = httpMockEntities.stream()

@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { deleteMock, getMocksByService, Mock, Service, ServiceV2, setEnabledMock } from '../../api/service';
-import { ArrowLeft01Icon, Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import {
+  deleteMock,
+  getMocksByService,
+  getMockUrl,
+  Mock,
+  Service,
+  ServiceV2,
+  setEnabledMock
+} from '../../api/service';
+import {
+  ArrowLeft01Icon,
+  Copy01Icon,
+  Delete01Icon,
+  PencilEdit01Icon,
+  PlusSignIcon
+} from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
@@ -56,6 +70,22 @@ const ServiceMocksListPage: React.FC = () => {
     });
   };
 
+  const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>, service: Service, mock: Mock) => {
+    const button = e.currentTarget
+    try {
+      button.classList.add( 'active')
+      const rs = await getMockUrl(service.serviceId, mock.mockId);
+      if (rs.data.success) {
+        const body = rs.data.body
+        await navigator.clipboard.writeText(body);
+      }
+    } catch (error) {
+      console.error('Failed to fetch services:', error);
+    } finally {
+      button.classList.remove( 'active')
+    }
+  };
+
   const handleSetEnabled = async (service: Service, mock: Mock, e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       await setEnabledMock(service.serviceId, mock.mockId, { enabled: e.target.checked });
@@ -109,6 +139,11 @@ const ServiceMocksListPage: React.FC = () => {
                 actions: <div className="btn-group" role="group">
                   <button type={'button'} className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
                     <PencilEdit01Icon />
+                  </button>
+                  <button type={'button'}
+                          className="btn btn-info"
+                          onClick={(e) => handleCopy(e, service, mock)}>
+                    <Copy01Icon />
                   </button>
                   <button type={'button'} className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
                     <Delete01Icon />
