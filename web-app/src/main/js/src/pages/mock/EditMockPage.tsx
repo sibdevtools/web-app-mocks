@@ -19,7 +19,7 @@ const EditMockPage: React.FC = () => {
   const { serviceId, mockId } = useParams();
   const [mockName, setMockName] = useState('');
   const [method, setMethod] = useState<Method>(methods[0]);
-  const [antPattern, setAntPattern] = useState('');
+  const [path, setPath] = useState('');
   const [mockType, setMockType] = useState<MockType>('STATIC');
   const [meta, setMeta] = useState<{ [key: string]: string }>({
     STATUS_CODE: '200'
@@ -46,7 +46,7 @@ const EditMockPage: React.FC = () => {
 
         setMockName(body.name);
         setMethod(body.method);
-        setAntPattern(body.antPattern);
+        setPath(body.path);
         setMockType(body.type);
         setInputText(decodeBase64ToText(body.content, 'UTF-8'));
         setMeta(body.meta)
@@ -66,7 +66,7 @@ const EditMockPage: React.FC = () => {
       await updateMock(+serviceId, +mockId, {
         name: mockName,
         method: method,
-        antPattern: antPattern,
+        path: path,
         type: mockType,
         meta: meta,
         content: encodeTextToBase64(inputText, 'UTF-8')
@@ -138,13 +138,14 @@ const EditMockPage: React.FC = () => {
                 </select>
               </div>
               <div className="col-md-10">
-                <label htmlFor="antPatternInput" className="form-label">Ant Pattern</label>
+                <label htmlFor="pathInput" className="form-label">Path</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="antPatternInput"
-                  value={antPattern}
-                  onChange={(e) => setAntPattern(e.target.value)}
+                  id="pathInput"
+                  placeholder={'Ant pattern or path, started with /'}
+                  value={path}
+                  onChange={(e) => setPath(e.target.value)}
                   required={true}
                 />
               </div>

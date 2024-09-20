@@ -26,8 +26,8 @@ public class HttpMockEntity {
     private String method;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "ant_pattern", nullable = false)
-    private String antPattern;
+    @Column(name = "path", nullable = false)
+    private String path;
     @ManyToOne(optional = false)
     @JoinColumn(name = "service_id")
     private HttpServiceEntity service;

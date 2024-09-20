@@ -35,7 +35,7 @@ export interface Mock {
   mockId: number;
   method: string;
   name: string;
-  antPattern: string;
+  path: string;
   type: string;
   enabled: boolean;
 }
@@ -61,7 +61,7 @@ export interface MockMeta {
 export interface CreateMockRq {
   name: string
   method: Method
-  antPattern: string
+  path: string
   type: MockType,
   meta: MockMeta
   content: string
@@ -77,7 +77,7 @@ export interface GetMockRs {
     mockId: number,
     method: Method
     name: string,
-    antPattern: string,
+    path: string,
     type: MockType,
     meta: MockMeta
     content: string
@@ -90,7 +90,7 @@ export const getMock = (serviceId: number, mockId: number) => service.get<GetMoc
 export interface UpdateMockRq {
   name: string
   method: Method
-  antPattern: string
+  path: string
   type: MockType
   meta: MockMeta
   content: string

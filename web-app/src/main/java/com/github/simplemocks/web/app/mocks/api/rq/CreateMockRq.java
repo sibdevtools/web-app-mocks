@@ -1,5 +1,7 @@
 package com.github.simplemocks.web.app.mocks.api.rq;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +19,14 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateMockRq implements Serializable {
+    @NotNull
     private String method;
+    @NotNull
     private String name;
-    private String antPattern;
+    @NotNull
+    @Pattern(regexp = "^(?!//)(/[\\w\\p{Punct}/* \\p{L}]*)$")
+    private String path;
+    @NotNull
     private String type;
     private Map<String, String> meta;
     private String content;

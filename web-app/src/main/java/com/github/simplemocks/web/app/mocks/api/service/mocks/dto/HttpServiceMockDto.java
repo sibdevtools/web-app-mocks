@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.net.URL;
 
 /**
  * @author sibmaks
@@ -19,7 +18,7 @@ public class HttpServiceMockDto implements Serializable {
     private long mockId;
     private String method;
     private String name;
-    private String antPattern;
+    private String path;
     private boolean enabled;
     private String type;
 
@@ -27,7 +26,7 @@ public class HttpServiceMockDto implements Serializable {
         this.mockId = httpMockEntity.getId();
         this.name = httpMockEntity.getName();
         this.method = httpMockEntity.getMethod();
-        this.antPattern = httpMockEntity.getAntPattern();
+        this.path = httpMockEntity.getPath();
         this.enabled = httpMockEntity.isEnabled();
         this.type = httpMockEntity.getType();
     }

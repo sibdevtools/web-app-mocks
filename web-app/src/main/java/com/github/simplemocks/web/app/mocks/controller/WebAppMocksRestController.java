@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
@@ -38,13 +39,13 @@ public class WebAppMocksRestController {
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public CreateMockRs create(@PathVariable("serviceId") long serviceId,
-                               @RequestBody CreateMockRq rq) {
+                               @RequestBody @Validated CreateMockRq rq) {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.create(
                 serviceId,
                 rq.getMethod(),
                 rq.getName(),
-                rq.getAntPattern(),
+                rq.getPath(),
                 rq.getType(),
                 rq.getMeta(),
                 B64_DECODER.decode(content)
@@ -56,13 +57,14 @@ public class WebAppMocksRestController {
             path = "/{mockId}",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public UpdateMockRs update(@PathVariable("mockId") long mockId, @RequestBody UpdateMockRq rq) {
+    public UpdateMockRs update(@PathVariable("mockId") long mockId,
+                               @RequestBody @Validated UpdateMockRq rq) {
         var content = rq.getContent();
         var httpMockEntity = webAppMocksService.update(
                 mockId,
                 rq.getMethod(),
                 rq.getName(),
-                rq.getAntPattern(),
+                rq.getPath(),
                 rq.getType(),
                 rq.getMeta(),
                 B64_DECODER.decode(content)

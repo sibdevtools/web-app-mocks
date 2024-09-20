@@ -119,7 +119,7 @@ const ServiceMocksListPage: React.FC = () => {
             columns={[
               { key: 'method', label: 'Method' },
               { key: 'name', label: 'Name' },
-              { key: 'antPattern', label: 'Ant Pattern' },
+              { key: 'path', label: 'Path' },
               { key: 'type', label: 'Type' },
               { key: 'enabled', label: 'Enabled' },
               { key: 'actions', label: 'Actions' },
@@ -128,7 +128,7 @@ const ServiceMocksListPage: React.FC = () => {
               return {
                 method: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
                 name: `${mock.name}`,
-                antPattern: <code>{mock.antPattern}</code>,
+                path: <code>{mock.path}</code>,
                 type: `${mock.type}`,
                 enabled: <div className="form-check form-switch">
                   <input className="form-check-input"
@@ -151,8 +151,8 @@ const ServiceMocksListPage: React.FC = () => {
                 </div>
               }
             })}
-            sortableColumns={['method', 'name', 'antPattern', 'type']}
-            filterableColumns={['method', 'name', 'antPattern', 'type']}
+            sortableColumns={['method', 'name', 'path', 'type']}
+            filterableColumns={['method', 'name', 'path', 'type']}
             styleProps={{
               centerHeaders: true,
               textCenterValues: true,

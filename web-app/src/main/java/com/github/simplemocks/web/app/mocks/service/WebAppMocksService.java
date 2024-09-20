@@ -13,12 +13,10 @@ import com.github.simplemocks.web.app.mocks.service.handler.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.ZonedDateTime;
@@ -39,7 +37,6 @@ public class WebAppMocksService {
     private final HttpServiceEntityRepository serviceEntityRepository;
     private final HttpMockEntityRepository httpMockEntityRepository;
     private final StorageService storageService;
-    private final AntPathMatcher antPathMatcher;
 
     @Value("${web.app.mocks.props.bucket.code}")
     private String bucketCode;
@@ -51,31 +48,25 @@ public class WebAppMocksService {
     public WebAppMocksService(List<RequestHandler> handlers,
                               HttpServiceEntityRepository httpServiceEntityRepository,
                               HttpMockEntityRepository httpMockEntityRepository,
-                              StorageService storageService,
-                              @Qualifier("webAppMocksAntPathMatcher")
-                              AntPathMatcher antPathMatcher) {
+                              StorageService storageService) {
         this.mockTypes = handlers.stream()
                 .map(RequestHandler::getType)
                 .collect(Collectors.toSet());
         this.serviceEntityRepository = httpServiceEntityRepository;
         this.httpMockEntityRepository = httpMockEntityRepository;
         this.storageService = storageService;
-        this.antPathMatcher = antPathMatcher;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public HttpMockEntity create(long serviceId,
                                  String method,
                                  String name,
-                                 String antPattern,
+                                 String path,
                                  String type,
                                  Map<String, String> meta,
                                  byte[] content) {
         if (!mockTypes.contains(type)) {
             throw new IllegalArgumentException("Type %s not supported".formatted(type));
-        }
-        if (!antPathMatcher.isPattern(antPattern)) {
-            throw new IllegalArgumentException("Not valid ant path passed: '%s'".formatted(antPattern));
         }
         var serviceEntity = serviceEntityRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
@@ -94,7 +85,7 @@ public class WebAppMocksService {
         var httpMockEntity = HttpMockEntity.builder()
                 .method(method)
                 .name(name)
-                .antPattern(antPattern)
+                .path(path)
                 .service(serviceEntity)
                 .type(type)
                 .enabled(true)
@@ -110,15 +101,12 @@ public class WebAppMocksService {
     public HttpMockEntity update(long mockId,
                                  String method,
                                  String name,
-                                 String antPattern,
+                                 String path,
                                  String type,
                                  Map<String, String> meta,
                                  byte[] content) {
         if (!mockTypes.contains(type)) {
             throw new IllegalArgumentException("Type %s not supported".formatted(type));
-        }
-        if (!antPathMatcher.isPattern(antPattern)) {
-            throw new IllegalArgumentException("Not valid ant path passed: '%s'".formatted(antPattern));
         }
         var httpMockEntity = httpMockEntityRepository.findById(mockId)
                 .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
@@ -137,7 +125,7 @@ public class WebAppMocksService {
 
         httpMockEntity.setMethod(method);
         httpMockEntity.setName(name);
-        httpMockEntity.setAntPattern(antPattern);
+        httpMockEntity.setPath(path);
         httpMockEntity.setType(type);
         httpMockEntity.setStorageType("LOCAL");
         httpMockEntity.setStorageId(contentId);
@@ -174,7 +162,7 @@ public class WebAppMocksService {
 
         var service = httpMockEntity.getService();
 
-        var antPattern = httpMockEntity.getAntPattern();
+        var path = httpMockEntity.getPath();
 
         var scheme = rq.getScheme();
         var serverName = rq.getServerName();
@@ -188,7 +176,7 @@ public class WebAppMocksService {
                 .path(contextPath)
                 .path(mockUriPath)
                 .path(service.getCode())
-                .path(antPattern)
+                .path(path)
                 .toUriString();
     }
 

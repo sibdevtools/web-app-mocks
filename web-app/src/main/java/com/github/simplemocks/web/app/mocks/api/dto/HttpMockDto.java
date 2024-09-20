@@ -22,7 +22,7 @@ public class HttpMockDto implements Serializable {
     private long mockId;
     private String method;
     private String name;
-    private String antPattern;
+    private String path;
     private String type;
     private Map<String, String> meta;
     private String content;
@@ -34,7 +34,7 @@ public class HttpMockDto implements Serializable {
         this.mockId = httpMockEntity.getId();
         this.method = httpMockEntity.getMethod();
         this.name = httpMockEntity.getName();
-        this.antPattern = httpMockEntity.getAntPattern();
+        this.path = httpMockEntity.getPath();
         this.type = httpMockEntity.getType();
         this.meta = getMeta(bucketFile);
         this.content = Base64.getEncoder()
