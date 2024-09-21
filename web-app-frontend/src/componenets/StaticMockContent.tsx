@@ -54,7 +54,6 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
   });
   const [aceType, setAceType] = useState(contentTypes.get('application/json')?.aceType);
 
-  console.log('update')
   const changeLocalMeta = (contentType: ContentType) => {
     if (localMeta.contentType === contentType) {
       return;
