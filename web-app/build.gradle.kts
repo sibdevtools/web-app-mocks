@@ -61,11 +61,22 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.register<Copy>("copyFrontendResources") {
+    group = "build"
+    description = "Copies the frontend build resources to the Spring Boot static directory"
+
+    dependsOn(":web-app-frontend:build")
+
+    from(project(":web-app-frontend").file("build/out"))
+    into(layout.buildDirectory.dir("resources/main/web/app/mocks/static"))
+}
+
+tasks.named("processResources") {
+    dependsOn("copyFrontendResources")
+}
+
 tasks.jar {
-    dependsOn(":web-app-frontend:buildFrontend")
-    from(project(":web-app-frontend").file("build/out")) {
-        into("web/app/mocks/static")
-    }
+    dependsOn("copyFrontendResources")
     from("LICENSE") {
         rename { "${it}_${project.property("project_name")}" }
     }
