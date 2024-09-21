@@ -1,3 +1,3 @@
 //rootProject.name = "web-app-mocks"
 
-include(":web-app", ":standalone")
+include(":web-app", ":web-app-pl", ":standalone")

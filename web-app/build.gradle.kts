@@ -61,6 +61,10 @@ tasks.withType<Test> {
 }
 
 tasks.jar {
+    dependsOn(":web-app-pl:buildFrontend")
+    from(project(":web-app-pl").file("build")) {
+        into("BOOT-INF/classes/static/web/app/mocks/static")
+    }
     from("LICENSE") {
         rename { "${it}_${project.property("project_name")}" }
     }
