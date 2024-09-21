@@ -9,6 +9,8 @@ plugins {
 
 dependencies {
     compileOnly("org.projectlombok:lombok")
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
+
     annotationProcessor("org.projectlombok:lombok")
 
     implementation("org.springframework:spring-context")
@@ -29,7 +31,6 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     implementation("jakarta.annotation:jakarta.annotation-api")
-    compileOnly("jakarta.servlet:jakarta.servlet-api")
     implementation("jakarta.persistence:jakarta.persistence-api")
 
     implementation("org.graalvm.js:js:${project.property("lib_graalvm_js")}")
@@ -61,9 +62,9 @@ tasks.withType<Test> {
 }
 
 tasks.jar {
-    dependsOn(":web-app-pl:buildFrontend")
-    from(project(":web-app-pl").file("build")) {
-        into("BOOT-INF/classes/static/web/app/mocks/static")
+    dependsOn(":web-app-frontend:buildFrontend")
+    from(project(":web-app-frontend").file("build/out")) {
+        into("web/app/mocks/static")
     }
     from("LICENSE") {
         rename { "${it}_${project.property("project_name")}" }

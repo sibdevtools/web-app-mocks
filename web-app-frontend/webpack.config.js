@@ -23,11 +23,11 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     publicPath: '/web/app/mocks/ui/',
-    path: path.resolve(__dirname, '../resources/web/app/mocks/static'),
+    path: path.resolve(__dirname, 'build/out'),
   },
   devServer: {
     static: {
-      directory: path.join(__dirname, '../resources/web/app/mocks/static'), // Serve from 'dist' directory
+      directory: path.join(__dirname, 'build/out'), // Serve from 'dist' directory
     },
     open: true, // Automatically open the browser
     port: 3000, // You can choose any port
