@@ -36,12 +36,12 @@ dependencies {
     implementation("org.graalvm.js:js:${project.property("lib_graalvm_js")}")
     implementation("org.graalvm.js:js-scriptengine:${project.property("lib_graalvm_js")}")
 
-    implementation("com.github.simple-mocks:api-common:${project.property("lib_api_common_version")}")
-    implementation("com.github.simple-mocks:api-error:${project.property("lib_api_error_version")}")
-    implementation("com.github.simple-mocks:api-localization:${project.property("lib_api_localization_version")}")
-    implementation("com.github.simple-mocks:api-session:${project.property("lib_api_session_version")}")
-    implementation("com.github.simple-mocks:api-storage:${project.property("lib_api_storage_version")}")
-    implementation("com.github.simple-mocks:api-web-app:${project.property("lib_api_web_app_version")}")
+    implementation("com.github.sibdevtools:api-common:${project.property("lib_api_common_version")}")
+    implementation("com.github.sibdevtools:api-error:${project.property("lib_api_error_version")}")
+    implementation("com.github.sibdevtools:api-localization:${project.property("lib_api_localization_version")}")
+    implementation("com.github.sibdevtools:api-session:${project.property("lib_api_session_version")}")
+    implementation("com.github.sibdevtools:api-storage:${project.property("lib_api_storage_version")}")
+    implementation("com.github.sibdevtools:api-web-app:${project.property("lib_api_web_app_version")}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
@@ -111,7 +111,7 @@ publishing {
             artifactId = "web-app-mocks"
             pom {
                 packaging = "jar"
-                url = "https://github.com/simple-mocks/web-app-mocks"
+                url = "https://github.com/sibdevtools/web-app-mocks"
 
                 licenses {
                     license {
@@ -121,9 +121,9 @@ publishing {
                 }
 
                 scm {
-                    connection.set("scm:https://github.com/simple-mocks/web-app-mocks.git")
-                    developerConnection.set("scm:git:ssh://github.com/simple-mocks")
-                    url.set("https://github.com/simple-mocks/web-app-mocks")
+                    connection.set("scm:https://github.com/sibdevtools/web-app-mocks.git")
+                    developerConnection.set("scm:git:ssh://github.com/sibdevtools")
+                    url.set("https://github.com/sibdevtools/web-app-mocks")
                 }
 
                 developers {
