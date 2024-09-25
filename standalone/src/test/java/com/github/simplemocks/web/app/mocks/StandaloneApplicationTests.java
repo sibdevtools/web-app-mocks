@@ -1,4 +1,4 @@
-package com.github.simplemocks.web.app.mocks;
+package com.github.sibdevtools.web.app.mocks;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

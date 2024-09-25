@@ -1,4 +1,4 @@
-# Simple Mock - Web Application Mocks
+# SibDevTools - Web Application Mocks
 
 Web service provide ability to create HTTP mocks.
 
