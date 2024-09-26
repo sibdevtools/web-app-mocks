@@ -79,28 +79,64 @@ export type MapKey<T extends Map<any, any>> = T extends Map<infer K, any> ? K : 
 
 export type StatusCode = MapKey<typeof statusCodes>
 
-export interface ContentTypeValue {
-  caption: string,
-  aceType: string
-}
-
-export const contentTypes = new Map<string, ContentTypeValue>([
-    ['application/json', { caption: 'JSON', aceType: 'json' }] as const,
-    ['application/javascript', { caption: 'JavaScript', aceType: 'javascript' }] as const,
-    ['application/xml', { caption: 'XML', aceType: 'xml' }] as const,
-    ['text/html', { caption: 'HTML', aceType: 'html' }] as const,
-    ['text/css', { caption: 'CSS', aceType: 'css' }] as const,
-    ['text/csv', { caption: 'CSV', aceType: 'plain_text' }] as const,
-    ['text/plain', { caption: 'Text plain', aceType: 'plain_text' }] as const,
-    ['text/markdown', { caption: 'Markdown', aceType: 'markdown' }] as const,
+export const mimeToAceModeMap = new Map<string, string>([
+    ['text/html', 'html'] as const,
+    ['text/css', 'css'] as const,
+    ['application/javascript', 'javascript'] as const,
+    ['application/json', 'json'] as const,
+    ['application/xml', 'xml'] as const,
+    ['text/xml', 'xml'] as const,
+    ['text/plain', 'text'] as const,
+    ['text/markdown', 'markdown'] as const,
+    ['text/x-java-source', 'java'] as const,
+    ['text/x-c', 'c_cpp'] as const,
+    ['text/x-c++', 'c_cpp'] as const,
+    ['text/x-csharp', 'csharp'] as const,
+    ['application/x-httpd-php', 'php'] as const,
+    ['application/x-sh', 'sh'] as const,
+    ['text/x-python', 'python'] as const,
+    ['text/x-ruby', 'ruby'] as const,
+    ['text/x-perl', 'perl'] as const,
+    ['text/x-sql', 'sql'] as const,
+    ['application/x-sql', 'sql'] as const,
+    ['text/x-go', 'golang'] as const,
+    ['text/x-latex', 'latex'] as const,
+    ['text/x-scala', 'scala'] as const,
+    ['text/x-haskell', 'haskell'] as const,
+    ['text/x-typescript', 'typescript'] as const,
+    ['text/x-javascript', 'javascript'] as const,
+    ['application/x-json', 'json'] as const,
+    ['application/x-yaml', 'yaml'] as const,
+    ['text/x-yaml', 'yaml'] as const,
+    ['text/x-sh', 'sh'] as const,
+    ['application/x-powershell', 'powershell'] as const,
+    ['application/x-lua', 'lua'] as const,
+    ['application/x-php', 'php'] as const,
+    ['text/x-sass', 'sass'] as const,
+    ['text/x-scss', 'scss'] as const,
+    ['text/x-rst', 'rst'] as const,
+    ['application/x-tex', 'tex'] as const,
+    ['text/x-cobol', 'cobol'] as const,
+    ['application/x-java-archive', 'java'] as const,
+    ['text/x-r', 'r'] as const,
+    ['application/x-erlang', 'erlang'] as const,
+    ['text/x-dockerfile', 'dockerfile'] as const,
+    ['text/x-ini', 'ini'] as const,
+    ['text/x-nginx-conf', 'nginx'] as const,
+    ['application/x-jade', 'jade'] as const,
+    ['application/x-ejs', 'ejs'] as const,
+    ['text/x-handlebars', 'handlebars'] as const,
+    ['application/x-protobuf', 'protobuf'] as const,
+    ['text/x-rustsrc', 'rust'] as const,
   ]
-)
+);
 
-export type ContentType = MapKey<typeof contentTypes>
+export type ContentType = MapKey<typeof mimeToAceModeMap>
 
 export const mockTypes = [
   'STATIC',
   'JS',
+  'PYTHON',
 ] as const;
 
 export type MockType = typeof mockTypes[number];

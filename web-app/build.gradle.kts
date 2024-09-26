@@ -36,6 +36,8 @@ dependencies {
     implementation("org.graalvm.js:js:${project.property("lib_graalvm_js")}")
     implementation("org.graalvm.js:js-scriptengine:${project.property("lib_graalvm_js")}")
 
+    implementation("org.graalvm.python:python:${project.property("lib_graalvm_python")}")
+
     implementation("com.github.sibdevtools:api-common:${project.property("lib_api_common_version")}")
     implementation("com.github.sibdevtools:api-error:${project.property("lib_api_error_version")}")
     implementation("com.github.sibdevtools:api-localization:${project.property("lib_api_localization_version")}")

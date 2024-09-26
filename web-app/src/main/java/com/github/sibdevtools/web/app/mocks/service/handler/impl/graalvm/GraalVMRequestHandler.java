@@ -1,4 +1,4 @@
-package com.github.sibdevtools.web.app.mocks.service.handler.impl.js;
+package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,49 +7,33 @@ import com.github.sibdevtools.storage.api.dto.BucketFileMetadata;
 import com.github.sibdevtools.storage.api.service.StorageService;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
 import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto.JSMocksContext;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto.JsRequest;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto.JsResponse;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto.JsSessions;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMMocksContext;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMRequest;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMResponse;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMSessions;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
  * @author sibmaks
- * @since 0.0.1
+ * @since 0.0.7
  */
 @Slf4j
-@Component
-public class JavaScriptRequestHandler implements RequestHandler {
-    private final StorageService storageService;
-    private final SessionService sessionService;
-    private final ObjectMapper objectMapper;
-
-    @Autowired
-    public JavaScriptRequestHandler(StorageService storageService,
-                                    SessionService sessionService,
-                                    @Qualifier("webAppMocksObjectMapper")
-                                    ObjectMapper objectMapper) {
-        this.storageService = storageService;
-        this.sessionService = sessionService;
-        this.objectMapper = objectMapper;
-    }
-
-    @Override
-    public String getType() {
-        return "JS";
-    }
+@AllArgsConstructor
+public abstract class GraalVMRequestHandler implements RequestHandler {
+    protected final String language;
+    protected final StorageService storageService;
+    protected final SessionService sessionService;
+    protected final ObjectMapper objectMapper;
 
     @Override
     @SneakyThrows
@@ -63,28 +47,45 @@ public class JavaScriptRequestHandler implements RequestHandler {
         var contentDescription = bucketFile.getDescription();
 
         var meta = contentDescription.getMeta();
-        fillHeaders(rs, meta);
+        prepareRs(rs, meta);
 
-        var context = JSMocksContext.builder()
-                .request(new JsRequest(path, rq))
-                .response(new JsResponse(objectMapper, rs))
-                .sessions(new JsSessions(sessionService))
+        var context = GraalVMMocksContext.builder()
+                .request(new GraalVMRequest(path, rq))
+                .response(new GraalVMResponse(objectMapper, rs))
+                .sessions(new GraalVMSessions(sessionService))
                 .build();
 
-        try (var js = Context.newBuilder("js")
+        try (var js = Context.newBuilder(language)
                 .allowHostAccess(HostAccess.ALL)
                 .build()) {
-            js.getBindings("js").putMember("wam", context);
+            js.getBindings(language).putMember("wam", context);
             var script = new String(bucketFile.getData(), StandardCharsets.UTF_8);
             try {
-                js.eval("js", script);
+                js.eval(language, script);
             } catch (Exception e) {
                 log.error("Template execution exception", e);
             }
         }
     }
 
-    private void fillHeaders(HttpServletResponse rs, BucketFileMetadata meta) throws JsonProcessingException {
+    private void prepareRs(HttpServletResponse rs,
+                           BucketFileMetadata meta) throws JsonProcessingException {
+        fillHeaders(rs, meta);
+        fillStatusCode(rs, meta);
+    }
+
+    private static void fillStatusCode(HttpServletResponse rs,
+                                       BucketFileMetadata meta) {
+        var statusCode = meta.get("STATUS_CODE");
+        if (statusCode == null) {
+            return;
+        }
+        var status = Integer.parseInt(statusCode);
+        rs.setStatus(status);
+    }
+
+    private void fillHeaders(HttpServletResponse rs,
+                             BucketFileMetadata meta) throws JsonProcessingException {
         var headersJson = meta.get("HTTP_HEADERS");
         if (headersJson == null) {
             return;
@@ -92,12 +93,6 @@ public class JavaScriptRequestHandler implements RequestHandler {
         Map<String, String> headers = objectMapper.readValue(headersJson, Map.class);
         for (var entry : headers.entrySet()) {
             rs.setHeader(entry.getKey(), entry.getValue());
-        }
-
-        var statusCode = meta.get("STATUS_CODE");
-        if (statusCode != null) {
-            var status = Integer.parseInt(statusCode);
-            rs.setStatus(status);
         }
     }
 }

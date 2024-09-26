@@ -1,4 +1,4 @@
-package com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto;
+package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto;
 
 import com.github.sibdevtools.session.api.dto.SessionId;
 import com.github.sibdevtools.session.api.dto.SessionOwnerType;
@@ -17,36 +17,36 @@ import java.util.Map;
  * @since 0.0.1
  */
 @AllArgsConstructor
-public class JsSessions {
+public class GraalVMSessions {
     private final SessionService sessionService;
 
     @HostAccess.Export
-    public JsSession get(@Nonnull String sessionId) {
+    public GraalVMSession get(@Nonnull String sessionId) {
         var getSessionRs = sessionService.get(sessionId);
         var session = getSessionRs.getBody();
-        return new JsSession(sessionService, session.getId());
+        return new GraalVMSession(sessionService, session.getId());
     }
 
     @HostAccess.Export
-    public JsSession get(@Nonnull String sessionId, long version) {
+    public GraalVMSession get(@Nonnull String sessionId, long version) {
         var getSessionRs = sessionService.get(SessionId.of(sessionId, version));
         var session = getSessionRs.getBody();
-        return new JsSession(sessionService, session.getId());
+        return new GraalVMSession(sessionService, session.getId());
     }
 
     @HostAccess.Export
-    public JsSession get(@Nonnull String sessionId, String versionCode) {
+    public GraalVMSession get(@Nonnull String sessionId, String versionCode) {
         var version = Long.parseLong(versionCode);
         var getSessionRs = sessionService.get(SessionId.of(sessionId, version));
         var session = getSessionRs.getBody();
-        return new JsSession(sessionService, session.getId());
+        return new GraalVMSession(sessionService, session.getId());
     }
 
     @HostAccess.Export
-    public JsSession create(@Nonnull Map<String, Map<String, Serializable>> sections,
-                            @Nonnull String ownerTypeCode,
-                            @Nonnull String ownerId,
-                            @Nonnull List<String> permissions) {
+    public GraalVMSession create(@Nonnull Map<String, Map<String, Serializable>> sections,
+                                 @Nonnull String ownerTypeCode,
+                                 @Nonnull String ownerId,
+                                 @Nonnull List<String> permissions) {
         var ownerType = SessionOwnerType.valueOf(ownerTypeCode);
         var rq = CreateSessionRq.builder()
                 .sections(sections)
@@ -58,7 +58,7 @@ public class JsSessions {
         var sessionId = createSessionRs.getBody();
         var getSessionRs = sessionService.get(sessionId);
         var session = getSessionRs.getBody();
-        return new JsSession(sessionService, session.getId());
+        return new GraalVMSession(sessionService, session.getId());
     }
 
 }

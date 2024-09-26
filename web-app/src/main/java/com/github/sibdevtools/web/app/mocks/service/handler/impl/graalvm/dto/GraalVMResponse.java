@@ -1,4 +1,4 @@
-package com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto;
+package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
  * @since 0.0.1
  */
 @AllArgsConstructor
-public class JsResponse {
+public class GraalVMResponse {
     private final ObjectMapper objectMapper;
     private final HttpServletResponse rs;
 
