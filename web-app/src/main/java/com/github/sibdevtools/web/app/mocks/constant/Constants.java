@@ -13,4 +13,6 @@ public final class Constants {
 
     public static final ErrorSourceId ERROR_SOURCE = new ErrorSourceId("WEB.APP.MOCKS");
 
+    public static final String META_HTTP_HEADERS = "HTTP_HEADERS";
+    public static final String META_STATUS_CODE = "STATUS_CODE";
 }

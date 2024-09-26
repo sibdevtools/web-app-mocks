@@ -9,12 +9,14 @@ import {
   StatusCode,
   statusCodes
 } from '../../const/common.const';
-import { decodeBase64ToText, encodeTextToBase64 } from '../../utils/base.64converters';
+import { encodeTextToBase64 } from '../../utils/base.64converters';
 import StaticMockContent from '../../componenets/StaticMockContent';
 import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 import PythonMockContent from '../../componenets/PythonMockContent';
 import HttpHeadersForm from '../../componenets/HttpHeadersForm';
+import StaticFileMockContent from '../../componenets/StaticFileMockContent';
 
+const textEncoder = new TextEncoder()
 
 const EditMockPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +28,7 @@ const EditMockPage: React.FC = () => {
   const [meta, setMeta] = useState<{ [key: string]: string }>({
     STATUS_CODE: '200'
   });
-  const [inputText, setInputText] = useState('');
+  const [content, setContent] = useState(new ArrayBuffer(0));
 
   useEffect(() => {
     if (!serviceId || !mockId) {
@@ -50,7 +52,7 @@ const EditMockPage: React.FC = () => {
         setMethod(body.method);
         setPath(body.path);
         setMockType(body.type);
-        setInputText(decodeBase64ToText(body.content, 'UTF-8'));
+        setContent(textEncoder.encode(body.content));
         setMeta(body.meta)
       }
     } catch (error) {
@@ -71,7 +73,7 @@ const EditMockPage: React.FC = () => {
         path: path,
         type: mockType,
         meta: meta,
-        content: encodeTextToBase64(inputText, 'UTF-8')
+        content: encodeTextToBase64(content)
       });
       toServicePage();
     } catch (error) {
@@ -200,21 +202,25 @@ const EditMockPage: React.FC = () => {
             {
               (mockType === 'STATIC') ? (
                 <StaticMockContent
-                  content={inputText}
-                  setContent={setInputText}
+                  content={content}
+                  setContent={setContent}
                   meta={meta}
                   setMeta={setMeta}
                   creation={false}
                 />
+              ) : (mockType === 'STATIC_FILE') ? (
+                <StaticFileMockContent
+                  setContent={setContent}
+                />
               ) : (mockType === 'JS') ? (
                 <JavaScriptMockContent
-                  content={inputText}
-                  setContent={setInputText}
+                  content={content}
+                  setContent={setContent}
                 />
               ) : (
                 <PythonMockContent
-                  content={inputText}
-                  setContent={setInputText} />
+                  content={content}
+                  setContent={setContent} />
               )
             }
             <div className={'col-md-1 offset-md-11'}>

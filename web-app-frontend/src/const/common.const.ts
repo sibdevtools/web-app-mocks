@@ -133,8 +133,24 @@ export const mimeToAceModeMap = new Map<string, string>([
 
 export type ContentType = MapKey<typeof mimeToAceModeMap>
 
+export const contentTypes = [
+  ...mimeToAceModeMap.keys(),
+  'application/vnd.rar',
+  'application/zip',
+  'application/x-7z-compressed',
+  'application/pdf',
+  'application/png',
+  'image/bmp',
+  'image/png',
+  'image/gif',
+  'image/jpeg',
+  'image/webp',
+  'image/svg+xml',
+].sort()
+
 export const mockTypes = [
   'STATIC',
+  'STATIC_FILE',
   'JS',
   'PYTHON',
 ] as const;

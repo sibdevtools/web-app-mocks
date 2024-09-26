@@ -10,12 +10,15 @@ import { useTheme } from '../theme/ThemeContext';
 import '../const/ace.imports'
 
 export interface StaticMockContentProps {
-  content: string,
-  setContent: (content: string) => void,
+  content: ArrayBuffer,
+  setContent: (content: ArrayBuffer) => void,
   meta: { [key: string]: string },
   setMeta: (meta: { [key: string]: string }) => void,
   creation: boolean,
 }
+
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
 
 const StaticMockContent: React.FC<StaticMockContentProps> = ({
                                                                content,
@@ -59,8 +62,8 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
               mode={aceType}
               theme={theme}
               name={`contentAceEditor`}
-              onChange={setContent}
-              value={content}
+              onChange={it => setContent(textEncoder.encode(it))}
+              value={textDecoder.decode(content)}
               fontSize={14}
               width="100%"
               height="480px"

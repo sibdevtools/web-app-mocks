@@ -3,6 +3,7 @@ package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.js;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sibdevtools.session.api.service.SessionService;
 import com.github.sibdevtools.storage.api.service.StorageService;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.CommonResponsePreparer;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.GraalVMRequestHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,9 @@ public class JavaScriptRequestHandler extends GraalVMRequestHandler {
     public JavaScriptRequestHandler(StorageService storageService,
                                     SessionService sessionService,
                                     @Qualifier("webAppMocksObjectMapper")
-                                    ObjectMapper objectMapper) {
-        super("js", storageService, sessionService, objectMapper);
+                                    ObjectMapper objectMapper,
+                                    CommonResponsePreparer commonResponsePreparer) {
+        super("js", storageService, sessionService, objectMapper, commonResponsePreparer);
     }
 
     @Override
