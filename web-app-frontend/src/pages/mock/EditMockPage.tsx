@@ -12,6 +12,7 @@ import {
 import { decodeBase64ToText, encodeTextToBase64 } from '../../utils/base.64converters';
 import StaticMockContent from '../../componenets/StaticMockContent';
 import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
+import PythonMockContent from '../../componenets/PythonMockContent';
 
 
 const EditMockPage: React.FC = () => {
@@ -188,20 +189,23 @@ const EditMockPage: React.FC = () => {
             </div>
             {
               (mockType === 'STATIC') ? (
-                  <StaticMockContent
-                    content={inputText}
-                    setContent={setInputText}
-                    meta={meta}
-                    setMeta={setMeta}
-                    creation={false}
-                  />
-                ) :
-                <JavaScriptMockContent
+                <StaticMockContent
                   content={inputText}
                   setContent={setInputText}
                   meta={meta}
                   setMeta={setMeta}
+                  creation={false}
                 />
+              ) : (mockType === 'JS') ? (
+                <JavaScriptMockContent
+                  content={inputText}
+                  setContent={setInputText}
+                />
+              ) : (
+                <PythonMockContent
+                  content={inputText}
+                  setContent={setInputText} />
+              )
             }
             <div className={'col-md-1 offset-md-11'}>
               <button type="submit" className="btn btn-primary">

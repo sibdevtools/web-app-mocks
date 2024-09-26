@@ -5,15 +5,15 @@ import { useTheme } from '../theme/ThemeContext';
 
 import '../const/ace.imports'
 
-export interface JavaScriptMockContentProps {
+export interface PythonMockContentProps {
   content: string,
   setContent: (content: string) => void,
 }
 
-const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
-                                                                       content,
-                                                                       setContent
-                                                                     }) => {
+const PythonMockContent: React.FC<PythonMockContentProps> = ({
+                                                                   content,
+                                                                   setContent
+                                                                 }) => {
   const { theme } = useTheme();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
 
@@ -38,7 +38,7 @@ const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
              className={`form-control`}
         >
           <AceEditor
-            mode={'javascript'}
+            mode={'python'}
             theme={theme}
             name={`contentAceEditor`}
             onChange={setContent}
@@ -66,4 +66,4 @@ const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
   );
 };
 
-export default JavaScriptMockContent;
+export default PythonMockContent;

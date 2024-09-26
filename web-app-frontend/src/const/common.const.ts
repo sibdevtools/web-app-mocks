@@ -101,6 +101,7 @@ export type ContentType = MapKey<typeof contentTypes>
 export const mockTypes = [
   'STATIC',
   'JS',
+  'PYTHON',
 ] as const;
 
 export type MockType = typeof mockTypes[number];

@@ -1,4 +1,4 @@
-package com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto;
+package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto;
 
 import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
 import jakarta.servlet.http.Cookie;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author sibmaks
  * @since 0.0.1
  */
-public class JsRequest {
+public class GraalVMRequest {
     @HostAccess.Export
     public final String method;
     @HostAccess.Export
@@ -30,7 +30,7 @@ public class JsRequest {
     private final CompletableFuture<byte[]> contentFuture;
     private final Map<String, Cookie> cookies;
 
-    public JsRequest(String path, HttpServletRequest rq) {
+    public GraalVMRequest(String path, HttpServletRequest rq) {
         this.method = rq.getMethod();
         this.path = path;
         this.headers = Collections.unmodifiableMap(getHeaders(rq));

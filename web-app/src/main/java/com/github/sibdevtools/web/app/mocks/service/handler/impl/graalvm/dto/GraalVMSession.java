@@ -1,4 +1,4 @@
-package com.github.sibdevtools.web.app.mocks.service.handler.impl.js.dto;
+package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto;
 
 import com.github.sibdevtools.session.api.ModificationQueryBuilder;
 import com.github.sibdevtools.session.api.dto.SessionId;
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @since 0.0.1
  */
 @AllArgsConstructor
-public class JsSession {
+public class GraalVMSession {
     private final SessionService sessionService;
     private SessionId sessionId;
 
