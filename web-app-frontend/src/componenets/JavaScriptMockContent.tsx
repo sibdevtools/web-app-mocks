@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { TextWrapIcon } from 'hugeicons-react';
 import AceEditor from 'react-ace';
-import { useTheme } from '../theme/ThemeContext';
 
 import '../const/ace.imports'
+import { loadSettings } from '../settings/utils';
 
 export interface JavaScriptMockContentProps {
   content: ArrayBuffer,
@@ -17,7 +17,7 @@ const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
                                                                        content,
                                                                        setContent
                                                                      }) => {
-  const { theme } = useTheme();
+  const settings = loadSettings();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
 
   return (
@@ -42,7 +42,7 @@ const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
         >
           <AceEditor
             mode={'javascript'}
-            theme={theme}
+            theme={settings['aceTheme'].value}
             name={`contentAceEditor`}
             onChange={it => setContent(textEncoder.encode(it))}
             value={textDecoder.decode(content)}

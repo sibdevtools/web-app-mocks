@@ -5,9 +5,9 @@ import {
   mimeToAceModeMap
 } from '../const/common.const';
 import AceEditor from 'react-ace';
-import { useTheme } from '../theme/ThemeContext';
 
 import '../const/ace.imports'
+import { loadSettings } from '../settings/utils';
 
 export interface StaticMockContentProps {
   content: ArrayBuffer,
@@ -27,7 +27,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
                                                              }) => {
   const [aceType, setAceType] = useState('text');
 
-  const { theme } = useTheme();
+  const settings = loadSettings();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({
           >
             <AceEditor
               mode={aceType}
-              theme={theme}
+              theme={settings['aceTheme'].value}
               name={`contentAceEditor`}
               onChange={it => setContent(textEncoder.encode(it))}
               value={textDecoder.decode(content)}

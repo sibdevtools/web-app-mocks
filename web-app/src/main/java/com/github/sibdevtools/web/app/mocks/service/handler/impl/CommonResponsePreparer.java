@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
+ * Common response preparer, took data from metamodel and save it into response
+ *
  * @author sibmaks
  * @since 0.0.8
  */
@@ -19,6 +21,11 @@ import java.util.Map;
 public class CommonResponsePreparer {
     private final ObjectMapper objectMapper;
 
+    /**
+     * Construct common response preparer
+     *
+     * @param objectMapper object mapper
+     */
     public CommonResponsePreparer(@Qualifier("webAppMocksObjectMapper")
                                   ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
