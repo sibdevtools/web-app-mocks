@@ -13,6 +13,7 @@ import { decodeBase64ToText, encodeTextToBase64 } from '../../utils/base.64conve
 import StaticMockContent from '../../componenets/StaticMockContent';
 import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 import PythonMockContent from '../../componenets/PythonMockContent';
+import HttpHeadersForm from '../../componenets/HttpHeadersForm';
 
 
 const EditMockPage: React.FC = () => {
@@ -148,6 +149,15 @@ const EditMockPage: React.FC = () => {
                   value={path}
                   onChange={(e) => setPath(e.target.value)}
                   required={true}
+                />
+              </div>
+            </div>
+            <div className={'row mb-3'}>
+              <div className="col-md-12">
+                <label htmlFor="httpHeaders" className="form-label">Http Headers</label>
+                <HttpHeadersForm
+                  meta={meta}
+                  setMeta={setMeta}
                 />
               </div>
             </div>

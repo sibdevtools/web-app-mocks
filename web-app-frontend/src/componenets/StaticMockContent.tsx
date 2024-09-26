@@ -2,16 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { TextWrapIcon } from 'hugeicons-react';
 import {
   ContentType,
-  contentTypes
+  mimeToAceModeMap
 } from '../const/common.const';
 import AceEditor from 'react-ace';
 import { useTheme } from '../theme/ThemeContext';
 
 import '../const/ace.imports'
-
-export interface StaticMeta {
-  contentType: ContentType
-}
 
 export interface StaticMockContentProps {
   content: string,
@@ -24,81 +20,22 @@ export interface StaticMockContentProps {
 const StaticMockContent: React.FC<StaticMockContentProps> = ({
                                                                content,
                                                                setContent,
-                                                               meta,
-                                                               setMeta,
-                                                               creation
+                                                               meta
                                                              }) => {
-  useEffect(() => {
-    if(!creation) {
-      return
-    }
-    setMeta({
-      ...meta,
-      HTTP_HEADERS: JSON.stringify({
-        'Content-Type': 'application/json'
-      })
-    })
-  }, []);
-  useEffect(() => {
-    if(creation) {
-      return
-    }
-    const basicHttpHeaders = meta['HTTP_HEADERS'];
-    const basicHttpHeaderParsed = basicHttpHeaders ? JSON.parse(basicHttpHeaders) : null;
-    const contentType = ((basicHttpHeaderParsed ? basicHttpHeaderParsed['Content-Type'] : null) || 'application/json') as ContentType;
-    changeLocalMeta(contentType);
-  }, [meta]);
-
-  const [localMeta, setLocalMeta] = useState<StaticMeta>({
-    contentType: 'application/json'
-  });
-  const [aceType, setAceType] = useState(contentTypes.get('application/json')?.aceType);
-
-  const changeLocalMeta = (contentType: ContentType) => {
-    if (localMeta.contentType === contentType) {
-      return;
-    }
-    setLocalMeta({ ...localMeta, contentType: contentType })
-    setAceType(contentTypes.get(contentType)?.aceType);
-    setMeta({
-      ...meta,
-      HTTP_HEADERS: JSON.stringify({
-        'Content-Type': contentType
-      })
-    })
-  }
+  const [aceType, setAceType] = useState('text');
 
   const { theme } = useTheme();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
 
-  const onContentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newContentType = e.target.value;
-    if (newContentType) {
-      changeLocalMeta(newContentType);
-    }
-  }
+  useEffect(() => {
+    const httpHeadersJson = meta['HTTP_HEADERS'];
+    const httpHeaders = httpHeadersJson ? JSON.parse(httpHeadersJson) : null;
+    const contentType = (httpHeaders ? httpHeaders['Content-Type'] : null) as ContentType;
+    setAceType(mimeToAceModeMap.get(contentType) || 'text');
+  }, [meta]);
 
   return (
     <>
-      <div className={'row mb-3'}>
-        <div className={'col-md-3'}>
-          <label htmlFor="contentTypeSelect" className="form-label">Content Type</label>
-          <select
-            id={'contentTypeSelect'}
-            className={'form-select'}
-            value={localMeta.contentType}
-            onChange={(e) => onContentTypeChange(e)}
-            required={true}
-          >
-            {
-              [...contentTypes.keys()].map(it => (
-                  <option key={it} value={it}>{contentTypes.get(it)?.caption}</option>
-                )
-              )
-            }
-          </select>
-        </div>
-      </div>
       <div className={'mb-3'}>
         <label htmlFor={`contentTextArea`} className="form-label">Content</label>
         <div className={' position-relative'}>

@@ -13,6 +13,7 @@ import { encodeTextToBase64 } from '../../utils/base.64converters';
 import StaticMockContent from '../../componenets/StaticMockContent';
 import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 import PythonMockContent from '../../componenets/PythonMockContent';
+import HttpHeadersForm from '../../componenets/HttpHeadersForm';
 
 
 const AddMockPage: React.FC = () => {
@@ -128,6 +129,15 @@ const AddMockPage: React.FC = () => {
               </div>
             </div>
             <div className={'row mb-3'}>
+              <div className="col-md-12">
+                <label htmlFor="httpHeaders" className="form-label">Http Headers</label>
+                <HttpHeadersForm
+                  meta={meta}
+                  setMeta={setMeta}
+                />
+              </div>
+            </div>
+            <div className={'row mb-3'}>
               <div className="col-md-8">
                 <label htmlFor="statusSelect" className="form-label">Status</label>
                 <select
@@ -170,7 +180,7 @@ const AddMockPage: React.FC = () => {
                   setContent={setInputText}
                   meta={meta}
                   setMeta={setMeta}
-                  creation={false}
+                  creation={true}
                 />
               ) : (mockType === 'JS') ? (
                 <JavaScriptMockContent
