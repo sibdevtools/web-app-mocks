@@ -1,12 +1,11 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sibdevtools.session.api.service.SessionService;
-import com.github.sibdevtools.storage.api.dto.BucketFileMetadata;
 import com.github.sibdevtools.storage.api.service.StorageService;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
 import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.CommonResponsePreparer;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMMocksContext;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMRequest;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMResponse;
@@ -21,7 +20,6 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * @author sibmaks
@@ -34,6 +32,7 @@ public abstract class GraalVMRequestHandler implements RequestHandler {
     protected final StorageService storageService;
     protected final SessionService sessionService;
     protected final ObjectMapper objectMapper;
+    protected final CommonResponsePreparer commonResponsePreparer;
 
     @Override
     @SneakyThrows
@@ -47,7 +46,7 @@ public abstract class GraalVMRequestHandler implements RequestHandler {
         var contentDescription = bucketFile.getDescription();
 
         var meta = contentDescription.getMeta();
-        prepareRs(rs, meta);
+        commonResponsePreparer.prepare(rs, meta);
 
         var context = GraalVMMocksContext.builder()
                 .request(new GraalVMRequest(path, rq))
@@ -68,31 +67,4 @@ public abstract class GraalVMRequestHandler implements RequestHandler {
         }
     }
 
-    private void prepareRs(HttpServletResponse rs,
-                           BucketFileMetadata meta) throws JsonProcessingException {
-        fillHeaders(rs, meta);
-        fillStatusCode(rs, meta);
-    }
-
-    private static void fillStatusCode(HttpServletResponse rs,
-                                       BucketFileMetadata meta) {
-        var statusCode = meta.get("STATUS_CODE");
-        if (statusCode == null) {
-            return;
-        }
-        var status = Integer.parseInt(statusCode);
-        rs.setStatus(status);
-    }
-
-    private void fillHeaders(HttpServletResponse rs,
-                             BucketFileMetadata meta) throws JsonProcessingException {
-        var headersJson = meta.get("HTTP_HEADERS");
-        if (headersJson == null) {
-            return;
-        }
-        Map<String, String> headers = objectMapper.readValue(headersJson, Map.class);
-        for (var entry : headers.entrySet()) {
-            rs.setHeader(entry.getKey(), entry.getValue());
-        }
-    }
 }

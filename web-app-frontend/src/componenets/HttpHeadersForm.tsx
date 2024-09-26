@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MinusSignIcon, PlusSignIcon } from 'hugeicons-react';
-import { mimeToAceModeMap } from '../const/common.const';
+import { contentTypes } from '../const/common.const';
 
 interface Header {
   key: string;
@@ -24,7 +24,7 @@ const commonHeaders = [
 ];
 
 const headerValueSuggestions: { [key: string]: string[] } = {
-  'Content-Type': [...mimeToAceModeMap.keys()],
+  'Content-Type': contentTypes,
   'Authorization': [
     'Bearer <token>',
     'Basic <credentials>',

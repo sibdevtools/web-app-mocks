@@ -1,22 +1,11 @@
 /**
- * Encode text to base64
- * @param text text
- * @param encoding encoding
+ * Encode array buffer to base64
+ * @param arrayBuffer array buffer
  */
-export const encodeTextToBase64 = (text: string, encoding: string): string => {
-  const encoder = new TextEncoder();
-  const encoded = encoder.encode(text);
-  return btoa(String.fromCharCode(...encoded));
+export const encodeTextToBase64 = (arrayBuffer: ArrayBuffer): string => {
+  return btoa(new Uint8Array(arrayBuffer).reduce(function (data, byte) {
+    return data + String.fromCharCode(byte);
+  }, ''));
 };
 
-/**
- * Decode base64 to source text
- * @param base64 encoded
- * @param encoding encoding
- */
-export const decodeBase64ToText = (base64: string, encoding: string): string => {
-  const decoded = atob(base64);
-  const decoder = new TextDecoder();
-  return decoder.decode(Uint8Array.from(decoded.split(''), c => c.charCodeAt(0)));
-};
 

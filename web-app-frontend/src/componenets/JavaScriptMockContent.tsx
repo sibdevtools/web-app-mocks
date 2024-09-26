@@ -6,9 +6,12 @@ import { useTheme } from '../theme/ThemeContext';
 import '../const/ace.imports'
 
 export interface JavaScriptMockContentProps {
-  content: string,
-  setContent: (content: string) => void,
+  content: ArrayBuffer,
+  setContent: (content: ArrayBuffer) => void,
 }
+
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
 
 const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
                                                                        content,
@@ -41,8 +44,8 @@ const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
             mode={'javascript'}
             theme={theme}
             name={`contentAceEditor`}
-            onChange={setContent}
-            value={content}
+            onChange={it => setContent(textEncoder.encode(it))}
+            value={textDecoder.decode(content)}
             fontSize={14}
             width="100%"
             height="480px"

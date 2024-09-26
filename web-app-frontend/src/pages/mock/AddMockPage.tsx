@@ -14,6 +14,7 @@ import StaticMockContent from '../../componenets/StaticMockContent';
 import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 import PythonMockContent from '../../componenets/PythonMockContent';
 import HttpHeadersForm from '../../componenets/HttpHeadersForm';
+import StaticFileMockContent from '../../componenets/StaticFileMockContent';
 
 
 const AddMockPage: React.FC = () => {
@@ -27,7 +28,7 @@ const AddMockPage: React.FC = () => {
   const [meta, setMeta] = useState<{ [key: string]: string }>({
     STATUS_CODE: '200'
   });
-  const [inputText, setInputText] = useState('');
+  const [content, setContent] = useState(new ArrayBuffer(0));
 
   if (!serviceId) {
     navigate(contextPath);
@@ -47,7 +48,7 @@ const AddMockPage: React.FC = () => {
         path: path,
         type: mockType,
         meta: meta,
-        content: encodeTextToBase64(inputText, 'UTF-8')
+        content: encodeTextToBase64(content)
       });
       toServicePage();
     } catch (error) {
@@ -176,21 +177,25 @@ const AddMockPage: React.FC = () => {
             {
               (mockType === 'STATIC') ? (
                 <StaticMockContent
-                  content={inputText}
-                  setContent={setInputText}
+                  content={content}
+                  setContent={setContent}
                   meta={meta}
                   setMeta={setMeta}
                   creation={true}
                 />
+              ) : (mockType === 'STATIC_FILE') ? (
+                <StaticFileMockContent
+                  setContent={setContent}
+                />
               ) : (mockType === 'JS') ? (
                 <JavaScriptMockContent
-                  content={inputText}
-                  setContent={setInputText}
+                  content={content}
+                  setContent={setContent}
                 />
               ) : (
                 <PythonMockContent
-                  content={inputText}
-                  setContent={setInputText} />
+                  content={content}
+                  setContent={setContent} />
               )
             }
             <div className={'col-md-1 offset-md-11'}>
