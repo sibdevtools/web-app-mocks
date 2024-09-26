@@ -8,4 +8,18 @@ export const encodeTextToBase64 = (arrayBuffer: ArrayBuffer): string => {
   }, ''));
 };
 
+/**
+ * Encode base64 to array buffer
+ * @param base64 base64 text
+ */
+export const decodeBase64ToText = (base64: string): ArrayBuffer => {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
 
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  return bytes.buffer;
+};

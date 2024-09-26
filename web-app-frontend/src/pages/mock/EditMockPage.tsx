@@ -9,7 +9,7 @@ import {
   StatusCode,
   statusCodes
 } from '../../const/common.const';
-import { encodeTextToBase64 } from '../../utils/base.64converters';
+import { decodeBase64ToText, encodeTextToBase64 } from '../../utils/base.64converters';
 import StaticMockContent from '../../componenets/StaticMockContent';
 import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 import PythonMockContent from '../../componenets/PythonMockContent';
@@ -52,7 +52,7 @@ const EditMockPage: React.FC = () => {
         setMethod(body.method);
         setPath(body.path);
         setMockType(body.type);
-        setContent(textEncoder.encode(body.content));
+        setContent(decodeBase64ToText(body.content));
         setMeta(body.meta)
       }
     } catch (error) {
