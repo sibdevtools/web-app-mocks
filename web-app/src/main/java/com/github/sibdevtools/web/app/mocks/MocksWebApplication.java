@@ -33,13 +33,13 @@ public class MocksWebApplication implements WebApplication {
     @Nonnull
     @Override
     public String getCode() {
-        return "web.app.mocks";
+        return "web_app_mocks";
     }
 
     @Nonnull
     @Override
     public String getFrontendUrl() {
-        return "/web/app/mocks/ui/";
+        return "/web/app/mocks/ui/remoteEntry.js";
     }
 
     @Nonnull
