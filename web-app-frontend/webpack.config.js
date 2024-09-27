@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ModuleFederationPlugin = require('webpack').container.ModuleFederationPlugin;
 
 module.exports = {
   mode: 'development',
@@ -39,6 +40,14 @@ module.exports = {
         removeComments: true,
         collapseWhitespace: true,
       },
+    }),
+    new ModuleFederationPlugin({
+      name: 'web_app_mocks',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './App': './src/App',
+      },
+      shared: ['react', 'react-dom'],
     }),
   ],
 };
