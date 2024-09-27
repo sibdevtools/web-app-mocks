@@ -1,4 +1,4 @@
-export const contextPath = '/web/app/mocks/ui/'
+export const contextPath = '/apps/web_app_mocks/'
 
 export const methods = [
   'GET',
