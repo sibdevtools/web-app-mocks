@@ -22,7 +22,7 @@ const JavaScriptMockContent: React.FC<JavaScriptMockContentProps> = ({
 
   return (
     <div className={'mb-3'}>
-      <label htmlFor={`contentTextArea`} className="form-label">Code</label>
+      <label htmlFor={`contentTextArea`} className="form-label">Content</label>
       <div className={' position-relative'}>
         <div className="btn-group position-absolute" role="group"
              style={{ top: '-20px', right: '-8px', zIndex: 3 }}>
