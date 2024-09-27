@@ -49,7 +49,7 @@ public abstract class GraalVMRequestHandler implements RequestHandler {
         commonResponsePreparer.prepare(rs, meta);
 
         var context = GraalVMMocksContext.builder()
-                .request(new GraalVMRequest(path, rq))
+                .request(new GraalVMRequest(objectMapper, path, rq))
                 .response(new GraalVMResponse(objectMapper, rs))
                 .sessions(new GraalVMSessions(sessionService))
                 .build();

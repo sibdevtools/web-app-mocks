@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 /**
+ * Web Mock application configuration
+ *
  * @author sibmaks
  * @since 0.0.1
  */
@@ -25,7 +27,7 @@ import java.util.Set;
         path = "classpath:/web/app/mocks/content/localizations/rus.json",
         iso3Code = "rus"
 )
-public class WebAppMocks implements WebApplication {
+public class MocksWebApplication implements WebApplication {
     private static final LocalizationSourceId LOCALIZATION_SOURCE_ID = new LocalizationSourceId("WEB.APP.MOCKS");
 
     @Nonnull

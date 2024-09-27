@@ -6,6 +6,8 @@ import lombok.*;
 import java.time.ZonedDateTime;
 
 /**
+ * Http service JPA entity
+ *
  * @author sibmaks
  * @since 0.0.1
  */
