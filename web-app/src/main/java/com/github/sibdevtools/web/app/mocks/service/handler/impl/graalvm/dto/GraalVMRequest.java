@@ -7,10 +7,7 @@ import org.graalvm.polyglot.HostAccess;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -35,7 +32,9 @@ public class GraalVMRequest {
         this.path = path;
         this.headers = Collections.unmodifiableMap(getHeaders(rq));
         this.contentFuture = getContentFuture(rq);
-        this.cookies = Arrays.stream(rq.getCookies())
+        this.cookies = Optional.ofNullable(rq.getCookies())
+                .stream()
+                .flatMap(Arrays::stream)
                 .collect(Collectors.toMap(Cookie::getName, Function.identity()));
     }
 
@@ -52,7 +51,8 @@ public class GraalVMRequest {
 
     private static Map<String, String> getHeaders(HttpServletRequest rq) {
         var headers = new HashMap<String, String>();
-        var headerNames = rq.getHeaderNames();
+        var headerNames = Optional.ofNullable(rq.getHeaderNames())
+                .orElseGet(Collections::emptyEnumeration);
         while (headerNames.hasMoreElements()) {
             var headerKey = headerNames.nextElement();
             var headerValue = rq.getHeader(headerKey);
