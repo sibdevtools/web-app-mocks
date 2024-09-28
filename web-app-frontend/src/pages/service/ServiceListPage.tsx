@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ButtonGroup, Button, Container, Row, Col, Modal, Form, Alert } from 'react-bootstrap';
-import { Cancel01Icon, Delete01Icon, FloppyDiskIcon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import { ButtonGroup, Button, Container, Row, Col, Alert } from 'react-bootstrap';
+import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { getAllServices, deleteService, updateService, createService, Service } from '../../api/service';
 import CustomTable from '../../components/CustomTable';
 import { Loader } from '../../components/Loader';
+import { ServiceModal } from './ServiceModal';
 
 const ServiceListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -172,31 +173,14 @@ const ServiceListPage: React.FC = () => {
       </Row>
 
       {/* Unified Modal for Add and Edit */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{modalMode === 'edit' ? 'Edit Service' : 'Add New Service'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="serviceCode">
-              <Form.Label>Service Code</Form.Label>
-              <Form.Control
-                type="text"
-                value={newServiceCode}
-                onChange={(e) => setNewServiceCode(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            <Cancel01Icon />
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            <FloppyDiskIcon />
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ServiceModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        modalMode={modalMode}
+        newServiceCode={newServiceCode}
+        setNewServiceCode={setNewServiceCode}
+        handleSave={handleSave}
+      />
     </Container>
   );
 };
