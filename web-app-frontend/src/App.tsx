@@ -4,12 +4,10 @@ import 'hugeicons-react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import ServiceListPage from './pages/service/ServiceListPage';
-import AddServiceForm from './pages/service/AddServicePage';
-import EditServicePage from './pages/service/EditServicePage';
-import ServiceMocksListPage from './pages/service/ServiceMocksListPage';
+import ServiceMocksListPage from './pages/service/mocks/ServiceMocksListPage';
 import { contextPath } from './const/common.const';
-import AddMockPage from './pages/mock/AddMockPage';
-import EditMockPage from './pages/mock/EditMockPage';
+import AddMockPage from './pages/mock/AddEditMockPage';
+import AddEditMockPage from './pages/mock/AddEditMockPage';
 
 
 const App: React.FC = () => {
@@ -19,16 +17,12 @@ const App: React.FC = () => {
         <Route path={contextPath}>
           <Route index element={<ServiceListPage />} />
           <Route path="service">
-            <Route path={'add'} element={<AddServiceForm />} />
-            <Route path={'edit'}>
-              <Route path={':serviceId'} element={<EditServicePage />} />
-            </Route>
             <Route path={':serviceId'}>
               <Route path={'mocks'}>
                 <Route index element={<ServiceMocksListPage />} />
                 <Route path={'add'} element={<AddMockPage />} />
                 <Route path={'edit'}>
-                  <Route path={':mockId'} element={<EditMockPage />} />
+                  <Route path={':mockId'} element={<AddEditMockPage />} />
                 </Route>
               </Route>
             </Route>

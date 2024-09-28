@@ -1,0 +1,148 @@
+import React, { useEffect, useState } from 'react';
+import { MinusSignIcon, PlusSignIcon } from 'hugeicons-react';
+import { contentTypes } from '../const/common.const';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+
+interface Header {
+  key: string;
+  value: string;
+}
+
+interface HttpHeadersFormProps {
+  meta: { [key: string]: string };
+  setMeta: (newMeta: { [key: string]: string }) => void;
+}
+
+const commonHeaders = [
+  'Content-Type',
+  'Authorization',
+  'Accept',
+  'Cache-Control',
+  'User-Agent',
+  'Accept-Encoding',
+  'Host',
+  'Referer',
+];
+
+const headerValueSuggestions: { [key: string]: string[] } = {
+  'Content-Type': contentTypes,
+  'Authorization': ['Bearer <token>', 'Basic <credentials>'],
+  'Accept': ['application/json', 'text/html', 'application/xml'],
+  'Cache-Control': ['no-cache', 'no-store', 'must-revalidate', 'public', 'private'],
+};
+
+const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
+  const initialHeaders = meta['HTTP_HEADERS']
+    ? JSON.parse(meta['HTTP_HEADERS'] as string)
+    : {};
+
+  const [headers, setHeaders] = useState<Header[]>(
+    Object.entries(initialHeaders).length > 0
+      ? Object.entries(initialHeaders).map(([key, value]) => ({ key, value: `${value}` }))
+      : [{ key: '', value: '' }]
+  );
+
+  useEffect(() => {
+    const initialHeaders = meta.HTTP_HEADERS ? JSON.parse(meta.HTTP_HEADERS) : {};
+    const updatedHeaders = Object.entries(initialHeaders).length > 0
+      ? Object.entries(initialHeaders).map(([key, value]) => ({ key, value: `${value}` }))
+      : [{ key: '', value: '' }];
+    setHeaders(updatedHeaders);
+  }, [meta]);
+
+  const updateMetaHeaders = (updatedHeaders: Header[]) => {
+    const headersObject: { [key: string]: string } = {};
+    updatedHeaders.forEach(({ key, value }) => {
+      headersObject[key] = value;
+    });
+
+    const newMeta = { ...meta, HTTP_HEADERS: JSON.stringify(headersObject) };
+    setMeta(newMeta);
+  };
+
+  const handleHeaderChange = (index: number, field: 'key' | 'value', value: string) => {
+    const updatedHeaders = [...headers];
+    updatedHeaders[index][field] = value;
+    setHeaders(updatedHeaders);
+    updateMetaHeaders(updatedHeaders);
+  };
+
+  const addHeader = () => {
+    const updatedHeaders = [...headers, { key: '', value: '' }];
+    setHeaders(updatedHeaders);
+    updateMetaHeaders(updatedHeaders);
+  };
+
+  const removeHeader = (index: number) => {
+    const updatedHeaders = headers.filter((_, i) => i !== index);
+    setHeaders(updatedHeaders);
+    updateMetaHeaders(updatedHeaders);
+  };
+
+  return (
+    <>
+      {headers.map((header, index) => (
+        <Row key={index} className="mb-3">
+          {/* Header Key Input */}
+          <Col md={5}>
+            <Form.Group>
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  list="header-suggestions"
+                  placeholder="Header Key"
+                  value={header.key}
+                  onChange={(e) => handleHeaderChange(index, 'key', e.target.value)}
+                />
+                <datalist id="header-suggestions">
+                  {commonHeaders.map((headerName, i) => (
+                    <option key={i} value={headerName} />
+                  ))}
+                </datalist>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          {/* Header Value Input */}
+          <Col md={5}>
+            <Form.Group>
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  list={`value-suggestions-${index}`}
+                  placeholder="Header Value"
+                  value={header.value}
+                  onChange={(e) => handleHeaderChange(index, 'value', e.target.value)}
+                />
+                <datalist id={`value-suggestions-${index}`}>
+                  {(headerValueSuggestions[header.key] || []).map((valueSuggestion, i) => (
+                    <option key={i} value={valueSuggestion} />
+                  ))}
+                </datalist>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          {/* Action Buttons: Remove/Add */}
+          <Col md={2} className="d-flex align-items-center">
+            <Button
+              variant="danger"
+              onClick={() => removeHeader(index)}
+              disabled={headers.length === 1}
+              className="me-2"
+            >
+              <MinusSignIcon />
+            </Button>
+            {index === headers.length - 1 && (
+              <Button variant="primary" onClick={addHeader}>
+                <PlusSignIcon />
+              </Button>
+            )}
+          </Col>
+        </Row>
+      ))}
+    </>
+  );
+};
+
+export default HttpHeadersForm;

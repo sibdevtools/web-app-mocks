@@ -55,66 +55,72 @@ export interface GetMocksByServiceRs {
 export const getMocksByService = (serviceId: number) => service.get<GetMocksByServiceRs>(`/services/${serviceId}/mocks`);
 
 export interface MockMeta {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export interface CreateMockRq {
-  name: string
-  method: Method
-  path: string
-  type: MockType,
+  name: string;
+  method: Method;
+  path: string;
+  type: MockType;
   delay: number,
-  meta: MockMeta
-  content: string
+  meta: MockMeta;
+  content: string;
 }
 
 export const createMock = (serviceId: number, rq: CreateMockRq) => service.post(`/services/${serviceId}/mocks/`, rq);
 
 // Fetch mock
 export interface GetMockRs {
-  success: boolean
+  success: boolean;
   body: {
-    serviceId: number,
-    mockId: number,
-    method: Method
-    name: string,
-    path: string,
-    type: MockType,
+    serviceId: number;
+    mockId: number;
+    method: Method;
+    name: string;
+    path: string;
+    type: MockType;
     delay: number,
-    meta: MockMeta
-    content: string
-  }
+    meta: MockMeta;
+    content: string;
+  };
 }
 
 
 export const getMock = (serviceId: number, mockId: number) => service.get<GetMockRs>(`/services/${serviceId}/mocks/${mockId}`);
 
 export interface UpdateMockRq {
-  name: string
-  method: Method
-  path: string
-  type: MockType
+  name: string;
+  method: Method;
+  path: string;
+  type: MockType;
   delay: number
-  meta: MockMeta
-  content: string
+  meta: MockMeta;
+  content: string;
 }
 
-export const updateMock = (serviceId: number, mockId: number, rq: UpdateMockRq) => service.put(`/services/${serviceId}/mocks/${mockId}`, rq);
+export const updateMock = (serviceId: number, mockId: number, rq: UpdateMockRq) => service.put(
+  `/services/${serviceId}/mocks/${mockId}`,
+  rq
+);
 
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
 export const deleteMock = (serviceId: number, mockId: number) => service.delete(`/services/${serviceId}/mocks/${mockId}`);
 
 export interface GetMockUrlRs {
-  success: boolean
-  body: string
+  success: boolean;
+  body: string;
 }
 
 export const getMockUrl = (serviceId: number, mockId: number) => service.get<GetMockUrlRs>(`/services/${serviceId}/mocks/${mockId}/url`);
 
 
 export interface SetEnabledMockRq {
-  enabled: boolean
+  enabled: boolean;
 }
 
-export const setEnabledMock = (serviceId: number, mockId: number, rq: SetEnabledMockRq) => service.put(`/services/${serviceId}/mocks/${mockId}/enabled`, rq);
+export const setEnabledMock = (serviceId: number, mockId: number, rq: SetEnabledMockRq) => service.put(
+  `/services/${serviceId}/mocks/${mockId}/enabled`,
+  rq
+);
 

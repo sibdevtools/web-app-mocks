@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { getAllServices, deleteService, Service } from '../../api/service';
-import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
-import { useNavigate } from 'react-router-dom';
-import { contextPath } from '../../const/common.const';
-import CustomTable from '../../componenets/CustomTable';
-import { Loader } from '../../componenets/Loader';
-
+import { ButtonGroup, Button, Container, Row, Col, Modal, Form, Alert } from 'react-bootstrap';
+import { Cancel01Icon, Delete01Icon, FloppyDiskIcon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import { getAllServices, deleteService, updateService, createService, Service } from '../../api/service';
+import CustomTable from '../../components/CustomTable';
+import { Loader } from '../../components/Loader';
 
 const ServiceListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [services, setServices] = useState<Service[]>([]);
-  const navigate = useNavigate();
+  const [editService, setEditService] = useState<Service | null>(null);
+  const [newServiceCode, setNewServiceCode] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState<'edit' | 'add'>('add');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchServices();
@@ -22,9 +24,13 @@ const ServiceListPage: React.FC = () => {
       const response = await getAllServices();
       if (response.data.success) {
         setServices(response.data.body);
+      } else {
+        setError('Failed to fetch services');
+        return;
       }
     } catch (error) {
       console.error('Failed to fetch services:', error);
+      setError('Failed to fetch services');
     } finally {
       setLoading(false);
     }
@@ -35,71 +41,163 @@ const ServiceListPage: React.FC = () => {
       return;
     }
     try {
-      await deleteService(serviceId);
+      const response = await deleteService(serviceId);
+      if (response.status !== 200) {
+        setError('Failed to delete service');
+        return;
+      }
       await fetchServices();
     } catch (error) {
       console.error('Failed to delete service:', error);
+      setError('Failed to delete service');
     }
   };
 
-  const handleEdit = async (service: Service) => {
-    navigate(`${contextPath}service/edit/${service.serviceId}`, {
-      state: {
-        code: service.code
+  const handleEditClick = (service: Service) => {
+    setEditService(service);
+    setNewServiceCode(service.code);
+    setModalMode('edit');
+    setShowModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editService) {
+      return;
+    }
+    try {
+      const response = await updateService({ serviceId: editService.serviceId, code: newServiceCode });
+      if (response.status !== 200) {
+        setError('Failed to update service');
+        return;
       }
-    });
+      await fetchServices();
+      setShowModal(false);
+    } catch (error) {
+      console.error('Failed to update service:', error);
+      setError('Failed to update service');
+    } finally {
+      setShowModal(false);
+    }
+  };
+
+  const handleAddClick = () => {
+    setNewServiceCode('');
+    setModalMode('add');
+    setShowModal(true);
+  };
+
+  const handleSaveAdd = async () => {
+    try {
+      const response = await createService({ code: newServiceCode });
+      if (response.status !== 200) {
+        setError('Failed to add service');
+        return;
+      }
+      await fetchServices();
+    } catch (error) {
+      console.error('Failed to add service:', error);
+      setError('Failed to add service');
+    } finally {
+      setShowModal(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (modalMode === 'edit') {
+      await handleSaveEdit();
+    } else {
+      await handleSaveAdd();
+    }
   };
 
   return (
-    <div className="container mt-4 mb-4">
-      <div className={'row'}>
-        <div className="col-md-8 offset-md-1 text-center">
+    <Container className="mt-4 mb-4">
+      <Row>
+        <Col md={{ span: 8, offset: 1 }} className="text-center">
           <span className={'h2'}>HTTP Services</span>
-        </div>
-        <div className="col-md-1 offset-md-1">
-          <button className="btn btn-outline-success" onClick={() => navigate(`${contextPath}service/add`)}>
+        </Col>
+        <Col md={{ span: 1, offset: 1 }}>
+          <Button variant="outline-success" onClick={handleAddClick}>
             <PlusSignIcon />
-          </button>
-        </div>
-      </div>
-      <div className={'row'}>
-        <div className="col-md-10 offset-md-1">
-          <div className="container mt-4">
-            {loading ?
+          </Button>
+        </Col>
+      </Row>
+      <Row>
+        <Col md={{ span: 10, offset: 1 }}>
+          <Container className="mt-4">
+            {loading ? (
               <Loader />
-              :
-              <CustomTable
-                columns={[
-                  { key: 'code', label: 'Code' },
-                  { key: 'actions', label: 'Actions' },
-                ]}
-                data={services.map(service => {
-                  return {
-                    code: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
-                      {service.code}
-                    </a>,
-                    actions: <div className="btn-group" role="group">
-                      <button className="btn btn-primary" onClick={() => handleEdit(service)}>
-                        <PencilEdit01Icon />
-                      </button>
-                      <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
-                        <Delete01Icon />
-                      </button>
-                    </div>
-                  }
-                })}
-                sortableColumns={['code']}
-                filterableColumns={['code']}
-                styleProps={{
-                  centerHeaders: true,
-                  textCenterValues: true,
-                }}
+            ) : (
+              <>
+                {error && (
+                  <Alert variant="danger" onClose={() => setError(null)} dismissible>
+                    {error}
+                  </Alert>
+                )}
+                <CustomTable
+                  columns={[
+                    { key: 'code', label: 'Code' },
+                    { key: 'actions', label: 'Actions' },
+                  ]}
+                  data={services.map((service) => {
+                    return {
+                      code: (
+                        <a href={`service/${service.serviceId}/mocks`} className="link-primary">
+                          {service.code}
+                        </a>
+                      ),
+                      actions: (
+                        <ButtonGroup>
+                          <Button variant={'primary'} onClick={() => handleEditClick(service)}>
+                            <PencilEdit01Icon />
+                          </Button>
+                          <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
+                            <Delete01Icon />
+                          </Button>
+                        </ButtonGroup>
+                      ),
+                    };
+                  })}
+                  sortableColumns={['code']}
+                  filterableColumns={['code']}
+                  styleProps={{
+                    centerHeaders: true,
+                    textCenterValues: true,
+                  }}
+                />
+              </>
+            )}
+          </Container>
+        </Col>
+      </Row>
+
+      {/* Unified Modal for Add and Edit */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{modalMode === 'edit' ? 'Edit Service' : 'Add New Service'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="serviceCode">
+              <Form.Label>Service Code</Form.Label>
+              <Form.Control
+                type="text"
+                value={newServiceCode}
+                onChange={(e) => setNewServiceCode(e.target.value)}
               />
-            }
-          </div>
-        </div>
-      </div>
-    </div>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            <Cancel01Icon />
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            <FloppyDiskIcon />
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 };
 
