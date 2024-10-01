@@ -18,9 +18,11 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
+import { Loader } from '../../componenets/Loader';
 
 
 const ServiceMocksListPage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const [service, setService] = useState<ServiceV2>(
     { code: '', mocks: [], serviceId: 0 }
   );
@@ -31,7 +33,7 @@ const ServiceMocksListPage: React.FC = () => {
     if (!serviceId) {
       return;
     }
-    fetchMocks();
+    fetchMocks()
   }, []);
 
   if (!serviceId) {
@@ -40,6 +42,7 @@ const ServiceMocksListPage: React.FC = () => {
   }
 
   const fetchMocks = async () => {
+    setLoading(true);
     try {
       const response = await getMocksByService(+serviceId);
       if (response.data.success) {
@@ -47,6 +50,8 @@ const ServiceMocksListPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to fetch mocks:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,7 +78,7 @@ const ServiceMocksListPage: React.FC = () => {
   const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>, service: Service, mock: Mock) => {
     const button = e.currentTarget
     try {
-      button.classList.add( 'active')
+      button.classList.add('active')
       const rs = await getMockUrl(service.serviceId, mock.mockId);
       if (rs.data.success) {
         const body = rs.data.body
@@ -82,7 +87,7 @@ const ServiceMocksListPage: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch services:', error);
     } finally {
-      button.classList.remove( 'active')
+      button.classList.remove('active')
     }
   };
 
@@ -115,49 +120,53 @@ const ServiceMocksListPage: React.FC = () => {
               </button>
             </div>
           </div>
-          <CustomTable
-            columns={[
-              { key: 'method', label: 'Method' },
-              { key: 'name', label: 'Name' },
-              { key: 'path', label: 'Path' },
-              { key: 'type', label: 'Type' },
-              { key: 'enabled', label: 'Enabled' },
-              { key: 'actions', label: 'Actions' },
-            ]}
-            data={service.mocks.map(mock => {
-              return {
-                method: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
-                name: `${mock.name}`,
-                path: <code>{mock.path}</code>,
-                type: `${mock.type}`,
-                enabled: <div className="form-check form-switch">
-                  <input className="form-check-input"
-                         type="checkbox"
-                         checked={mock.enabled}
-                         onChange={e => handleSetEnabled(service, mock, e)} />
-                </div>,
-                actions: <div className="btn-group" role="group">
-                  <button type={'button'} className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
-                    <PencilEdit01Icon />
-                  </button>
-                  <button type={'button'}
-                          className="btn btn-info"
-                          onClick={(e) => handleCopy(e, service, mock)}>
-                    <Copy01Icon />
-                  </button>
-                  <button type={'button'} className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
-                    <Delete01Icon />
-                  </button>
-                </div>
-              }
-            })}
-            sortableColumns={['method', 'name', 'path', 'type']}
-            filterableColumns={['method', 'name', 'path', 'type']}
-            styleProps={{
-              centerHeaders: true,
-              textCenterValues: true,
-            }}
-          />
+          {loading ?
+            <Loader />
+            :
+            <CustomTable
+              columns={[
+                { key: 'method', label: 'Method' },
+                { key: 'name', label: 'Name' },
+                { key: 'path', label: 'Path' },
+                { key: 'type', label: 'Type' },
+                { key: 'enabled', label: 'Enabled' },
+                { key: 'actions', label: 'Actions' },
+              ]}
+              data={service.mocks.map(mock => {
+                return {
+                  method: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
+                  name: `${mock.name}`,
+                  path: <code>{mock.path}</code>,
+                  type: `${mock.type}`,
+                  enabled: <div className="form-check form-switch">
+                    <input className="form-check-input"
+                           type="checkbox"
+                           checked={mock.enabled}
+                           onChange={e => handleSetEnabled(service, mock, e)} />
+                  </div>,
+                  actions: <div className="btn-group" role="group">
+                    <button type={'button'} className="btn btn-primary" onClick={() => handleEdit(service, mock)}>
+                      <PencilEdit01Icon />
+                    </button>
+                    <button type={'button'}
+                            className="btn btn-info"
+                            onClick={(e) => handleCopy(e, service, mock)}>
+                      <Copy01Icon />
+                    </button>
+                    <button type={'button'} className="btn btn-danger" onClick={() => handleDelete(mock.mockId)}>
+                      <Delete01Icon />
+                    </button>
+                  </div>
+                }
+              })}
+              sortableColumns={['method', 'name', 'path', 'type']}
+              filterableColumns={['method', 'name', 'path', 'type']}
+              styleProps={{
+                centerHeaders: true,
+                textCenterValues: true,
+              }}
+            />
+          }
         </div>
       </div>
     </div>

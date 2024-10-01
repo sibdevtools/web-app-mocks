@@ -15,9 +15,11 @@ import JavaScriptMockContent from '../../componenets/JavaScriptMockContent';
 import PythonMockContent from '../../componenets/PythonMockContent';
 import HttpHeadersForm from '../../componenets/HttpHeadersForm';
 import StaticFileMockContent from '../../componenets/StaticFileMockContent';
+import { Loader } from '../../componenets/Loader';
 
 
 const EditMockPage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { serviceId, mockId } = useParams();
   const [mockName, setMockName] = useState('');
@@ -43,6 +45,7 @@ const EditMockPage: React.FC = () => {
   }
 
   const fetchMock = async () => {
+    setLoading(true);
     try {
       const response = await getMock(+serviceId, +mockId);
       if (response.data.success) {
@@ -58,6 +61,8 @@ const EditMockPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to fetch services:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,140 +116,144 @@ const EditMockPage: React.FC = () => {
           <h2>Edit Mock</h2>
         </div>
       </div>
-      <div className={'row'}>
-        <div className="col-md-10 offset-md-1">
-          <form className={'mt-4'} onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="mockNameInput" className="form-label">Name</label>
-              <input
-                type="text"
-                className="form-control"
-                id="mockNameInput"
-                value={mockName}
-                onChange={(e) => setMockName(e.target.value)}
-                required={true}
-              />
-            </div>
-            <div className={'row mb-3'}>
-              <div className="col-md-2">
-                <label htmlFor="httpMethodSelect" className="form-label">HTTP Method</label>
-                <select
-                  id={'httpMethodSelect'}
-                  className={'form-select'}
-                  onChange={e => setMethod(methods[e.target.selectedIndex])}
-                  value={method}
-                  required={true}
-                >
-                  {
-                    methods.map((it) => (
-                        <option key={it} value={it}>{it}</option>
-                      )
-                    )
-                  }
-                </select>
-              </div>
-              <div className="col-md-10">
-                <label htmlFor="pathInput" className="form-label">Path</label>
+      {loading ?
+        <Loader />
+        :
+        <div className={'row'}>
+          <div className="col-md-10 offset-md-1">
+            <form className={'mt-4'} onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="mockNameInput" className="form-label">Name</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="pathInput"
-                  placeholder={'Ant pattern or path, started with /'}
-                  value={path}
-                  onChange={(e) => setPath(e.target.value)}
+                  id="mockNameInput"
+                  value={mockName}
+                  onChange={(e) => setMockName(e.target.value)}
                   required={true}
                 />
               </div>
-            </div>
-            <div className={'row mb-3'}>
-              <div className="col-md-12">
-                <label htmlFor="httpHeaders" className="form-label">Http Headers</label>
-                <HttpHeadersForm
-                  meta={meta}
-                  setMeta={setMeta}
-                />
-              </div>
-            </div>
-            <div className={'row mb-3'}>
-              <div className="col-md-8">
-                <label htmlFor="statusSelect" className="form-label">Status</label>
-                <select
-                  id={'statusSelect'}
-                  className={'form-select'}
-                  value={meta['STATUS_CODE']}
-                  onChange={(e) => onStatusChange(e)}
-                  required={true}
-                >
-                  {
-                    [...statusCodes.keys()].map(it => (
-                        <option key={it} value={it}>{it}: {statusCodes.get(it)}</option>
+              <div className={'row mb-3'}>
+                <div className="col-md-2">
+                  <label htmlFor="httpMethodSelect" className="form-label">HTTP Method</label>
+                  <select
+                    id={'httpMethodSelect'}
+                    className={'form-select'}
+                    onChange={e => setMethod(methods[e.target.selectedIndex])}
+                    value={method}
+                    required={true}
+                  >
+                    {
+                      methods.map((it) => (
+                          <option key={it} value={it}>{it}</option>
+                        )
                       )
-                    )
-                  }
-                </select>
+                    }
+                  </select>
+                </div>
+                <div className="col-md-10">
+                  <label htmlFor="pathInput" className="form-label">Path</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="pathInput"
+                    placeholder={'Ant pattern or path, started with /'}
+                    value={path}
+                    onChange={(e) => setPath(e.target.value)}
+                    required={true}
+                  />
+                </div>
               </div>
-              <div className={'col-md-2'}>
-                <label htmlFor="mockDelayInput" className="form-label">Delay (ms)</label>
-                <input
-                  id={'mockDelayInput'}
-                  type={'number'}
-                  min={0}
-                  className={'form-control'}
-                  value={`${delay}`}
-                  onChange={(e) => setDelay(+e.target.value)}
-                  required={true}
-                />
+              <div className={'row mb-3'}>
+                <div className="col-md-12">
+                  <label htmlFor="httpHeaders" className="form-label">Http Headers</label>
+                  <HttpHeadersForm
+                    meta={meta}
+                    setMeta={setMeta}
+                  />
+                </div>
               </div>
-              <div className={'col-md-2'}>
-                <label htmlFor="mockTypeSelect" className="form-label">Type</label>
-                <select
-                  id={'mockTypeSelect'}
-                  className={'form-select'}
-                  value={mockType}
-                  onChange={(e) => onMockTypeChange(e)}
-                  required={true}
-                >
-                  {
-                    mockTypes.map(it => (
-                        <option key={it} value={it}>{it}</option>
+              <div className={'row mb-3'}>
+                <div className="col-md-8">
+                  <label htmlFor="statusSelect" className="form-label">Status</label>
+                  <select
+                    id={'statusSelect'}
+                    className={'form-select'}
+                    value={meta['STATUS_CODE']}
+                    onChange={(e) => onStatusChange(e)}
+                    required={true}
+                  >
+                    {
+                      [...statusCodes.keys()].map(it => (
+                          <option key={it} value={it}>{it}: {statusCodes.get(it)}</option>
+                        )
                       )
-                    )
-                  }
-                </select>
+                    }
+                  </select>
+                </div>
+                <div className={'col-md-2'}>
+                  <label htmlFor="mockDelayInput" className="form-label">Delay (ms)</label>
+                  <input
+                    id={'mockDelayInput'}
+                    type={'number'}
+                    min={0}
+                    className={'form-control'}
+                    value={`${delay}`}
+                    onChange={(e) => setDelay(+e.target.value)}
+                    required={true}
+                  />
+                </div>
+                <div className={'col-md-2'}>
+                  <label htmlFor="mockTypeSelect" className="form-label">Type</label>
+                  <select
+                    id={'mockTypeSelect'}
+                    className={'form-select'}
+                    value={mockType}
+                    onChange={(e) => onMockTypeChange(e)}
+                    required={true}
+                  >
+                    {
+                      mockTypes.map(it => (
+                          <option key={it} value={it}>{it}</option>
+                        )
+                      )
+                    }
+                  </select>
+                </div>
               </div>
-            </div>
-            {
-              (mockType === 'STATIC') ? (
-                <StaticMockContent
-                  content={content}
-                  setContent={setContent}
-                  meta={meta}
-                  setMeta={setMeta}
-                  creation={false}
-                />
-              ) : (mockType === 'STATIC_FILE') ? (
-                <StaticFileMockContent
-                  setContent={setContent}
-                />
-              ) : (mockType === 'JS') ? (
-                <JavaScriptMockContent
-                  content={content}
-                  setContent={setContent}
-                />
-              ) : (
-                <PythonMockContent
-                  content={content}
-                  setContent={setContent} />
-              )
-            }
-            <div className={'col-md-1 offset-md-11'}>
-              <button type="submit" className="btn btn-primary">
-                <FloppyDiskIcon />
-              </button>
-            </div>
-          </form>
+              {
+                (mockType === 'STATIC') ? (
+                  <StaticMockContent
+                    content={content}
+                    setContent={setContent}
+                    meta={meta}
+                    setMeta={setMeta}
+                    creation={false}
+                  />
+                ) : (mockType === 'STATIC_FILE') ? (
+                  <StaticFileMockContent
+                    setContent={setContent}
+                  />
+                ) : (mockType === 'JS') ? (
+                  <JavaScriptMockContent
+                    content={content}
+                    setContent={setContent}
+                  />
+                ) : (
+                  <PythonMockContent
+                    content={content}
+                    setContent={setContent} />
+                )
+              }
+              <div className={'col-md-1 offset-md-11'}>
+                <button type="submit" className="btn btn-primary">
+                  <FloppyDiskIcon />
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      }
     </div>
   );
 };
