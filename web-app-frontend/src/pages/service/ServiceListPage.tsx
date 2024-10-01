@@ -4,9 +4,11 @@ import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
 import CustomTable from '../../componenets/CustomTable';
+import { Loader } from '../../componenets/Loader';
 
 
 const ServiceListPage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const [services, setServices] = useState<Service[]>([]);
   const navigate = useNavigate();
 
@@ -15,6 +17,7 @@ const ServiceListPage: React.FC = () => {
   }, []);
 
   const fetchServices = async () => {
+    setLoading(true);
     try {
       const response = await getAllServices();
       if (response.data.success) {
@@ -22,6 +25,8 @@ const ServiceListPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to fetch services:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,7 +36,7 @@ const ServiceListPage: React.FC = () => {
     }
     try {
       await deleteService(serviceId);
-      fetchServices();
+      await fetchServices();
     } catch (error) {
       console.error('Failed to delete service:', error);
     }
@@ -60,33 +65,37 @@ const ServiceListPage: React.FC = () => {
       <div className={'row'}>
         <div className="col-md-10 offset-md-1">
           <div className="container mt-4">
-            <CustomTable
-              columns={[
-                { key: 'code', label: 'Code' },
-                { key: 'actions', label: 'Actions' },
-              ]}
-              data={services.map(service => {
-                return {
-                  code: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
-                    {service.code}
-                  </a>,
-                  actions: <div className="btn-group" role="group">
-                    <button className="btn btn-primary" onClick={() => handleEdit(service)}>
-                      <PencilEdit01Icon />
-                    </button>
-                    <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
-                      <Delete01Icon />
-                    </button>
-                  </div>
-                }
-              })}
-              sortableColumns={['code']}
-              filterableColumns={['code']}
-              styleProps={{
-                centerHeaders: true,
-                textCenterValues: true,
-              }}
-            />
+            {loading ?
+              <Loader />
+              :
+              <CustomTable
+                columns={[
+                  { key: 'code', label: 'Code' },
+                  { key: 'actions', label: 'Actions' },
+                ]}
+                data={services.map(service => {
+                  return {
+                    code: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
+                      {service.code}
+                    </a>,
+                    actions: <div className="btn-group" role="group">
+                      <button className="btn btn-primary" onClick={() => handleEdit(service)}>
+                        <PencilEdit01Icon />
+                      </button>
+                      <button className="btn btn-danger" onClick={() => handleDelete(service.serviceId)}>
+                        <Delete01Icon />
+                      </button>
+                    </div>
+                  }
+                })}
+                sortableColumns={['code']}
+                filterableColumns={['code']}
+                styleProps={{
+                  centerHeaders: true,
+                  textCenterValues: true,
+                }}
+              />
+            }
           </div>
         </div>
       </div>
