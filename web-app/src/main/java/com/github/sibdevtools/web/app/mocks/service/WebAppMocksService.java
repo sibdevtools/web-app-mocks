@@ -63,6 +63,7 @@ public class WebAppMocksService {
                                  String name,
                                  String path,
                                  String type,
+                                 long delay,
                                  Map<String, String> meta,
                                  byte[] content) {
         if (!mockTypes.contains(type)) {
@@ -88,6 +89,7 @@ public class WebAppMocksService {
                 .path(path)
                 .service(serviceEntity)
                 .type(type)
+                .delay(delay)
                 .enabled(true)
                 .storageType("LOCAL")
                 .storageId(contentId)
@@ -103,6 +105,7 @@ public class WebAppMocksService {
                                  String name,
                                  String path,
                                  String type,
+                                 long delay,
                                  Map<String, String> meta,
                                  byte[] content) {
         if (!mockTypes.contains(type)) {
@@ -127,6 +130,7 @@ public class WebAppMocksService {
         httpMockEntity.setName(name);
         httpMockEntity.setPath(path);
         httpMockEntity.setType(type);
+        httpMockEntity.setDelay(delay);
         httpMockEntity.setStorageType("LOCAL");
         httpMockEntity.setStorageId(contentId);
         httpMockEntity.setModifiedAt(ZonedDateTime.now());
