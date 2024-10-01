@@ -1,6 +1,7 @@
 package com.github.sibdevtools.web.app.mocks.service;
 
 import com.github.sibdevtools.web.app.mocks.exception.NotFoundException;
+import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
 import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import jakarta.annotation.Nonnull;
@@ -13,6 +14,7 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +58,15 @@ public class RequestDispatcher {
             var requestHandler = handlers.get(type);
             if (requestHandler == null) {
                 throw new NotFoundException("Request handler with type %s not exists".formatted(type));
+            }
+            var delay = httpMock.getDelay();
+            if (delay > 0) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(delay);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new UnexpectedErrorException("Mock delay was interrupted", e);
+                }
             }
             requestHandler.handle(path, httpMock, rq, rs);
             return;

@@ -63,6 +63,7 @@ export interface CreateMockRq {
   method: Method
   path: string
   type: MockType,
+  delay: number,
   meta: MockMeta
   content: string
 }
@@ -79,6 +80,7 @@ export interface GetMockRs {
     name: string,
     path: string,
     type: MockType,
+    delay: number,
     meta: MockMeta
     content: string
   }
@@ -92,6 +94,7 @@ export interface UpdateMockRq {
   method: Method
   path: string
   type: MockType
+  delay: number
   meta: MockMeta
   content: string
 }
@@ -105,6 +108,7 @@ export interface GetMockUrlRs {
   success: boolean
   body: string
 }
+
 export const getMockUrl = (serviceId: number, mockId: number) => service.get<GetMockUrlRs>(`/services/${serviceId}/mocks/${mockId}/url`);
 
 

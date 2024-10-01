@@ -16,7 +16,6 @@ import PythonMockContent from '../../componenets/PythonMockContent';
 import HttpHeadersForm from '../../componenets/HttpHeadersForm';
 import StaticFileMockContent from '../../componenets/StaticFileMockContent';
 
-const textEncoder = new TextEncoder()
 
 const EditMockPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,6 +24,7 @@ const EditMockPage: React.FC = () => {
   const [method, setMethod] = useState<Method>(methods[0]);
   const [path, setPath] = useState('');
   const [mockType, setMockType] = useState<MockType>('STATIC');
+  const [delay, setDelay] = useState<number>(0);
   const [meta, setMeta] = useState<{ [key: string]: string }>({
     STATUS_CODE: '200'
   });
@@ -52,6 +52,7 @@ const EditMockPage: React.FC = () => {
         setMethod(body.method);
         setPath(body.path);
         setMockType(body.type);
+        setDelay(body.delay);
         setContent(decodeBase64ToText(body.content));
         setMeta(body.meta)
       }
@@ -72,6 +73,7 @@ const EditMockPage: React.FC = () => {
         method: method,
         path: path,
         type: mockType,
+        delay: delay,
         meta: meta,
         content: encodeTextToBase64(content)
       });
@@ -180,6 +182,18 @@ const EditMockPage: React.FC = () => {
                     )
                   }
                 </select>
+              </div>
+              <div className={'col-md-2'}>
+                <label htmlFor="mockDelayInput" className="form-label">Delay (ms)</label>
+                <input
+                  id={'mockDelayInput'}
+                  type={'number'}
+                  min={0}
+                  className={'form-control'}
+                  value={`${delay}`}
+                  onChange={(e) => setDelay(+e.target.value)}
+                  required={true}
+                />
               </div>
               <div className={'col-md-2'}>
                 <label htmlFor="mockTypeSelect" className="form-label">Type</label>

@@ -24,6 +24,7 @@ const AddMockPage: React.FC = () => {
   const [mockName, setMockName] = useState('');
   const [method, setMethod] = useState<Method>(methods[0]);
   const [path, setPath] = useState('');
+  const [delay, setDelay] = useState<number>(0);
   const [mockType, setMockType] = useState<MockType>('STATIC');
   const [meta, setMeta] = useState<{ [key: string]: string }>({
     STATUS_CODE: '200'
@@ -47,6 +48,7 @@ const AddMockPage: React.FC = () => {
         method: method,
         path: path,
         type: mockType,
+        delay: delay,
         meta: meta,
         content: encodeTextToBase64(content)
       });
@@ -139,7 +141,7 @@ const AddMockPage: React.FC = () => {
               </div>
             </div>
             <div className={'row mb-3'}>
-              <div className="col-md-8">
+              <div className={'col-md-8'}>
                 <label htmlFor="statusSelect" className="form-label">Status</label>
                 <select
                   id={'statusSelect'}
@@ -155,6 +157,18 @@ const AddMockPage: React.FC = () => {
                     )
                   }
                 </select>
+              </div>
+              <div className={'col-md-2'}>
+                <label htmlFor="mockDelayInput" className="form-label">Delay (ms)</label>
+                <input
+                  id={'mockDelayInput'}
+                  type={'number'}
+                  min={0}
+                  className={'form-control'}
+                  value={`${delay}`}
+                  onChange={(e) => setDelay(+e.target.value)}
+                  required={true}
+                />
               </div>
               <div className={'col-md-2'}>
                 <label htmlFor="mockTypeSelect" className="form-label">Type</label>

@@ -1,5 +1,6 @@
 package com.github.sibdevtools.web.app.mocks.api.rq;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,9 @@ public class CreateMockRq implements Serializable {
     private String path;
     @NotNull
     private String type;
+    @NotNull
+    @Min(0)
+    private Long delay;
     private Map<String, String> meta;
     private String content;
 }
