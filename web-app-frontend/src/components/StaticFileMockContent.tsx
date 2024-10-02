@@ -1,12 +1,11 @@
 import React, { useCallback } from 'react';
+import { Form } from 'react-bootstrap';
 
 export interface StaticMockBinaryContentProps {
-  setContent: (content: ArrayBuffer) => void,
+  setContent: (content: ArrayBuffer) => void;
 }
 
-const StaticFileMockContent: React.FC<StaticMockBinaryContentProps> = ({
-                                                                         setContent,
-                                                                       }) => {
+const StaticFileMockContent: React.FC<StaticMockBinaryContentProps> = ({ setContent }) => {
   const getFileContent = useCallback((file: File): Promise<ArrayBuffer> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -29,16 +28,13 @@ const StaticFileMockContent: React.FC<StaticMockBinaryContentProps> = ({
   };
 
   return (
-    <div className={'mb-3'}>
-      <label htmlFor={`fileInput`} className="form-label">Upload File</label>
-      <input
+    <Form.Group controlId="fileInput" className="mb-3">
+      <Form.Label>Upload File</Form.Label>
+      <Form.Control
         type="file"
-        id="fileInput"
-        className="form-control"
-        aria-describedby="fileInputFeedback"
         onChange={handleFileChange}
       />
-    </div>
+    </Form.Group>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { Table, Form } from 'react-bootstrap';
 
 export interface TableColumn {
   key: string;
@@ -34,7 +35,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Handle filter changes
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>, columnKey: string) => {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, columnKey: string) => {
     setFilter({ ...filter, [columnKey]: event.target.value });
   };
 
@@ -51,13 +52,13 @@ const CustomTable: React.FC<CustomTableProps> = ({
     if (typeof node === 'string' || typeof node === 'number') {
       return node.toString();
     }
-    if (React.isValidElement(node)) {
-      const htmlString = ReactDOMServer.renderToString(node);
-      const div = document.createElement('div');
-      div.innerHTML = htmlString;
-      return div.innerText || div.textContent || '';
+    if (!React.isValidElement(node)) {
+      return '';
     }
-    return '';
+    const htmlString = ReactDOMServer.renderToString(node);
+    const div = document.createElement('div');
+    div.innerHTML = htmlString;
+    return div.innerText || div.textContent || '';
   };
 
   // Apply filtering
@@ -90,7 +91,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   });
 
   return (
-    <table className="table table-striped table-bordered table-hover">
+    <Table striped={true} bordered={true} hover={true}>
       <thead className={'table-dark'}>
       <tr className={`${styleProps.centerHeaders ? 'text-center' : ''}`}>
         {columns.map((column) => (
@@ -110,9 +111,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
         {columns.map((column) => (
           <th key={`filter-${column.key}`}>
             {filterableColumns.includes(column.key) && (
-              <input
-                type="text"
-                className="form-control"
+              <Form.Control
+                type={'text'}
                 placeholder={`Filter ${column.label}`}
                 value={filter[column.key] || ''}
                 onChange={(e) => handleFilterChange(e, column.key)}
@@ -132,7 +132,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         </tr>
       ))}
       </tbody>
-    </table>
+    </Table>
   );
 };
 
