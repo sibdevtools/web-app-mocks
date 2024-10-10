@@ -12,9 +12,22 @@ export interface StyleProps {
   textCenterValues: boolean,
 }
 
+export interface ReactCell {
+  /**
+   * Data UI representation
+   */
+  representation: React.ReactNode;
+  /**
+   * Data text representation for filtering and sorting
+   */
+  value?: string;
+}
+
+export type Cell = ReactCell | string;
+
 export interface CustomTableProps {
   columns: TableColumn[];
-  data: Array<{ [key: string]: React.ReactNode }>;
+  data: Array<{ [key: string]: Cell }>;
   sortableColumns?: string[];
   filterableColumns?: string[];
   styleProps?: StyleProps;
@@ -47,47 +60,39 @@ const CustomTable: React.FC<CustomTableProps> = ({
     setSortDirection(direction);
   };
 
-  // Helper function to extract text from ReactNode
-  const extractText = (node: React.ReactNode): string => {
-    if (typeof node === 'string' || typeof node === 'number') {
-      return node.toString();
+  const getCellValue = (cell: Cell): string => {
+    if (typeof cell === 'string') {
+      return cell;
     }
-    if (!React.isValidElement(node)) {
-      return '';
+    return cell.value || '';
+  };
+
+  const getCellRepresentation = (cell: Cell): React.ReactNode => {
+    if (typeof cell === 'string') {
+      return (cell);
     }
-    const htmlString = ReactDOMServer.renderToString(node);
-    const div = document.createElement('div');
-    div.innerHTML = htmlString;
-    return div.innerText || div.textContent || '';
+    return cell.representation;
   };
 
   // Apply filtering
   const filteredData = data.filter((item) => {
     return Object.entries(filter).every(([key, value]) => {
       if (!value) return true; // No filter for this column
-      const cellValue = item[key];
-      const cellText = extractText(cellValue);
-      return cellText.toLowerCase().includes(value.toLowerCase());
+      const cell = item[key];
+      let cellValue = getCellValue(cell);
+      return cellValue.toLowerCase().includes(value.toLowerCase());
     });
   });
 
   // Apply sorting
   const sortedData = [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0; // No sorting applied
-    const aValue = a[sortColumn];
-    const bValue = b[sortColumn];
+    const aValue = getCellValue(a[sortColumn]);
+    const bValue = getCellValue(b[sortColumn]);
 
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return sortDirection === 'asc'
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-    }
-
-    return 0;
+    return sortDirection === 'asc'
+      ? aValue.localeCompare(bValue)
+      : bValue.localeCompare(aValue);
   });
 
   return (
@@ -127,7 +132,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         <tr key={index}>
           {columns.map((column) => (
             <td className={`${styleProps.textCenterValues ? 'text-center' : ''}`}
-                key={column.key}>{item[column.key]}</td>
+                key={column.key}>{getCellRepresentation(item[column.key])}</td>
           ))}
         </tr>
       ))}

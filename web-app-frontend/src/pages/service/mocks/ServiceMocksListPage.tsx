@@ -93,24 +93,34 @@ const ServiceMocksListPage: React.FC = () => {
               ]}
               data={service.mocks.map(mock => {
                 return {
-                  method: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
-                  name: `${mock.name}`,
-                  path: <code>{mock.path}</code>,
-                  type: `${mock.type}`,
-                  enabled: <Form.Check
-                    type={'switch'}
-                    checked={mock.enabled}
-                    onChange={e => setEnabledMockHandler(mock, e.target.checked)}
-                  />,
-                  actions: (
-                    <ActionButtons
+                  method: {
+                    representation: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
+                    value: mock.method
+                  },
+                  name: mock.name,
+                  pathRaw: mock.path,
+                  path: {
+                    representation: <code>{mock.path}</code>,
+                    value: mock.path
+                  },
+                  type: mock.type,
+                  enabled: {
+                    representation: <Form.Check
+                      type={'switch'}
+                      checked={mock.enabled}
+                      onChange={e => setEnabledMockHandler(mock, e.target.checked)}
+                    />,
+                    value: `${mock.enabled}`
+                  },
+                  actions: {
+                    representation: <ActionButtons
                       mock={mock}
                       onEdit={() => handleEdit(service, mock)}
                       onCopy={() => handleCopy(service, mock)}
                       onDelete={() => deleteMockHandler(mock)}
                       showTooltip={showTooltip}
                     />
-                  )
+                  }
                 };
               })}
               sortableColumns={['method', 'name', 'path', 'type']}

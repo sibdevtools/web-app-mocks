@@ -142,21 +142,23 @@ const ServiceListPage: React.FC = () => {
                   ]}
                   data={services.map((service) => {
                     return {
-                      code: (
-                        <a href={`service/${service.serviceId}/mocks`} className="link-primary">
+                      code: {
+                        representation: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
                           {service.code}
-                        </a>
-                      ),
-                      actions: (
-                        <ButtonGroup>
-                          <Button variant={'primary'} onClick={() => handleEditClick(service)}>
-                            <PencilEdit01Icon />
-                          </Button>
-                          <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
-                            <Delete01Icon />
-                          </Button>
-                        </ButtonGroup>
-                      ),
+                        </a>,
+                        value: service.code,
+                      },
+                      actions: {
+                        representation:
+                          <ButtonGroup>
+                            <Button variant={'primary'} onClick={() => handleEditClick(service)}>
+                              <PencilEdit01Icon />
+                            </Button>
+                            <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
+                              <Delete01Icon />
+                            </Button>
+                          </ButtonGroup>
+                      }
                     };
                   })}
                   sortableColumns={['code']}
