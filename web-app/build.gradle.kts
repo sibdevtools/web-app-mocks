@@ -13,6 +13,7 @@ dependencies {
 
     annotationProcessor("org.projectlombok:lombok")
 
+    implementation("org.springframework:spring-aspects")
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-core")
     implementation("org.springframework:spring-web")

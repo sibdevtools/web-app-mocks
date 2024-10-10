@@ -3,17 +3,23 @@ package com.github.sibdevtools.web.app.mocks.service;
 import com.github.sibdevtools.storage.api.rq.SaveFileRq;
 import com.github.sibdevtools.storage.api.service.StorageService;
 import com.github.sibdevtools.web.app.mocks.api.dto.HttpMockDto;
+import com.github.sibdevtools.web.app.mocks.api.dto.HttpMockInvocationItemDto;
 import com.github.sibdevtools.web.app.mocks.api.service.get.dto.HttpServiceDto;
 import com.github.sibdevtools.web.app.mocks.api.service.mocks.dto.HttpServiceItemDto;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
 import com.github.sibdevtools.web.app.mocks.entity.HttpServiceEntity;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
+import com.github.sibdevtools.web.app.mocks.repository.HttpMockInvocationEntityRepository;
 import com.github.sibdevtools.web.app.mocks.repository.HttpServiceEntityRepository;
 import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +42,7 @@ public class WebAppMocksService {
     private final Set<String> mockTypes;
     private final HttpServiceEntityRepository serviceEntityRepository;
     private final HttpMockEntityRepository httpMockEntityRepository;
+    private final HttpMockInvocationEntityRepository httpMockInvocationEntityRepository;
     private final StorageService storageService;
 
     @Value("${web.app.mocks.props.bucket.code}")
@@ -48,12 +55,14 @@ public class WebAppMocksService {
     public WebAppMocksService(List<RequestHandler> handlers,
                               HttpServiceEntityRepository httpServiceEntityRepository,
                               HttpMockEntityRepository httpMockEntityRepository,
+                              HttpMockInvocationEntityRepository httpMockInvocationEntityRepository,
                               StorageService storageService) {
         this.mockTypes = handlers.stream()
                 .map(RequestHandler::getType)
                 .collect(Collectors.toSet());
         this.serviceEntityRepository = httpServiceEntityRepository;
         this.httpMockEntityRepository = httpMockEntityRepository;
+        this.httpMockInvocationEntityRepository = httpMockInvocationEntityRepository;
         this.storageService = storageService;
     }
 
@@ -266,5 +275,27 @@ public class WebAppMocksService {
      */
     public void deleteMockById(long mockId) {
         httpMockEntityRepository.deleteById(mockId);
+    }
+
+    /**
+     * Get invocation history by mock id
+     *
+     * @param mockId   mock identifier
+     * @param page     history page
+     * @param pageSize history page size
+     * @return invocation history
+     */
+    public Page<HttpMockInvocationItemDto> getHistory(long mockId,
+                                                      Integer page,
+                                                      Integer pageSize) {
+        var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createdAt")));
+        var invocations = httpMockInvocationEntityRepository.findAllByMockId(mockId, pageable);
+
+        var entities = invocations
+                .stream()
+                .map(HttpMockInvocationItemDto::new)
+                .toList();
+
+        return new PageImpl<>(entities, pageable, invocations.getTotalElements());
     }
 }

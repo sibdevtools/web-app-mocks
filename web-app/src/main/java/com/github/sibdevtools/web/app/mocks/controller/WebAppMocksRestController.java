@@ -4,10 +4,7 @@ import com.github.sibdevtools.common.api.rs.StandardRs;
 import com.github.sibdevtools.web.app.mocks.api.rq.CreateMockRq;
 import com.github.sibdevtools.web.app.mocks.api.rq.SetEnabledMockRq;
 import com.github.sibdevtools.web.app.mocks.api.rq.UpdateMockRq;
-import com.github.sibdevtools.web.app.mocks.api.rs.CreateMockRs;
-import com.github.sibdevtools.web.app.mocks.api.rs.GetMockRs;
-import com.github.sibdevtools.web.app.mocks.api.rs.GetMockUrlRs;
-import com.github.sibdevtools.web.app.mocks.api.rs.UpdateMockRs;
+import com.github.sibdevtools.web.app.mocks.api.rs.*;
 import com.github.sibdevtools.web.app.mocks.service.WebAppMocksService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +100,14 @@ public class WebAppMocksRestController {
                                HttpServletRequest rq) {
         var mockUrl = webAppMocksService.getUrl(mockId, rq);
         return new GetMockUrlRs(mockUrl);
+    }
+
+    @GetMapping("/{mockId}/history/{pageSize}/{page}")
+    public GetMockInvocationsRs getHistory(@PathVariable("mockId") long mockId,
+                                           @PathVariable("pageSize") int pageSize,
+                                           @PathVariable("page") int page) {
+        var history = webAppMocksService.getHistory(mockId, page, pageSize);
+        return new GetMockInvocationsRs(history);
     }
 
 }

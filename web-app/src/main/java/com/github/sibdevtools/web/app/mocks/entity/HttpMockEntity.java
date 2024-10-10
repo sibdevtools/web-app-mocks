@@ -48,20 +48,4 @@ public class HttpMockEntity {
     @Column(name = "modified_at", nullable = false)
     private ZonedDateTime modifiedAt;
 
-    /**
-     * Fill values for new entity
-     */
-    @PrePersist
-    public void prePersist() {
-        createdAt = ZonedDateTime.now();
-        modifiedAt = ZonedDateTime.now();
-    }
-
-    /**
-     * Fill values for updated entity
-     */
-    @PreUpdate
-    public void preUpdate() {
-        modifiedAt = ZonedDateTime.now();
-    }
 }
