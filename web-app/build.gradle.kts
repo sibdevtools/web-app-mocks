@@ -12,6 +12,7 @@ dependencies {
     compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.mapstruct:mapstruct-processor:${project.property("lib_mapstruct_version")}")
 
     implementation("org.springframework:spring-aspects")
     implementation("org.springframework:spring-context")
@@ -38,6 +39,9 @@ dependencies {
     implementation("org.graalvm.js:js-scriptengine:${project.property("lib_graalvm_js")}")
 
     implementation("org.graalvm.python:python:${project.property("lib_graalvm_python")}")
+
+    implementation("org.mapstruct:mapstruct:${project.property("lib_mapstruct_version")}")
+    implementation("org.projectlombok:lombok-mapstruct-binding:${project.property("lib_mapstruct_lombok_binding_version")}")
 
     implementation("com.github.sibdevtools:api-common:${project.property("lib_api_common_version")}")
     implementation("com.github.sibdevtools:api-error:${project.property("lib_api_error_version")}")

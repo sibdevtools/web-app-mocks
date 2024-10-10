@@ -20,6 +20,8 @@ public class WebAppMockStartUpListener {
 
     @Value("${web.app.mocks.props.bucket.code}")
     private String bucketCode;
+    @Value("${web.app.mocks.props.invocations.bucket.code}")
+    private String invocationsBucketCode;
 
     @Autowired
     public WebAppMockStartUpListener(StorageBucketService storageBucketService) {
@@ -32,6 +34,11 @@ public class WebAppMockStartUpListener {
             storageBucketService.create(bucketCode);
         } catch (ServiceException e) {
             log.warn("Bucket creation error: {}", e.getMessage());
+        }
+        try {
+            storageBucketService.create(invocationsBucketCode);
+        } catch (ServiceException e) {
+            log.warn("Invocation bucket creation error: {}", e.getMessage());
         }
     }
 }

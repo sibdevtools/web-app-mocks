@@ -34,15 +34,18 @@ public class HttpMockInvocationEntity {
     private String method;
     @Column(name = "path", nullable = false)
     private String path;
-    //headers and query params
     @Column(name = "timing", nullable = false)
     private long timing;
     @Column(name = "status", nullable = false)
     private int status;
-    @Column(name = "body_storage_type", nullable = false)
-    private String bodyStorageType;
-    @Column(name = "body_storage_id", nullable = false)
-    private String bodyStorageId;
+    @Column(name = "rq_body_storage_type")
+    private String rqBodyStorageType;
+    @Column(name = "rq_body_storage_id")
+    private String rqBodyStorageId;
+    @Column(name = "rs_body_storage_type")
+    private String rsBodyStorageType;
+    @Column(name = "rs_body_storage_id")
+    private String rsBodyStorageId;
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
 }

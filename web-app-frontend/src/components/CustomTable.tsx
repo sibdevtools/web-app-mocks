@@ -68,8 +68,11 @@ const CustomTable: React.FC<CustomTableProps> = ({
   };
 
   const getCellRepresentation = (cell: Cell): React.ReactNode => {
+    if (!cell) {
+      return '';
+    }
     if (typeof cell === 'string') {
-      return (cell);
+      return cell;
     }
     return cell.representation;
   };

@@ -1,11 +1,12 @@
 import React from 'react';
 import { Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Copy01Icon, Delete01Icon, PencilEdit01Icon } from 'hugeicons-react';
+import { Copy01Icon, Delete01Icon, PencilEdit01Icon, WorkHistoryIcon } from 'hugeicons-react';
 import { Mock } from '../../../api/service';
 
 
 export interface ActionButtonsProps {
   mock: Mock;
+  onInvocations: () => void;
   onEdit: () => void;
   onCopy: () => void;
   onDelete: () => void;
@@ -14,12 +15,16 @@ export interface ActionButtonsProps {
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
                                                               mock,
+                                                              onInvocations,
                                                               onEdit,
                                                               onCopy,
                                                               onDelete,
                                                               showTooltip
                                                             }) => (
   <ButtonGroup>
+    <Button variant="outline-primary" onClick={onInvocations}>
+      <WorkHistoryIcon />
+    </Button>
     <Button variant="primary" onClick={onEdit}>
       <PencilEdit01Icon />
     </Button>

@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  * Http mocks invocations entity repository
  *
@@ -12,6 +14,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since 0.0.13
  */
 public interface HttpMockInvocationEntityRepository extends JpaRepository<HttpMockInvocationEntity, Long> {
+
+    /**
+     * Find mock invocation by mock identifier and invocation id
+     *
+     * @param mockId mock identifier
+     * @param id     invocation identifier
+     * @return invocation
+     */
+    Optional<HttpMockInvocationEntity> findByMockIdAndId(long mockId, long id);
 
     /**
      * Find all mock invocation by mocks id

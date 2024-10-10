@@ -23,9 +23,19 @@ export interface GetAllServicesRs {
 export const getAllServices = () => service.get<GetAllServicesRs>('/services/');
 
 // Create a new service
-export const createService = (rq: { code: string }) => service.post('/services/', rq);
+export interface CreateServiceRq {
+  code: string;
+}
+
+export const createService = (rq: CreateServiceRq) => service.post('/services/', rq);
+
 // Update an existing service
-export const updateService = (rq: { serviceId: number, code: string }) => service.put('/services/', rq);
+
+export interface UpdateServiceRq {
+  code: string;
+}
+
+export const updateService = (serviceId: number, rq: UpdateServiceRq) => service.put(`/services/${serviceId}`, rq);
 
 // Delete a service (assuming you have a delete endpoint, otherwise skip this)
 export const deleteService = (serviceId: number) => service.delete(`/services/${serviceId}`);
@@ -94,7 +104,7 @@ export interface UpdateMockRq {
   method: Method;
   path: string;
   type: MockType;
-  delay: number
+  delay: number;
   meta: MockMeta;
   content: string;
 }
@@ -124,3 +134,23 @@ export const setEnabledMock = (serviceId: number, mockId: number, rq: SetEnabled
   rq
 );
 
+export interface MockInvocationItem {
+  invocationId: number;
+  method: string;
+  path: string;
+  timing: number;
+  status: number;
+  createdAt: string;
+}
+
+export interface GetInvocationsByMockRs {
+  success: boolean;
+  body: {
+    pages: number;
+    invocations: MockInvocationItem[];
+  };
+}
+
+// Fetch invocations for a mock
+export const getInvocationsByMock = (serviceId: number, mockId: number, page: number, pageSize: number) =>
+  service.get<GetInvocationsByMockRs>(`/services/${serviceId}/mocks/${mockId}/history/${pageSize}/${page}`);

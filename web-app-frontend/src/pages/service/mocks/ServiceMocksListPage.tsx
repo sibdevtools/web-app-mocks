@@ -37,6 +37,10 @@ const ServiceMocksListPage: React.FC = () => {
     });
   };
 
+  const handleInvocations = async (service: Service, mock: Mock) => {
+    navigate(`${contextPath}service/${service.serviceId}/mocks/invocations/${mock.mockId}`);
+  };
+
   const handleCopy = async (service: Service, mock: Mock) => {
     try {
       const rs = await getMockUrl(service.serviceId, mock.mockId);
@@ -68,7 +72,7 @@ const ServiceMocksListPage: React.FC = () => {
                 <ArrowLeft01Icon />
               </Button>
             </Col>
-            <Col md={7}>
+            <Col md={6}>
               <span className={'h2'}>HTTP Service {service.code} Mocks</span>
             </Col>
             <Col md={{ span: 1, offset: 1 }}>
@@ -98,7 +102,6 @@ const ServiceMocksListPage: React.FC = () => {
                     value: mock.method
                   },
                   name: mock.name,
-                  pathRaw: mock.path,
                   path: {
                     representation: <code>{mock.path}</code>,
                     value: mock.path
@@ -115,6 +118,7 @@ const ServiceMocksListPage: React.FC = () => {
                   actions: {
                     representation: <ActionButtons
                       mock={mock}
+                      onInvocations={() => handleInvocations(service, mock)}
                       onEdit={() => handleEdit(service, mock)}
                       onCopy={() => handleCopy(service, mock)}
                       onDelete={() => deleteMockHandler(mock)}

@@ -66,7 +66,7 @@ const ServiceListPage: React.FC = () => {
       return;
     }
     try {
-      const response = await updateService({ serviceId: editService.serviceId, code: newServiceCode });
+      const response = await updateService(editService.serviceId, { code: newServiceCode });
       if (response.status !== 200) {
         setError('Failed to update service');
         return;
@@ -114,7 +114,7 @@ const ServiceListPage: React.FC = () => {
   return (
     <Container className="mt-4 mb-4">
       <Row>
-        <Col md={{ span: 8, offset: 1 }} className="text-center">
+        <Col md={{ span: 6, offset: 3 }}>
           <span className={'h2'}>HTTP Services</span>
         </Col>
         <Col md={{ span: 1, offset: 1 }}>

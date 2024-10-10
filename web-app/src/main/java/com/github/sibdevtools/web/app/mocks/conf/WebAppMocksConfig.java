@@ -7,9 +7,12 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.github.sibdevtools.web.app.mocks.service.WebAppMockInvocationService;
+import com.github.sibdevtools.web.app.mocks.service.handler.InvocationRequestHandler;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +40,14 @@ public class WebAppMocksConfig {
                 .addModule(new Jdk8Module())
                 .addModule(new JavaTimeModule())
                 .build();
+    }
+
+    @Bean("webAppMocksInvocationRequestHandler")
+    @ConditionalOnProperty(name = "web.app.mocks.props.invocation.history.enabled", havingValue = "true")
+    public InvocationRequestHandler webAppMocksInvocationRequestHandler(
+            WebAppMockInvocationService invocationService
+    ) {
+        return new InvocationRequestHandler(invocationService);
     }
 
     @Bean("webAppMocksAntPathMatcher")
