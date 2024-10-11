@@ -1,18 +1,20 @@
 package com.github.sibdevtools.web.app.mocks.controller;
 
-import com.github.sibdevtools.common.api.rs.StandardRs;
-import com.github.sibdevtools.web.app.mocks.api.service.all.rs.GetServicesRs;
-import com.github.sibdevtools.web.app.mocks.api.service.create.rq.CreateServiceRq;
-import com.github.sibdevtools.web.app.mocks.api.service.create.rs.CreateServiceRs;
-import com.github.sibdevtools.web.app.mocks.api.service.get.rs.GetServiceRs;
-import com.github.sibdevtools.web.app.mocks.api.service.mocks.rs.GetServiceMocksRs;
-import com.github.sibdevtools.web.app.mocks.api.service.update.rq.UpdateServiceRq;
-import com.github.sibdevtools.web.app.mocks.service.WebAppMocksService;
+import com.github.sibdevtools.common.api.rs.StandardBodyRs;
+import com.github.sibdevtools.web.app.mocks.api.mock.dto.HttpServiceMocksDto;
+import com.github.sibdevtools.web.app.mocks.api.service.dto.HttpServiceDto;
+import com.github.sibdevtools.web.app.mocks.api.service.rq.CreateServiceRq;
+import com.github.sibdevtools.web.app.mocks.api.service.rq.UpdateServiceRq;
+import com.github.sibdevtools.web.app.mocks.service.WebAppMocksServicesService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -20,18 +22,9 @@ import org.springframework.web.bind.annotation.*;
         value = "${web.app.mocks.uri.rest.services.path}",
         produces = MediaType.APPLICATION_JSON_VALUE
 )
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksServiceController {
-    private final WebAppMocksService mockService;
-
-    /**
-     * Constructor web app mocks service controller
-     *
-     * @param mockService mock service
-     */
-    @Autowired
-    public WebAppMocksServiceController(WebAppMocksService mockService) {
-        this.mockService = mockService;
-    }
+    private final WebAppMocksServicesService servicesService;
 
     /**
      * Create service Rest handler
@@ -40,13 +33,15 @@ public class WebAppMocksServiceController {
      * @return creation response
      */
     @PostMapping(
-            name = "/",
+            path = "/",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public CreateServiceRs create(@RequestBody @Validated CreateServiceRq rq) {
+    public StandardBodyRs<Long> create(
+            @RequestBody @Validated CreateServiceRq rq
+    ) {
         var code = rq.getCode();
-        var serviceMockEntity = mockService.createService(code);
-        return new CreateServiceRs(serviceMockEntity.getId());
+        var serviceMockEntity = servicesService.create(code);
+        return new StandardBodyRs<>(serviceMockEntity.getId());
     }
 
     /**
@@ -56,14 +51,16 @@ public class WebAppMocksServiceController {
      * @return updating response
      */
     @PutMapping(
-            name = "/",
+            path = "/{serviceId}",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public StandardRs update(@RequestBody @Validated UpdateServiceRq rq) {
-        var id = rq.getServiceId();
+    public StandardBodyRs<Long> update(
+            @PathVariable("serviceId") long serviceId,
+            @RequestBody @Validated UpdateServiceRq rq
+    ) {
         var code = rq.getCode();
-        mockService.updateService(id, code);
-        return new StandardRs();
+        servicesService.update(serviceId, code);
+        return new StandardBodyRs<>(serviceId);
     }
 
     /**
@@ -73,9 +70,11 @@ public class WebAppMocksServiceController {
      * @return service information
      */
     @GetMapping("/{serviceId}")
-    public GetServiceRs getById(@PathVariable("serviceId") long serviceId) {
-        var service = this.mockService.getService(serviceId);
-        return new GetServiceRs(service);
+    public StandardBodyRs<HttpServiceDto> getById(
+            @PathVariable("serviceId") long serviceId
+    ) {
+        var service = this.servicesService.getById(serviceId);
+        return new StandardBodyRs<>(service);
     }
 
     /**
@@ -84,9 +83,11 @@ public class WebAppMocksServiceController {
      * @return all services
      */
     @GetMapping("/")
-    public GetServicesRs getAll() {
-        var services = mockService.getAllServices();
-        return new GetServicesRs(services);
+    public StandardBodyRs<ArrayList<HttpServiceDto>> getAll() {
+        var services = Optional.ofNullable(servicesService.getAll())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        return new StandardBodyRs<>(services);
     }
 
     /**
@@ -96,7 +97,7 @@ public class WebAppMocksServiceController {
      */
     @DeleteMapping("/{serviceId}")
     public void deleteById(@PathVariable("serviceId") long serviceId) {
-        this.mockService.deleteServiceById(serviceId);
+        servicesService.deleteById(serviceId);
     }
 
     /**
@@ -105,9 +106,9 @@ public class WebAppMocksServiceController {
      * @param serviceId service identifier
      */
     @GetMapping("/{serviceId}/mocks")
-    public GetServiceMocksRs getAllMocks(@PathVariable("serviceId") long serviceId) {
-        var service = this.mockService.getServiceMocks(serviceId);
-        return new GetServiceMocksRs(service);
+    public StandardBodyRs<HttpServiceMocksDto> getAllMocks(@PathVariable("serviceId") long serviceId) {
+        var service = servicesService.getMocks(serviceId);
+        return new StandardBodyRs<>(service);
     }
 
 }

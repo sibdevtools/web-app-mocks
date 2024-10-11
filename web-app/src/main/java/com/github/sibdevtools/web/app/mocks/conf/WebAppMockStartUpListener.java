@@ -2,6 +2,7 @@ package com.github.sibdevtools.web.app.mocks.conf;
 
 import com.github.sibdevtools.error.exception.ServiceException;
 import com.github.sibdevtools.storage.api.service.StorageBucketService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,16 +16,14 @@ import org.springframework.context.event.EventListener;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMockStartUpListener {
     private final StorageBucketService storageBucketService;
 
     @Value("${web.app.mocks.props.bucket.code}")
     private String bucketCode;
-
-    @Autowired
-    public WebAppMockStartUpListener(StorageBucketService storageBucketService) {
-        this.storageBucketService = storageBucketService;
-    }
+    @Value("${web.app.mocks.props.invocations.bucket.code}")
+    private String invocationsBucketCode;
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
@@ -32,6 +31,11 @@ public class WebAppMockStartUpListener {
             storageBucketService.create(bucketCode);
         } catch (ServiceException e) {
             log.warn("Bucket creation error: {}", e.getMessage());
+        }
+        try {
+            storageBucketService.create(invocationsBucketCode);
+        } catch (ServiceException e) {
+            log.warn("Invocation bucket creation error: {}", e.getMessage());
         }
     }
 }

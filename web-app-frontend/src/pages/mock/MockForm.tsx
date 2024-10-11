@@ -195,7 +195,7 @@ export const MockForm: React.FC<MockFormProps> = ({
               <Row>
                 <Col className="d-flex justify-content-end">
                   <Button variant="primary" type="submit">
-                    <FloppyDiskIcon /> Save
+                    <FloppyDiskIcon />
                   </Button>
                 </Col>
               </Row>

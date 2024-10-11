@@ -30,11 +30,11 @@ const ServiceMocksListPage: React.FC = () => {
   }
 
   const handleEdit = async (service: Service, mock: Mock) => {
-    navigate(`${contextPath}service/${service.serviceId}/mocks/edit/${mock.mockId}`, {
-      state: {
-        code: service.code
-      }
-    });
+    navigate(`${contextPath}service/${service.serviceId}/mocks/edit/${mock.mockId}`);
+  };
+
+  const handleInvocations = async (service: Service, mock: Mock) => {
+    navigate(`${contextPath}service/${service.serviceId}/mocks/invocations/${mock.mockId}`);
   };
 
   const handleCopy = async (service: Service, mock: Mock) => {
@@ -68,8 +68,8 @@ const ServiceMocksListPage: React.FC = () => {
                 <ArrowLeft01Icon />
               </Button>
             </Col>
-            <Col md={7}>
-              <span className={'h2'}>HTTP Service {service.code} Mocks</span>
+            <Col md={6}>
+              <span className={'h2'}>HTTP Service <code>{service.code}</code> Mocks</span>
             </Col>
             <Col md={{ span: 1, offset: 1 }}>
               <Button variant={'outline-success'}
@@ -98,7 +98,6 @@ const ServiceMocksListPage: React.FC = () => {
                     value: mock.method
                   },
                   name: mock.name,
-                  pathRaw: mock.path,
                   path: {
                     representation: <code>{mock.path}</code>,
                     value: mock.path
@@ -110,11 +109,12 @@ const ServiceMocksListPage: React.FC = () => {
                       checked={mock.enabled}
                       onChange={e => setEnabledMockHandler(mock, e.target.checked)}
                     />,
-                    value: `${mock.enabled}`
+                    value: mock.enabled
                   },
                   actions: {
                     representation: <ActionButtons
                       mock={mock}
+                      onInvocations={() => handleInvocations(service, mock)}
                       onEdit={() => handleEdit(service, mock)}
                       onCopy={() => handleCopy(service, mock)}
                       onDelete={() => deleteMockHandler(mock)}

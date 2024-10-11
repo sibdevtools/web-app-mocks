@@ -1,4 +1,4 @@
-export const contextPath = '/web/app/mocks/ui/'
+export const contextPath = '/web/app/mocks/ui/';
 
 export const methods = [
   'GET',
@@ -73,7 +73,7 @@ export const statusCodes = new Map([
     [522, 'Connection timed out'] as const,
     [524, 'A timeout occurred'] as const,
   ]
-)
+);
 
 export type MapKey<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never
 
@@ -146,7 +146,7 @@ export const contentTypes = [
   'image/jpeg',
   'image/webp',
   'image/svg+xml',
-].sort()
+].sort();
 
 export const mockTypes = [
   'STATIC',

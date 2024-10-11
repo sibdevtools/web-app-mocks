@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { ButtonGroup, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { getAllServices, deleteService, updateService, createService, Service } from '../../api/service';
-import CustomTable from '../../components/CustomTable';
+import CustomTable, { Cell, Row as TableRow } from '../../components/CustomTable';
 import { Loader } from '../../components/Loader';
 import { ServiceModal } from './ServiceModal';
+import { contextPath } from '../../const/common.const';
+import { useNavigate } from 'react-router-dom';
 
 const ServiceListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -14,6 +16,7 @@ const ServiceListPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('add');
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchServices();
@@ -66,7 +69,7 @@ const ServiceListPage: React.FC = () => {
       return;
     }
     try {
-      const response = await updateService({ serviceId: editService.serviceId, code: newServiceCode });
+      const response = await updateService(editService.serviceId, { code: newServiceCode });
       if (response.status !== 200) {
         setError('Failed to update service');
         return;
@@ -111,10 +114,14 @@ const ServiceListPage: React.FC = () => {
     }
   };
 
+  const handleCodeClick = (row: TableRow) => {
+    navigate(`${contextPath}service/${row.serviceId}/mocks`);
+  };
+
   return (
     <Container className="mt-4 mb-4">
       <Row>
-        <Col md={{ span: 8, offset: 1 }} className="text-center">
+        <Col md={{ span: 6, offset: 3 }}>
           <span className={'h2'}>HTTP Services</span>
         </Col>
         <Col md={{ span: 1, offset: 1 }}>
@@ -135,39 +142,41 @@ const ServiceListPage: React.FC = () => {
                     {error}
                   </Alert>
                 )}
-                <CustomTable
-                  columns={[
-                    { key: 'code', label: 'Code' },
-                    { key: 'actions', label: 'Actions' },
-                  ]}
-                  data={services.map((service) => {
-                    return {
-                      code: {
-                        representation: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
-                          {service.code}
-                        </a>,
-                        value: service.code,
-                      },
-                      actions: {
-                        representation:
-                          <ButtonGroup>
-                            <Button variant={'primary'} onClick={() => handleEditClick(service)}>
-                              <PencilEdit01Icon />
-                            </Button>
-                            <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
-                              <Delete01Icon />
-                            </Button>
-                          </ButtonGroup>
-                      }
-                    };
-                  })}
-                  sortableColumns={['code']}
-                  filterableColumns={['code']}
-                  styleProps={{
-                    centerHeaders: true,
-                    textCenterValues: true,
-                  }}
-                />
+                {!error && (
+                  <CustomTable
+                    columns={[
+                      { key: 'code', label: 'Code' },
+                      { key: 'actions', label: 'Actions' },
+                    ]}
+                    data={services.map((service) => {
+                      return {
+                        serviceId: service.serviceId,
+                        code: {
+                          representation: <code>{service.code}</code>,
+                          onClick: handleCodeClick,
+                          value: service.code,
+                        },
+                        actions: {
+                          representation:
+                            <ButtonGroup>
+                              <Button variant={'primary'} onClick={() => handleEditClick(service)}>
+                                <PencilEdit01Icon />
+                              </Button>
+                              <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
+                                <Delete01Icon />
+                              </Button>
+                            </ButtonGroup>
+                        }
+                      };
+                    })}
+                    sortableColumns={['code']}
+                    filterableColumns={['code']}
+                    styleProps={{
+                      centerHeaders: true,
+                      textCenterValues: true,
+                    }}
+                  />
+                )}
               </>
             )}
           </Container>

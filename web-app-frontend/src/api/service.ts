@@ -23,9 +23,19 @@ export interface GetAllServicesRs {
 export const getAllServices = () => service.get<GetAllServicesRs>('/services/');
 
 // Create a new service
-export const createService = (rq: { code: string }) => service.post('/services/', rq);
+export interface CreateServiceRq {
+  code: string;
+}
+
+export const createService = (rq: CreateServiceRq) => service.post('/services/', rq);
+
 // Update an existing service
-export const updateService = (rq: { serviceId: number, code: string }) => service.put('/services/', rq);
+
+export interface UpdateServiceRq {
+  code: string;
+}
+
+export const updateService = (serviceId: number, rq: UpdateServiceRq) => service.put(`/services/${serviceId}`, rq);
 
 // Delete a service (assuming you have a delete endpoint, otherwise skip this)
 export const deleteService = (serviceId: number) => service.delete(`/services/${serviceId}`);
@@ -94,7 +104,7 @@ export interface UpdateMockRq {
   method: Method;
   path: string;
   type: MockType;
-  delay: number
+  delay: number;
   meta: MockMeta;
   content: string;
 }
@@ -124,3 +134,68 @@ export const setEnabledMock = (serviceId: number, mockId: number, rq: SetEnabled
   rq
 );
 
+export interface MockInvocationItem {
+  invocationId: number;
+  method: string;
+  path: string;
+  timing: number;
+  status: number;
+  createdAt: string;
+}
+
+export interface GetInvocationsByMockRs {
+  success: boolean;
+  body: {
+    pages: number;
+    invocations: MockInvocationItem[];
+  };
+}
+
+// Fetch invocations for a mock
+export const getInvocationsByMock = (serviceId: number, mockId: number, page: number, pageSize: number) =>
+  service.get<GetInvocationsByMockRs>(`/services/${serviceId}/mocks/${mockId}/history/${pageSize}/${page}`);
+
+export type MultiValueMap = { [key: string]: [string | null] } | null;
+export type Headers = MultiValueMap;
+export type QueryParams = MultiValueMap;
+
+export interface MockInvocation {
+  invocationId: number;
+  remoteHost: string | null;
+  remoteAddress: string | null;
+  method: string;
+  path: string;
+  queryParams: QueryParams;
+  timing: number;
+  status: number;
+  createdAt: string;
+  rqBody: string | null;
+  rqHeaders: Headers;
+  rsBody: string | null;
+  rsHeaders: Headers;
+}
+
+export const MockInvocationDefaults: MockInvocation = {
+  createdAt: '',
+  invocationId: 0,
+  method: '',
+  path: '',
+  queryParams: null,
+  remoteAddress: null,
+  remoteHost: null,
+  rqBody: null,
+  rqHeaders: null,
+  rsBody: null,
+  rsHeaders: null,
+  status: 0,
+  timing: 0
+};
+
+export interface GetInvocationRs {
+  success: boolean;
+  body: MockInvocation;
+}
+
+// Fetch invocation
+export const getInvocation = (serviceId: number, mockId: number, invocationId: number) =>
+  service.get<GetInvocationRs>(`/services/${serviceId}/mocks/${mockId}/history/invocation/${invocationId}`);

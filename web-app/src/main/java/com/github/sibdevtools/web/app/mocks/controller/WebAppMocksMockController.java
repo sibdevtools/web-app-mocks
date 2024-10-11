@@ -4,6 +4,7 @@ import com.github.sibdevtools.web.app.mocks.service.RequestDispatcher;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,16 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @Controller
 @RequestMapping("${web.app.mocks.uri.mock.path}")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksMockController {
     @Value("${web.app.mocks.uri.mock.path}")
     private String uriPath;
 
     private final RequestDispatcher requestDispatcher;
-
-    @Autowired
-    public WebAppMocksMockController(RequestDispatcher requestDispatcher) {
-        this.requestDispatcher = requestDispatcher;
-    }
 
     @PostConstruct
     public void setUp() {

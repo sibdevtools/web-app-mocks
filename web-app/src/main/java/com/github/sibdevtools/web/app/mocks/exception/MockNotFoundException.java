@@ -5,16 +5,17 @@ import com.github.sibdevtools.web.app.mocks.constant.Constants;
 
 /**
  * @author sibmaks
- * @since 0.0.1
+ * @since 0.0.13
  */
-public class NotFoundException extends ServiceException {
+public class MockNotFoundException extends ServiceException {
 
     /**
      * Construct not found error exception.
      *
-     * @param systemMessage system message
+     * @param mockId mock identifier
      */
-    public NotFoundException(String systemMessage) {
-        super(404, Constants.ERROR_SOURCE, "NOT_FOUND", systemMessage);
+    public MockNotFoundException(long mockId) {
+        super(404, Constants.ERROR_SOURCE, "MOCK_NOT_FOUND", "Mock %s not found".formatted(mockId));
     }
+
 }

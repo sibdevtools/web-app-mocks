@@ -1,16 +1,17 @@
 package com.github.sibdevtools.web.app.mocks.service;
 
+import com.github.sibdevtools.storage.api.dto.BucketFile;
 import com.github.sibdevtools.storage.api.rq.SaveFileRq;
 import com.github.sibdevtools.storage.api.service.StorageService;
-import com.github.sibdevtools.web.app.mocks.api.dto.HttpMockDto;
-import com.github.sibdevtools.web.app.mocks.api.service.get.dto.HttpServiceDto;
-import com.github.sibdevtools.web.app.mocks.api.service.mocks.dto.HttpServiceItemDto;
+import com.github.sibdevtools.web.app.mocks.api.mock.dto.HttpMockDto;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
-import com.github.sibdevtools.web.app.mocks.entity.HttpServiceEntity;
+import com.github.sibdevtools.web.app.mocks.exception.MockNotFoundException;
+import com.github.sibdevtools.web.app.mocks.exception.ServiceNotFoundException;
+import com.github.sibdevtools.web.app.mocks.mapper.HttpMockDtoMapper;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
 import com.github.sibdevtools.web.app.mocks.repository.HttpServiceEntityRepository;
-import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author sibmaks
@@ -32,30 +31,19 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksService {
-    private final Set<String> mockTypes;
+    private final Set<String> webAppMocksHandlerTypes;
     private final HttpServiceEntityRepository serviceEntityRepository;
     private final HttpMockEntityRepository httpMockEntityRepository;
     private final StorageService storageService;
+    private final HttpMockDtoMapper httpMockDtoMapper;
 
     @Value("${web.app.mocks.props.bucket.code}")
     private String bucketCode;
 
     @Value("${web.app.mocks.uri.mock.path}")
     private String mockUriPath;
-
-    @Autowired
-    public WebAppMocksService(List<RequestHandler> handlers,
-                              HttpServiceEntityRepository httpServiceEntityRepository,
-                              HttpMockEntityRepository httpMockEntityRepository,
-                              StorageService storageService) {
-        this.mockTypes = handlers.stream()
-                .map(RequestHandler::getType)
-                .collect(Collectors.toSet());
-        this.serviceEntityRepository = httpServiceEntityRepository;
-        this.httpMockEntityRepository = httpMockEntityRepository;
-        this.storageService = storageService;
-    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public HttpMockEntity create(long serviceId,
@@ -66,11 +54,11 @@ public class WebAppMocksService {
                                  long delay,
                                  Map<String, String> meta,
                                  byte[] content) {
-        if (!mockTypes.contains(type)) {
+        if (!webAppMocksHandlerTypes.contains(type)) {
             throw new IllegalArgumentException("Type %s not supported".formatted(type));
         }
         var serviceEntity = serviceEntityRepository.findById(serviceId)
-                .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
+                .orElseThrow(() -> new ServiceNotFoundException(serviceId));
         meta = meta == null ? Collections.emptyMap() : meta;
         var contentName = "%s-%s-%s".formatted(method, serviceEntity.getCode(), type);
 
@@ -108,11 +96,11 @@ public class WebAppMocksService {
                                  long delay,
                                  Map<String, String> meta,
                                  byte[] content) {
-        if (!mockTypes.contains(type)) {
+        if (!webAppMocksHandlerTypes.contains(type)) {
             throw new IllegalArgumentException("Type %s not supported".formatted(type));
         }
         var httpMockEntity = httpMockEntityRepository.findById(mockId)
-                .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
+                .orElseThrow(() -> new MockNotFoundException(mockId));
         meta = meta == null ? Collections.emptyMap() : meta;
         var serviceEntity = httpMockEntity.getService();
         var contentName = "%s-%s-%s".formatted(method, serviceEntity.getCode(), type);
@@ -142,7 +130,7 @@ public class WebAppMocksService {
     public HttpMockEntity setEnabled(long mockId,
                                      boolean enabled) {
         var httpMockEntity = httpMockEntityRepository.findById(mockId)
-                .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
+                .orElseThrow(() -> new MockNotFoundException(mockId));
 
         httpMockEntity.setEnabled(enabled);
         httpMockEntity.setModifiedAt(ZonedDateTime.now());
@@ -150,19 +138,31 @@ public class WebAppMocksService {
         return httpMockEntityRepository.save(httpMockEntity);
     }
 
-    public HttpMockDto get(long mockId) {
+    /**
+     * Get mock by ID
+     *
+     * @param mockId mock identifier
+     * @return mock instance
+     */
+    public HttpMockDto getById(long mockId) {
         var httpMockEntity = httpMockEntityRepository.findById(mockId)
-                .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
+                .orElseThrow(() -> new MockNotFoundException(mockId));
         var storageId = httpMockEntity.getStorageId();
-        var getBucketFileRs = storageService.get(storageId);
-        var bucketFile = getBucketFileRs.getBody();
-        return new HttpMockDto(httpMockEntity, bucketFile);
+        var bucketFile = getBucketFile(storageId);
+        return httpMockDtoMapper.map(httpMockEntity, bucketFile);
     }
 
+    /**
+     * Get mock URL
+     *
+     * @param mockId mock identifier
+     * @param rq     http request
+     * @return mock URL
+     */
     public String getUrl(long mockId,
                          HttpServletRequest rq) {
         var httpMockEntity = httpMockEntityRepository.findById(mockId)
-                .orElseThrow(() -> new IllegalArgumentException("Mock %s not found".formatted(mockId)));
+                .orElseThrow(() -> new MockNotFoundException(mockId));
 
         var service = httpMockEntity.getService();
 
@@ -185,86 +185,19 @@ public class WebAppMocksService {
     }
 
     /**
-     * Create service
-     *
-     * @param code service code
-     * @return service instance
-     */
-    public HttpServiceEntity createService(String code) {
-        var serviceEntity = HttpServiceEntity.builder()
-                .code(code)
-                .createdAt(ZonedDateTime.now())
-                .modifiedAt(ZonedDateTime.now())
-                .build();
-        return serviceEntityRepository.save(serviceEntity);
-    }
-
-    /**
-     * Get service info by id
-     *
-     * @param serviceId service identifier
-     * @return service information
-     */
-    public HttpServiceDto getService(long serviceId) {
-        var serviceEntity = serviceEntityRepository.findById(serviceId)
-                .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
-        return new HttpServiceDto(serviceEntity);
-    }
-
-    /**
-     * Get service's mocks by id
-     *
-     * @param serviceId service identifier
-     * @return service information with mocks
-     */
-    public HttpServiceItemDto getServiceMocks(long serviceId) {
-        var serviceEntity = serviceEntityRepository.findById(serviceId)
-                .orElseThrow(() -> new IllegalArgumentException("Service %s not found".formatted(serviceId)));
-        var httpMockEntities = httpMockEntityRepository.findAllByServiceId(serviceId);
-        return new HttpServiceItemDto(
-                serviceEntity,
-                httpMockEntities
-        );
-    }
-
-    /**
-     * Get all services
-     *
-     * @return list of all services
-     */
-    public List<com.github.sibdevtools.web.app.mocks.api.service.all.dto.HttpServiceDto> getAllServices() {
-        return serviceEntityRepository.findAll()
-                .stream()
-                .map(com.github.sibdevtools.web.app.mocks.api.service.all.dto.HttpServiceDto::new)
-                .toList();
-    }
-
-    /**
-     * Delete service by id
-     *
-     * @param serviceId service identifier
-     */
-    public void deleteServiceById(long serviceId) {
-        serviceEntityRepository.deleteById(serviceId);
-    }
-
-    /**
-     * Update service code
-     *
-     * @param id   service identifier
-     * @param code service code
-     */
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateService(long id, String code) {
-        serviceEntityRepository.updateCodeById(id, code, ZonedDateTime.now());
-    }
-
-    /**
      * Delete mock by id
      *
      * @param mockId mock identifier
      */
     public void deleteMockById(long mockId) {
         httpMockEntityRepository.deleteById(mockId);
+    }
+
+    private BucketFile getBucketFile(String invocation) {
+        if (invocation == null) {
+            return null;
+        }
+        var getBucketFileRs = storageService.get(invocation);
+        return getBucketFileRs.getBody();
     }
 }

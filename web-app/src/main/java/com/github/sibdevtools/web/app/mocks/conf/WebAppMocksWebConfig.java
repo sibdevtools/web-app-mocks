@@ -1,5 +1,9 @@
 package com.github.sibdevtools.web.app.mocks.conf;
 
+import com.github.sibdevtools.web.app.mocks.filter.WebAppMocksFilter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -28,5 +32,19 @@ public class WebAppMocksWebConfig implements WebMvcConfigurer {
                 .setViewName("forward:/web/app/mocks/ui/index.html");
         registry.addViewController("/web/app/mocks/ui/service/**")
                 .setViewName("forward:/web/app/mocks/ui/index.html");
+    }
+
+    @Bean
+    public FilterRegistrationBean<WebAppMocksFilter> webAppMocksFilter(
+            @Value("${web.app.mocks.uri.mock.path.ant}")
+            String path
+    ) {
+        var registrationBean = new FilterRegistrationBean<WebAppMocksFilter>();
+
+        registrationBean.setFilter(new WebAppMocksFilter());
+        registrationBean.addUrlPatterns(path);
+        registrationBean.setOrder(Integer.MIN_VALUE);
+
+        return registrationBean;
     }
 }

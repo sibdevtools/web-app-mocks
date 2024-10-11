@@ -2,6 +2,7 @@ package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
+import com.github.sibdevtools.web.app.mocks.utils.HttpUtils;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,8 +56,8 @@ public class GraalVMRequest {
         this.remoteAddress = rq.getRemoteAddr();
         this.method = rq.getMethod();
         this.path = path;
-        this.headers = Collections.unmodifiableMap(getHeaders(rq));
-        this.queryParams = Collections.unmodifiableMap(getQueryParams(rq));
+        this.headers = HttpUtils.getHeaders(rq);
+        this.queryParams = HttpUtils.getQueryParams(rq);
         this.contentFuture = getContentFuture(rq);
         this.cookies = Optional.ofNullable(rq.getCookies())
                 .stream()
@@ -73,37 +74,6 @@ public class GraalVMRequest {
                 throw new UnexpectedErrorException("Can't read rq content", e);
             }
         });
-    }
-
-    private static Map<String, List<String>> getHeaders(HttpServletRequest rq) {
-        var headers = new HashMap<String, List<String>>();
-        var names = Optional.ofNullable(rq.getHeaderNames())
-                .orElseGet(Collections::emptyEnumeration);
-        while (names.hasMoreElements()) {
-            var key = names.nextElement();
-            var values = new ArrayList<String>();
-            var headerValues = rq.getHeaders(key);
-            while (headerValues.hasMoreElements()) {
-                var value = headerValues.nextElement();
-                values.add(value);
-            }
-            headers.put(key, Collections.unmodifiableList(values));
-        }
-        return headers;
-    }
-
-    private static Map<String, List<String>> getQueryParams(HttpServletRequest rq) {
-        return Optional.ofNullable(rq.getParameterMap())
-                .map(Map::entrySet)
-                .stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        it -> Optional.ofNullable(it.getValue())
-                                .map(Arrays::asList)
-                                .orElseGet(Collections::emptyList))
-                );
-
     }
 
     /**
