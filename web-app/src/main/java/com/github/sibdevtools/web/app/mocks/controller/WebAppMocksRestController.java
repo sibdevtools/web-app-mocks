@@ -11,6 +11,7 @@ import com.github.sibdevtools.web.app.mocks.api.mock.rq.UpdateMockRq;
 import com.github.sibdevtools.web.app.mocks.service.WebAppMockInvocationService;
 import com.github.sibdevtools.web.app.mocks.service.WebAppMocksService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,18 +27,12 @@ import java.util.Base64;
         path = "${web.app.mocks.uri.rest.mocks.path}",
         produces = MediaType.APPLICATION_JSON_VALUE
 )
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksRestController {
     private static final Base64.Decoder B64_DECODER = Base64.getDecoder();
 
     private final WebAppMocksService webAppMocksService;
     private final WebAppMockInvocationService webAppMockInvocationService;
-
-    @Autowired
-    public WebAppMocksRestController(WebAppMocksService webAppMocksService,
-                                     WebAppMockInvocationService webAppMockInvocationService) {
-        this.webAppMocksService = webAppMocksService;
-        this.webAppMockInvocationService = webAppMockInvocationService;
-    }
 
     @PostMapping(
             path = "/",

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.sibdevtools.web.app.mocks.service.WebAppMockInvocationService;
 import com.github.sibdevtools.web.app.mocks.service.handler.InvocationRequestHandler;
+import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +22,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.util.AntPathMatcher;
 
 import javax.sql.DataSource;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author sibmaks
@@ -68,5 +72,12 @@ public class WebAppMocksConfig {
         var flyway = new Flyway(configuration);
         flyway.migrate();
         return flyway;
+    }
+
+    @Bean("webAppMocksHandlerTypeToHandler")
+    public Set<String> webAppMocksHandlerTypes(List<RequestHandler> handlers) {
+        return handlers.stream()
+                .map(RequestHandler::getType)
+                .collect(Collectors.toSet());
     }
 }

@@ -1,11 +1,13 @@
 package com.github.sibdevtools.web.app.mocks.service;
 
-import com.github.sibdevtools.web.app.mocks.api.service.dto.HttpServiceDto;
 import com.github.sibdevtools.web.app.mocks.api.mock.dto.HttpServiceMocksDto;
+import com.github.sibdevtools.web.app.mocks.api.service.dto.HttpServiceDto;
 import com.github.sibdevtools.web.app.mocks.entity.HttpServiceEntity;
 import com.github.sibdevtools.web.app.mocks.exception.ServiceNotFoundException;
+import com.github.sibdevtools.web.app.mocks.mapper.HttpServiceMocksDtoMapper;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
 import com.github.sibdevtools.web.app.mocks.repository.HttpServiceEntityRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,18 +23,11 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
 public class WebAppMocksServicesService {
     private final HttpServiceEntityRepository serviceEntityRepository;
     private final HttpMockEntityRepository httpMockEntityRepository;
-
-    @Autowired
-    public WebAppMocksServicesService(
-            HttpServiceEntityRepository httpServiceEntityRepository,
-            HttpMockEntityRepository httpMockEntityRepository
-    ) {
-        this.serviceEntityRepository = httpServiceEntityRepository;
-        this.httpMockEntityRepository = httpMockEntityRepository;
-    }
+    private final HttpServiceMocksDtoMapper httpServiceMocksDtoMapper;
 
     /**
      * Create service
@@ -71,10 +66,7 @@ public class WebAppMocksServicesService {
         var serviceEntity = serviceEntityRepository.findById(serviceId)
                 .orElseThrow(() -> new ServiceNotFoundException(serviceId));
         var httpMockEntities = httpMockEntityRepository.findAllByServiceId(serviceId);
-        return new HttpServiceMocksDto(
-                serviceEntity,
-                httpMockEntities
-        );
+        return httpServiceMocksDtoMapper.map(serviceEntity, httpMockEntities);
     }
 
     /**

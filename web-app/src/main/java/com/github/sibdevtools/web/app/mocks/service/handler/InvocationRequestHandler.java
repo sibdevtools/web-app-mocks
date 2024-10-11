@@ -4,6 +4,7 @@ import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
 import com.github.sibdevtools.web.app.mocks.service.WebAppMockInvocationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,13 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 0.0.13
  */
 @Aspect
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class InvocationRequestHandler {
     private final WebAppMockInvocationService invocationService;
-
-    @Autowired
-    public InvocationRequestHandler(WebAppMockInvocationService invocationService) {
-        this.invocationService = invocationService;
-    }
 
     /**
      * Wrap request handles, for saving history.

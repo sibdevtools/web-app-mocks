@@ -6,6 +6,7 @@ import com.github.sibdevtools.web.app.mocks.api.service.dto.HttpServiceDto;
 import com.github.sibdevtools.web.app.mocks.api.service.rq.CreateServiceRq;
 import com.github.sibdevtools.web.app.mocks.api.service.rq.UpdateServiceRq;
 import com.github.sibdevtools.web.app.mocks.service.WebAppMocksServicesService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,18 +22,9 @@ import java.util.Optional;
         value = "${web.app.mocks.uri.rest.services.path}",
         produces = MediaType.APPLICATION_JSON_VALUE
 )
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksServiceController {
     private final WebAppMocksServicesService servicesService;
-
-    /**
-     * Constructor web app mocks service controller
-     *
-     * @param servicesService service's service
-     */
-    @Autowired
-    public WebAppMocksServiceController(WebAppMocksServicesService servicesService) {
-        this.servicesService = servicesService;
-    }
 
     /**
      * Create service Rest handler

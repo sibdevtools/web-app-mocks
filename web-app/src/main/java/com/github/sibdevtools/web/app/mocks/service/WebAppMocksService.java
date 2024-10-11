@@ -10,8 +10,8 @@ import com.github.sibdevtools.web.app.mocks.exception.ServiceNotFoundException;
 import com.github.sibdevtools.web.app.mocks.mapper.HttpMockDtoMapper;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
 import com.github.sibdevtools.web.app.mocks.repository.HttpServiceEntityRepository;
-import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,10 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author sibmaks
@@ -33,8 +31,9 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksService {
-    private final Set<String> mockTypes;
+    private final Set<String> webAppMocksHandlerTypes;
     private final HttpServiceEntityRepository serviceEntityRepository;
     private final HttpMockEntityRepository httpMockEntityRepository;
     private final StorageService storageService;
@@ -46,23 +45,6 @@ public class WebAppMocksService {
     @Value("${web.app.mocks.uri.mock.path}")
     private String mockUriPath;
 
-    @Autowired
-    public WebAppMocksService(
-            List<RequestHandler> handlers,
-            HttpServiceEntityRepository httpServiceEntityRepository,
-            HttpMockEntityRepository httpMockEntityRepository,
-            StorageService storageService,
-            HttpMockDtoMapper httpMockDtoMapper
-    ) {
-        this.mockTypes = handlers.stream()
-                .map(RequestHandler::getType)
-                .collect(Collectors.toSet());
-        this.serviceEntityRepository = httpServiceEntityRepository;
-        this.httpMockEntityRepository = httpMockEntityRepository;
-        this.storageService = storageService;
-        this.httpMockDtoMapper = httpMockDtoMapper;
-    }
-
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public HttpMockEntity create(long serviceId,
                                  String method,
@@ -72,7 +54,7 @@ public class WebAppMocksService {
                                  long delay,
                                  Map<String, String> meta,
                                  byte[] content) {
-        if (!mockTypes.contains(type)) {
+        if (!webAppMocksHandlerTypes.contains(type)) {
             throw new IllegalArgumentException("Type %s not supported".formatted(type));
         }
         var serviceEntity = serviceEntityRepository.findById(serviceId)
@@ -114,7 +96,7 @@ public class WebAppMocksService {
                                  long delay,
                                  Map<String, String> meta,
                                  byte[] content) {
-        if (!mockTypes.contains(type)) {
+        if (!webAppMocksHandlerTypes.contains(type)) {
             throw new IllegalArgumentException("Type %s not supported".formatted(type));
         }
         var httpMockEntity = httpMockEntityRepository.findById(mockId)

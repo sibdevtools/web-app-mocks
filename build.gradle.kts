@@ -25,7 +25,6 @@ allprojects {
         if (JavaVersion.current() < javaVersion) {
             toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
         }
-        withJavadocJar()
         withSourcesJar()
     }
 
