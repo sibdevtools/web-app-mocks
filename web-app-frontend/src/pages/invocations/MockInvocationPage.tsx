@@ -50,17 +50,22 @@ const MockInvocationPage: React.FC = () => {
     navigate(`${contextPath}service/${serviceId}/mocks/invocations/${mockId}`);
   };
 
-  // Helper function to decode Base64 body
   const decodeBase64 = (data: string | null) => {
     return data ? atob(data) : null;
   };
 
-  // Helper function to safely convert Map to object or return null
-  const convertMapToObject = (map: Map<string, Array<string> | null> | null) => {
-    if (map) {
-      return Object.fromEntries(map.entries());
-    }
-    return null;
+  const renderTableRows = (map: Map<string, Array<string> | null> | null) => {
+    if (!map || !(map instanceof Map)) return <tr><td colSpan={2}>N/A</td></tr>;
+
+    const entries = Array.from(map.entries());
+    if (entries.length === 0) return <tr><td colSpan={2}>N/A</td></tr>;
+
+    return entries.map(([key, value], idx) => (
+      <tr key={idx}>
+        <td>{key}</td>
+        <td>{value ? value.join(', ') : 'N/A'}</td>
+      </tr>
+    ));
   };
 
   return (
@@ -89,70 +94,87 @@ const MockInvocationPage: React.FC = () => {
                 )}
 
                 {!error && (
-                  <Table striped bordered hover>
-                    <tbody>
-                    <tr>
-                      <td><strong>Remote Client Host</strong></td>
-                      <td>{invocation.remoteHost || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Remote Client Address</strong></td>
-                      <td>{invocation.remoteAddress || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>HTTP Method</strong></td>
-                      <td>{invocation.method}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Request Path</strong></td>
-                      <td>{invocation.path}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Query Params</strong></td>
-                      <td>
-                        {invocation.queryParams ? (
-                          <pre>{JSON.stringify(convertMapToObject(invocation.queryParams), null, 2)}</pre>
-                        ) : 'N/A'}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>Execution Timing</strong></td>
-                      <td>{invocation.timing} ms</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Status Code</strong></td>
-                      <td>{invocation.status}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Invocation Date Time</strong></td>
-                      <td>{invocation.createdAt}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Request Body</strong></td>
-                      <td><pre>{decodeBase64(invocation.rqBody)}</pre></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Request Headers</strong></td>
-                      <td>
-                        {invocation.rqHeaders ? (
-                          <pre>{JSON.stringify(convertMapToObject(invocation.rqHeaders), null, 2)}</pre>
-                        ) : 'N/A'}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>Response Body</strong></td>
-                      <td><pre>{decodeBase64(invocation.rsBody)}</pre></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Response Headers</strong></td>
-                      <td>
-                        {invocation.rsHeaders ? (
-                          <pre>{JSON.stringify(convertMapToObject(invocation.rsHeaders), null, 2)}</pre>
-                        ) : 'N/A'}
-                      </td>
-                    </tr>
-                    </tbody>
-                  </Table>
+                  <>
+                    <Table striped bordered hover>
+                      <tbody>
+                      <tr>
+                        <td><strong>Remote Client Host</strong></td>
+                        <td>{invocation.remoteHost || 'N/A'}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Remote Client Address</strong></td>
+                        <td>{invocation.remoteAddress || 'N/A'}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>HTTP Method</strong></td>
+                        <td>{invocation.method}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Request Path</strong></td>
+                        <td>{invocation.path}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Execution Timing</strong></td>
+                        <td>{invocation.timing} ms</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Status Code</strong></td>
+                        <td>{invocation.status}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Invocation Date Time</strong></td>
+                        <td>{invocation.createdAt}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Request Body</strong></td>
+                        <td><pre>{decodeBase64(invocation.rqBody)}</pre></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Response Body</strong></td>
+                        <td><pre>{decodeBase64(invocation.rsBody)}</pre></td>
+                      </tr>
+                      </tbody>
+                    </Table>
+
+                    <h4 className="mt-4">Query Params</h4>
+                    <Table striped bordered hover>
+                      <thead>
+                      <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {renderTableRows(invocation.queryParams)}
+                      </tbody>
+                    </Table>
+
+                    <h4 className="mt-4">Request Headers</h4>
+                    <Table striped bordered hover>
+                      <thead>
+                      <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {renderTableRows(invocation.rqHeaders)}
+                      </tbody>
+                    </Table>
+
+                    <h4 className="mt-4">Response Headers</h4>
+                    <Table striped bordered hover>
+                      <thead>
+                      <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {renderTableRows(invocation.rsHeaders)}
+                      </tbody>
+                    </Table>
+                  </>
                 )}
               </>
             )}
