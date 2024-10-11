@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Copy01Icon, Delete01Icon, PencilEdit01Icon, WorkHistoryIcon } from 'hugeicons-react';
+import { Clock01Icon, Copy01Icon, Delete01Icon, PencilEdit01Icon, WorkHistoryIcon } from 'hugeicons-react';
 import { Mock } from '../../../api/service';
 
 
@@ -23,14 +23,14 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
                                                             }) => (
   <ButtonGroup>
     <Button variant="outline-primary" onClick={onInvocations}>
-      <WorkHistoryIcon />
+      <Clock01Icon />
     </Button>
     <Button variant="primary" onClick={onEdit}>
       <PencilEdit01Icon />
     </Button>
     <OverlayTrigger show={mock.mockId in showTooltip && showTooltip[mock.mockId]} placement="top"
                     overlay={<Tooltip id={`tooltip-${mock.mockId}`}>Copied!</Tooltip>}>
-      <Button variant="info" onClick={onCopy}>
+      <Button variant="outline-info" onClick={onCopy}>
         <Copy01Icon />
       </Button>
     </OverlayTrigger>

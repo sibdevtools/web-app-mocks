@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'hugeicons-react'
+import 'hugeicons-react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import ServiceListPage from './pages/service/ServiceListPage';
@@ -9,6 +9,7 @@ import { contextPath } from './const/common.const';
 import AddMockPage from './pages/mock/AddEditMockPage';
 import AddEditMockPage from './pages/mock/AddEditMockPage';
 import MockInvocationListPage from './pages/invocations/MockInvocationListPage';
+import MockInvocationPage from './pages/invocations/MockInvocationPage';
 
 
 const App: React.FC = () => {
@@ -26,7 +27,10 @@ const App: React.FC = () => {
                   <Route path={':mockId'} element={<AddEditMockPage />} />
                 </Route>
                 <Route path={'invocations'}>
-                  <Route path={':mockId'} element={<MockInvocationListPage />} />
+                  <Route path={':mockId'}>
+                    <Route index element={<MockInvocationListPage />} />
+                    <Route path={':invocationId'} element={<MockInvocationPage />} />
+                  </Route>
                 </Route>
               </Route>
             </Route>

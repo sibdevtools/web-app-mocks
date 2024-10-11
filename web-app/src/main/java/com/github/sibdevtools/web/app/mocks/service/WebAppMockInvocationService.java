@@ -141,6 +141,12 @@ public class WebAppMockInvocationService {
             throw new UnexpectedErrorException("Can't store request data", e);
         }
 
+        try {
+            storeRsData(rs, mock, entityBuilder);
+        } catch (IOException e) {
+            throw new UnexpectedErrorException("Can't store response data", e);
+        }
+
         httpMockInvocationEntityRepository.save(
                 entityBuilder.build()
         );
@@ -168,5 +174,27 @@ public class WebAppMockInvocationService {
         entityBuilder
                 .rqBodyStorageType(bucketCode)
                 .rqBodyStorageId(contentId);
+    }
+
+    private void storeRsData(HttpServletResponse rs,
+                             HttpMockEntity mock,
+                             HttpMockInvocationEntity.HttpMockInvocationEntityBuilder entityBuilder) throws IOException {
+        var body = HttpUtils.getRsBody(rs);
+        var headers = HttpUtils.getHeaders(rs);
+
+        var saveRq = SaveFileRq.builder()
+                .bucket(bucketCode)
+                .name(mock.getName())
+                .meta(Map.of(
+                        Constants.META_HTTP_HEADERS, objectMapper.writeValueAsString(headers)
+                ))
+                .data(body)
+                .build();
+        var saveFileRs = storageService.save(saveRq);
+        var contentId = saveFileRs.getBody();
+
+        entityBuilder
+                .rsBodyStorageType(bucketCode)
+                .rsBodyStorageId(contentId);
     }
 }

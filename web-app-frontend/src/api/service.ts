@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Method, MockType } from '../const/common.const';
+import MockInvocationPage from '../pages/invocations/MockInvocationPage';
 
 const service = axios.create({
   baseURL: '/web/app/mocks/rest/api',
@@ -154,3 +155,44 @@ export interface GetInvocationsByMockRs {
 // Fetch invocations for a mock
 export const getInvocationsByMock = (serviceId: number, mockId: number, page: number, pageSize: number) =>
   service.get<GetInvocationsByMockRs>(`/services/${serviceId}/mocks/${mockId}/history/${pageSize}/${page}`);
+
+export interface MockInvocation {
+  invocationId: number;
+  remoteHost: string | null;
+  remoteAddress: string | null;
+  method: string;
+  path: string;
+  queryParams: Map<string, Array<string> | null> | null;
+  timing: number;
+  status: number;
+  createdAt: string;
+  rqBody: string | null;
+  rqHeaders: Map<string, Array<string> | null> | null;
+  rsBody: string | null;
+  rsHeaders: Map<string, Array<string> | null> | null;
+}
+
+export const MockInvocationDefaults: MockInvocation =  {
+  createdAt: '',
+  invocationId: 0,
+  method: '',
+  path: '',
+  queryParams: null,
+  remoteAddress: null,
+  remoteHost: null,
+  rqBody: null,
+  rqHeaders: null,
+  rsBody: null,
+  rsHeaders: null,
+  status: 0,
+  timing: 0
+}
+
+export interface GetInvocationRs {
+  success: boolean;
+  body: MockInvocation;
+}
+
+// Fetch invocation
+export const getInvocation = (serviceId: number, mockId: number, invocationId: number) =>
+  service.get<GetInvocationRs>(`/services/${serviceId}/mocks/${mockId}/history/invocation/${invocationId}`);

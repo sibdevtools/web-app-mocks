@@ -36,12 +36,12 @@ const MockInvocationListPage: React.FC = () => {
       if (response.data.success) {
         setInvocations(response.data.body.invocations);
       } else {
-        setError('Failed to fetch services');
+        setError('Failed to fetch invocations');
         return;
       }
     } catch (error) {
-      console.error('Failed to fetch services:', error);
-      setError('Failed to fetch services');
+      console.error('Failed to fetch invocations:', error);
+      setError('Failed to fetch invocations');
     } finally {
       setLoading(false);
     }
@@ -98,44 +98,46 @@ const MockInvocationListPage: React.FC = () => {
                     {error}
                   </Alert>
                 )}
-                <CustomTable
-                  columns={[
-                    { key: 'method', label: 'Method' },
-                    { key: 'path', label: 'Path' },
-                    { key: 'timing', label: 'Timing' },
-                    { key: 'status', label: 'Status' },
-                    { key: 'createdAt', label: 'At' },
-                  ]}
-                  data={invocations.map((invocation) => {
-                    return {
-                      method: {
-                        representation: <span
-                          className={'badge text-bg-primary align-middle'}>{invocation.method}</span>,
-                        value: invocation.method
-                      },
-                      path: {
-                        representation: <code>{invocation.path}</code>,
-                        value: invocation.path
-                      },
-                      timing: {
-                        representation: <code>{invocation.timing}</code>,
-                        value: `${invocation.timing}`
-                      },
-                      status: {
-                        representation: <span
-                          className={`badge ${getStatusBadgeStyle(invocation.status)} align-middle`}>{invocation.status}</span>,
-                        value: `${invocation.status}`
-                      },
-                      createdAt: invocation.createdAt,
-                    };
-                  })}
-                  sortableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
-                  filterableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
-                  styleProps={{
-                    centerHeaders: true,
-                    textCenterValues: true,
-                  }}
-                />
+                {!error && (
+                  <CustomTable
+                    columns={[
+                      { key: 'method', label: 'Method' },
+                      { key: 'path', label: 'Path' },
+                      { key: 'timing', label: 'Timing' },
+                      { key: 'status', label: 'Status' },
+                      { key: 'createdAt', label: 'At' },
+                    ]}
+                    data={invocations.map((invocation) => {
+                      return {
+                        method: {
+                          representation: <span
+                            className={'badge text-bg-primary align-middle'}>{invocation.method}</span>,
+                          value: invocation.method
+                        },
+                        path: {
+                          representation: <code>{invocation.path}</code>,
+                          value: invocation.path
+                        },
+                        timing: {
+                          representation: <code>{invocation.timing}</code>,
+                          value: `${invocation.timing}`
+                        },
+                        status: {
+                          representation: <span
+                            className={`badge ${getStatusBadgeStyle(invocation.status)} align-middle`}>{invocation.status}</span>,
+                          value: `${invocation.status}`
+                        },
+                        createdAt: invocation.createdAt,
+                      };
+                    })}
+                    sortableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
+                    filterableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
+                    styleProps={{
+                      centerHeaders: true,
+                      textCenterValues: true,
+                    }}
+                  />
+                )}
               </>
             )}
           </Container>
