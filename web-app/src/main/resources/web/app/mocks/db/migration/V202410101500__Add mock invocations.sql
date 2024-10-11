@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS http_mock_invocation
     rs_body_storage_id   varchar(128),
     created_at           timestamp     NOT NULL,
     CONSTRAINT http_mock_invocation_pk PRIMARY KEY (id),
-    FOREIGN KEY (mock_id) references http_mock (id)
+    FOREIGN KEY (mock_id) references http_mock (id) on delete cascade
 );

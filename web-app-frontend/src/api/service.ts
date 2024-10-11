@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Method, MockType } from '../const/common.const';
-import MockInvocationPage from '../pages/invocations/MockInvocationPage';
 
 const service = axios.create({
   baseURL: '/web/app/mocks/rest/api',
@@ -156,23 +155,27 @@ export interface GetInvocationsByMockRs {
 export const getInvocationsByMock = (serviceId: number, mockId: number, page: number, pageSize: number) =>
   service.get<GetInvocationsByMockRs>(`/services/${serviceId}/mocks/${mockId}/history/${pageSize}/${page}`);
 
+export type MultiValueMap = { [key: string]: [string | null] } | null;
+export type Headers = MultiValueMap;
+export type QueryParams = MultiValueMap;
+
 export interface MockInvocation {
   invocationId: number;
   remoteHost: string | null;
   remoteAddress: string | null;
   method: string;
   path: string;
-  queryParams: Map<string, Array<string> | null> | null;
+  queryParams: QueryParams;
   timing: number;
   status: number;
   createdAt: string;
   rqBody: string | null;
-  rqHeaders: Map<string, Array<string> | null> | null;
+  rqHeaders: Headers;
   rsBody: string | null;
-  rsHeaders: Map<string, Array<string> | null> | null;
+  rsHeaders: Headers;
 }
 
-export const MockInvocationDefaults: MockInvocation =  {
+export const MockInvocationDefaults: MockInvocation = {
   createdAt: '',
   invocationId: 0,
   method: '',
@@ -186,7 +189,7 @@ export const MockInvocationDefaults: MockInvocation =  {
   rsHeaders: null,
   status: 0,
   timing: 0
-}
+};
 
 export interface GetInvocationRs {
   success: boolean;

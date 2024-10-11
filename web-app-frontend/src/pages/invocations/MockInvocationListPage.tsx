@@ -4,6 +4,7 @@ import {
   MockInvocationItem, getInvocationsByMock
 } from '../../api/service';
 import CustomTable from '../../components/CustomTable';
+import { Row as TableRow } from '../../components/CustomTable';
 import { Loader } from '../../components/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath } from '../../const/common.const';
@@ -70,6 +71,10 @@ const MockInvocationListPage: React.FC = () => {
     navigate(`${contextPath}service/${serviceId}/mocks`);
   };
 
+  const handleRowClick = (row: TableRow) => {
+    navigate(`${contextPath}service/${serviceId}/mocks/invocations/${mockId}/${row.invocationId}`);
+  };
+
   return (
     <Container className="mt-4 mb-4">
       <Row>
@@ -109,6 +114,7 @@ const MockInvocationListPage: React.FC = () => {
                     ]}
                     data={invocations.map((invocation) => {
                       return {
+                        invocationId: invocation.invocationId,
                         method: {
                           representation: <span
                             className={'badge text-bg-primary align-middle'}>{invocation.method}</span>,
@@ -120,16 +126,17 @@ const MockInvocationListPage: React.FC = () => {
                         },
                         timing: {
                           representation: <code>{invocation.timing}</code>,
-                          value: `${invocation.timing}`
+                          value: invocation.timing
                         },
                         status: {
                           representation: <span
                             className={`badge ${getStatusBadgeStyle(invocation.status)} align-middle`}>{invocation.status}</span>,
-                          value: `${invocation.status}`
+                          value: invocation.status
                         },
                         createdAt: invocation.createdAt,
                       };
                     })}
+                    onRowClick={handleRowClick}
                     sortableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
                     filterableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
                     styleProps={{

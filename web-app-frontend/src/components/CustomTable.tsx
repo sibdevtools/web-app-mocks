@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ReactDOMServer from 'react-dom/server';
 import { Table, Form } from 'react-bootstrap';
 
 export interface TableColumn {
@@ -12,25 +11,38 @@ export interface StyleProps {
   textCenterValues: boolean,
 }
 
+export type CellValue = string | number | boolean;
+
+export type Cell = ReactCell | CellValue;
+
+export type Row = { [key: string]: Cell };
+
+export type CellClickHandler = (row: Row, cell: Cell) => void;
+
 export interface ReactCell {
   /**
    * Data UI representation
    */
   representation: React.ReactNode;
   /**
+   * Click handler
+   * @param row clicked row
+   * @param cell clicked cell
+   */
+  onClick?: CellClickHandler;
+  /**
    * Data text representation for filtering and sorting
    */
-  value?: string;
+  value?: CellValue;
 }
-
-export type Cell = ReactCell | string;
 
 export interface CustomTableProps {
   columns: TableColumn[];
-  data: Array<{ [key: string]: Cell }>;
+  data: Array<Row>;
   sortableColumns?: string[];
   filterableColumns?: string[];
   styleProps?: StyleProps;
+  onRowClick?: (row: Row) => void;
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({
@@ -41,7 +53,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                                    styleProps = {
                                                      centerHeaders: true,
                                                      textCenterValues: false,
-                                                   }
+                                                   },
+                                                   onRowClick = null,
                                                  }) => {
   const [filter, setFilter] = useState<{ [key: string]: string }>({});
   const [sortColumn, setSortColumn] = useState<string>('');
@@ -61,20 +74,40 @@ const CustomTable: React.FC<CustomTableProps> = ({
   };
 
   const getCellValue = (cell: Cell): string => {
-    if (typeof cell === 'string') {
+    if (typeof cell == 'string') {
       return cell;
     }
-    return cell.value || '';
+    if (typeof cell === 'number' || typeof cell === 'boolean') {
+      return `${cell}`;
+    }
+    if (typeof cell.value === 'string') {
+      return cell.value;
+    }
+    return cell.value ? `${cell.value}` : '';
   };
 
   const getCellRepresentation = (cell: Cell): React.ReactNode => {
     if (!cell) {
       return '';
     }
-    if (typeof cell === 'string') {
+    if (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') {
       return cell;
     }
     return cell.representation;
+  };
+
+  const getCellOnClick = (row: Row, cell: Cell): undefined | (() => void) => {
+    if (!cell) {
+      return undefined;
+    }
+    if (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') {
+      return undefined;
+    }
+    const onClick = cell.onClick;
+    if (!onClick) {
+      return undefined;
+    }
+    return () => onClick(row, cell);
   };
 
   // Apply filtering
@@ -132,11 +165,19 @@ const CustomTable: React.FC<CustomTableProps> = ({
       </thead>
       <tbody>
       {sortedData.map((item, index) => (
-        <tr key={index}>
-          {columns.map((column) => (
-            <td className={`${styleProps.textCenterValues ? 'text-center' : ''}`}
-                key={column.key}>{getCellRepresentation(item[column.key])}</td>
-          ))}
+        <tr
+          key={index}
+          onClick={onRowClick ? () => onRowClick(item) : undefined}
+          role={onRowClick ? 'button' : undefined}>
+          {columns.map((column) => {
+            const cellOnClick = getCellOnClick(item, item[column.key]);
+            return (
+              <td className={`${styleProps.textCenterValues ? 'text-center' : ''}`}
+                  onClick={cellOnClick}
+                  role={cellOnClick ? 'button' : undefined}
+                  key={column.key}>{getCellRepresentation(item[column.key])}</td>
+            );
+          })}
         </tr>
       ))}
       </tbody>

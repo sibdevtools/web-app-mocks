@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { ButtonGroup, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
 import { getAllServices, deleteService, updateService, createService, Service } from '../../api/service';
-import CustomTable from '../../components/CustomTable';
+import CustomTable, { Cell, Row as TableRow } from '../../components/CustomTable';
 import { Loader } from '../../components/Loader';
 import { ServiceModal } from './ServiceModal';
+import { contextPath } from '../../const/common.const';
+import { useNavigate } from 'react-router-dom';
 
 const ServiceListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -14,6 +16,7 @@ const ServiceListPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('add');
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchServices();
@@ -111,6 +114,10 @@ const ServiceListPage: React.FC = () => {
     }
   };
 
+  const handleCodeClick = (row: TableRow) => {
+    navigate(`${contextPath}service/${row.serviceId}/mocks`);
+  };
+
   return (
     <Container className="mt-4 mb-4">
       <Row>
@@ -143,10 +150,10 @@ const ServiceListPage: React.FC = () => {
                     ]}
                     data={services.map((service) => {
                       return {
+                        serviceId: service.serviceId,
                         code: {
-                          representation: <a href={`service/${service.serviceId}/mocks`} className="link-primary">
-                            {service.code}
-                          </a>,
+                          representation: <code>{service.code}</code>,
+                          onClick: handleCodeClick,
                           value: service.code,
                         },
                         actions: {

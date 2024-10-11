@@ -30,11 +30,7 @@ const ServiceMocksListPage: React.FC = () => {
   }
 
   const handleEdit = async (service: Service, mock: Mock) => {
-    navigate(`${contextPath}service/${service.serviceId}/mocks/edit/${mock.mockId}`, {
-      state: {
-        code: service.code
-      }
-    });
+    navigate(`${contextPath}service/${service.serviceId}/mocks/edit/${mock.mockId}`);
   };
 
   const handleInvocations = async (service: Service, mock: Mock) => {
@@ -73,7 +69,7 @@ const ServiceMocksListPage: React.FC = () => {
               </Button>
             </Col>
             <Col md={6}>
-              <span className={'h2'}>HTTP Service {service.code} Mocks</span>
+              <span className={'h2'}>HTTP Service <code>{service.code}</code> Mocks</span>
             </Col>
             <Col md={{ span: 1, offset: 1 }}>
               <Button variant={'outline-success'}
@@ -113,7 +109,7 @@ const ServiceMocksListPage: React.FC = () => {
                       checked={mock.enabled}
                       onChange={e => setEnabledMockHandler(mock, e.target.checked)}
                     />,
-                    value: `${mock.enabled}`
+                    value: mock.enabled
                   },
                   actions: {
                     representation: <ActionButtons

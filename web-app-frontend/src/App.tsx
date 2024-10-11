@@ -9,7 +9,7 @@ import { contextPath } from './const/common.const';
 import AddMockPage from './pages/mock/AddEditMockPage';
 import AddEditMockPage from './pages/mock/AddEditMockPage';
 import MockInvocationListPage from './pages/invocations/MockInvocationListPage';
-import MockInvocationPage from './pages/invocations/MockInvocationPage';
+import MockInvocationPage from './pages/invocations/invocation/MockInvocationPage';
 
 
 const App: React.FC = () => {
