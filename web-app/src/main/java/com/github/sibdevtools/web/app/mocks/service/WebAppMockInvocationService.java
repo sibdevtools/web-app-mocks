@@ -9,6 +9,7 @@ import com.github.sibdevtools.web.app.mocks.api.mock.dto.HttpMockInvocationItemD
 import com.github.sibdevtools.web.app.mocks.constant.Constants;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockInvocationEntity;
+import com.github.sibdevtools.web.app.mocks.event.spring.InvocationCreatedEvent;
 import com.github.sibdevtools.web.app.mocks.exception.NotFoundException;
 import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
 import com.github.sibdevtools.web.app.mocks.mapper.HttpMockInvocationDtoMapper;
@@ -21,11 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -43,6 +48,7 @@ public class WebAppMockInvocationService {
     private final ObjectMapper objectMapper;
     private final HttpMockInvocationDtoMapper httpMockInvocationDtoMapper;
     private final HttpMockInvocationItemDtoMapper httpMockInvocationItemDtoMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${web.app.mocks.props.invocations.bucket.code}")
     private String bucketCode;
@@ -54,13 +60,15 @@ public class WebAppMockInvocationService {
             @Qualifier("webAppMocksObjectMapper")
             ObjectMapper objectMapper,
             HttpMockInvocationDtoMapper httpMockInvocationDtoMapper,
-            HttpMockInvocationItemDtoMapper httpMockInvocationItemDtoMapper
+            HttpMockInvocationItemDtoMapper httpMockInvocationItemDtoMapper,
+            ApplicationEventPublisher applicationEventPublisher
     ) {
         this.httpMockInvocationEntityRepository = httpMockInvocationEntityRepository;
         this.storageService = storageService;
         this.objectMapper = objectMapper;
         this.httpMockInvocationDtoMapper = httpMockInvocationDtoMapper;
         this.httpMockInvocationItemDtoMapper = httpMockInvocationItemDtoMapper;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
@@ -119,6 +127,10 @@ public class WebAppMockInvocationService {
      * @param rq     http request
      * @param rs     http response
      */
+    @Transactional(
+            isolation = Isolation.REPEATABLE_READ,
+            propagation = Propagation.REQUIRES_NEW
+    )
     public void save(long timing,
                      String path,
                      HttpMockEntity mock,
@@ -150,6 +162,7 @@ public class WebAppMockInvocationService {
         httpMockInvocationEntityRepository.save(
                 entityBuilder.build()
         );
+        applicationEventPublisher.publishEvent(new InvocationCreatedEvent(mock.getId()));
     }
 
     private void storeRqData(HttpServletRequest rq,

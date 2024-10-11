@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -42,4 +44,31 @@ public interface HttpMockInvocationEntityRepository extends JpaRepository<HttpMo
      */
     @Modifying
     int deleteAllByCreatedAtBefore(ZonedDateTime bound);
+
+    /**
+     * Count all mock invocations
+     *
+     * @param mockId mock identifier
+     * @return invocation count
+     */
+    long countAllByMockId(long mockId);
+
+    /**
+     * Delete all mock invocations except last N
+     *
+     * @param mockId mock identifier
+     * @param rows   rows to stay alive
+     */
+    @Modifying
+    @Query(value = "DELETE FROM web_app_mocks.http_mock_invocation WHERE id IN ( " +
+            "  SELECT id FROM ( " +
+            "    SELECT id, ROW_NUMBER() OVER (ORDER BY created_at DESC) AS row_num " +
+            "    FROM web_app_mocks.http_mock_invocation " +
+            "    WHERE mock_id = :mockId " +
+            "  ) ranked WHERE row_num > :rows FOR UPDATE" +
+            ")", nativeQuery = true)
+    void deleteAllExceptLastN(
+            @Param("mockId") long mockId,
+            @Param("rows") int rows
+    );
 }
