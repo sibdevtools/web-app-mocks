@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TextWrapIcon } from 'hugeicons-react';
-import { ContentType, mimeToAceModeMap } from '../const/common.const';
+import { mimeToAceModeMap } from '../const/common.const';
 import AceEditor from 'react-ace';
 
 import '../const/ace.imports';
 import { loadSettings } from '../settings/utils';
 import { Button, ButtonGroup, Form } from 'react-bootstrap';
+import { getContentType } from '../utils/http';
 
 export interface StaticMockContentProps {
   content: ArrayBuffer;
@@ -25,9 +26,9 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({ content, setConte
 
   useEffect(() => {
     const httpHeadersJson = meta['HTTP_HEADERS'];
-    const httpHeaders = httpHeadersJson ? JSON.parse(httpHeadersJson) : null;
-    const contentType = (httpHeaders ? httpHeaders['Content-Type'] : null) as ContentType;
-    setAceType(mimeToAceModeMap.get(contentType) || 'text');
+    const contentType = getContentType(httpHeadersJson);
+
+    setAceType(mimeToAceModeMap.get(contentType ?? 'plain/text') ?? 'text');
   }, [meta]);
 
   return (
