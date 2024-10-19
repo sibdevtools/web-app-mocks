@@ -9,7 +9,7 @@ import {
   PlusSignIcon
 } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contextPath } from '../../../const/common.const';
+import { contextPath, mockTypes } from '../../../const/common.const';
 import CustomTable from '../../../components/CustomTable';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useServiceMocks } from './serviceMocks';
@@ -22,7 +22,7 @@ const ServiceMocksListPage: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState<{ [key: number]: boolean }>({});
   const navigate = useNavigate();
   const { serviceId } = useParams();
-  const { service, deleteMockHandler, setEnabledMockHandler } = useServiceMocks(serviceId, setLoading);
+  const { service, mocks, deleteMockHandler, setEnabledMockHandler } = useServiceMocks(serviceId, setLoading);
 
   if (!serviceId) {
     navigate(contextPath);
@@ -91,7 +91,7 @@ const ServiceMocksListPage: React.FC = () => {
                 { key: 'enabled', label: 'Enabled' },
                 { key: 'actions', label: 'Actions' },
               ]}
-              data={service.mocks.map(mock => {
+              data={mocks.map(mock => {
                 return {
                   method: {
                     representation: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
@@ -102,14 +102,13 @@ const ServiceMocksListPage: React.FC = () => {
                     representation: <code>{mock.path}</code>,
                     value: mock.path
                   },
-                  type: mock.type,
+                  type: mockTypes.get(mock.type) || mock.type,
                   enabled: {
                     representation: <Form.Check
                       type={'switch'}
                       checked={mock.enabled}
                       onChange={e => setEnabledMockHandler(mock, e.target.checked)}
-                    />,
-                    value: mock.enabled
+                    />
                   },
                   actions: {
                     representation: <ActionButtons

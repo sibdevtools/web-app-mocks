@@ -148,11 +148,13 @@ export const contentTypes = [
   'image/svg+xml',
 ].sort();
 
-export const mockTypes = [
-  'STATIC',
-  'STATIC_FILE',
-  'JS',
-  'PYTHON',
-] as const;
+export const mockTypes = new Map<string, string>([
+    ['STATIC', 'Static content'] as const,
+    ['STATIC_FILE', 'Static file'] as const,
+    ['JS', 'JavaScript'] as const,
+    ['PYTHON', 'Python'] as const,
+  ]
+);
 
-export type MockType = typeof mockTypes[number];
+export type MockType = MapKey<typeof mockTypes>
+

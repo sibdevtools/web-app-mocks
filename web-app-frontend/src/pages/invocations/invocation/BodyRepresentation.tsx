@@ -1,23 +1,23 @@
-import { Button, ButtonGroup } from 'react-bootstrap';
+import { Button, ButtonGroup, FormLabel } from 'react-bootstrap';
 import { FloppyDiskIcon, TextWrapIcon } from 'hugeicons-react';
 import { downloadBase64File } from '../../../utils/files';
 import AceEditor from 'react-ace';
-import { decodeBase64ToText } from '../../../utils/base.64converters';
+import { decodeToText } from '../../../utils/base.64converters';
 import React, { useState } from 'react';
 import { loadSettings } from '../../../settings/utils';
-import { caseInsensitiveEquals } from '../../../utils/strings';
 import { mimeToAceModeMap } from '../../../const/common.const';
 import { Headers } from '../../../api/service';
+import { getContentTypeFromMap } from '../../../utils/http';
 
 export interface BodyRepresentationProps {
+  title: string;
   invocationId: number;
   headers: Headers;
   body: string | null;
 }
 
-const textDecoder = new TextDecoder();
-
 export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
+                                                                        title,
                                                                         invocationId,
                                                                         headers,
                                                                         body,
@@ -25,26 +25,30 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
   const settings = loadSettings();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
 
-  if (!body) return 'N/A';
+  if (!body) return <>
+    <FormLabel className={'h4'} htmlFor={`bodyRepresentation-${invocationId}`}>{title}: <code>N/A</code></FormLabel>
+  </>;
 
-  const contentTypeHeader = Object.entries(headers || {})
-    .find(it => caseInsensitiveEquals(it[0], 'content-type'));
-
-  const contentType = contentTypeHeader?.at(1)?.at(0) || '';
+  const contentType = getContentTypeFromMap(headers) ?? 'text/plain';
   const aceMode = mimeToAceModeMap.get(contentType) || '';
   if (!aceMode) {
-    return (
-      <Button
-        variant="outline-primary"
-        onClick={() => downloadBase64File(body, `file.${invocationId}.bin`, contentType)}
-      >
-        <FloppyDiskIcon />
-      </Button>
+    return (<>
+        <FormLabel className={'h4'} htmlFor={`bodyRepresentation-${invocationId}`}>{title}</FormLabel>
+        <ButtonGroup className={'float-end'}>
+          <Button
+            variant="outline-primary"
+            onClick={() => downloadBase64File(body, `file.${invocationId}.bin`, contentType)}
+          >
+            <FloppyDiskIcon />
+          </Button>
+        </ButtonGroup>
+      </>
     );
   }
-  return <div className="position-relative">
+  return <>
+    <FormLabel className={'h4'} htmlFor={`bodyRepresentation-${invocationId}`}>{title}</FormLabel>
     {/* Word Wrap Button */}
-    <ButtonGroup className="position-absolute" style={{ top: '-20px', right: '-8px', zIndex: 3 }}>
+    <ButtonGroup className={'float-end'}>
       <Button
         variant="primary"
         active={isWordWrapEnabled}
@@ -63,8 +67,15 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
     <AceEditor
       mode={aceMode}
       theme={settings['aceTheme'].value}
-      name="contentAceEditor"
-      value={textDecoder.decode(decodeBase64ToText(body))}
+      name={`bodyRepresentation-${invocationId}`}
+      value={decodeToText(body)}
+      className={'rounded'}
+      style={{
+        resize: 'vertical',
+        overflow: 'auto',
+        height: '480px',
+        minHeight: '200px',
+      }}
       fontSize={14}
       width="100%"
       height="480px"
@@ -73,15 +84,12 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
       highlightActiveLine={true}
       wrapEnabled={isWordWrapEnabled}
       setOptions={{
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
         showLineNumbers: true,
-        enableSnippets: true,
         wrap: isWordWrapEnabled,
         useWorker: false,
         readOnly: true,
       }}
       editorProps={{ $blockScrolling: true }}
     />
-  </div>;
+  </>;
 };

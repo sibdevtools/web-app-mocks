@@ -163,9 +163,13 @@ export const MockForm: React.FC<MockFormProps> = ({
                       onChange={onMockTypeChange}
                       required
                     >
-                      {mockTypes.map((it) => (
-                        <option key={it} value={it}>{it}</option>
-                      ))}
+                      {
+                        Array.from(mockTypes.keys()).map(
+                          it => (
+                            <option key={it} value={it}>{mockTypes.get(it)}</option>
+                          )
+                        )
+                      }
                     </Form.Select>
                   </Form.Group>
                 </Col>

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { createMock, getMock, updateMock } from '../../api/service';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath, Method, methods, MockType } from '../../const/common.const';
-import { decodeBase64ToText, encodeTextToBase64 } from '../../utils/base.64converters';
+import { decodeToBuffer, encode } from '../../utils/base.64converters';
 import MockForm from './MockForm';
-import { Loader } from '../../components/Loader';
 
 const AddEditMockPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -42,7 +41,7 @@ const AddEditMockPage: React.FC = () => {
       setDelay(body.delay);
       setMockType(body.type);
       setMeta(body.meta);
-      setContent(decodeBase64ToText(body.content));
+      setContent(decodeToBuffer(body.content));
     } catch (error) {
       console.error('Failed to fetch mock:', error);
     } finally {
@@ -65,7 +64,7 @@ const AddEditMockPage: React.FC = () => {
         type: mockType,
         delay: delay,
         meta,
-        content: encodeTextToBase64(content)
+        content: encode(content)
       };
       if (mockId) {
         await updateMock(+serviceId, +mockId, mockData);
