@@ -2,7 +2,7 @@
  * Encode array buffer to base64
  * @param arrayBuffer array buffer
  */
-export const encodeTextToBase64 = (arrayBuffer: ArrayBuffer): string => {
+export const encode = (arrayBuffer: ArrayBuffer): string => {
   return btoa(new Uint8Array(arrayBuffer).reduce(function (data, byte) {
     return data + String.fromCharCode(byte);
   }, ''));
@@ -12,7 +12,7 @@ export const encodeTextToBase64 = (arrayBuffer: ArrayBuffer): string => {
  * Encode base64 to array buffer
  * @param base64 base64 text
  */
-export const decodeBase64ToText = (base64: string): ArrayBuffer => {
+export const decodeToBuffer = (base64: string): ArrayBuffer => {
   const binaryString = atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
@@ -22,4 +22,14 @@ export const decodeBase64ToText = (base64: string): ArrayBuffer => {
   }
 
   return bytes.buffer;
+};
+
+const textDecoder = new TextDecoder();
+/**
+ * Encode base64 to text
+ * @param base64 base64 text
+ */
+export const decodeToText = (base64: string): string => {
+  const buffer = decodeToBuffer(base64);
+  return textDecoder.decode(buffer);
 };

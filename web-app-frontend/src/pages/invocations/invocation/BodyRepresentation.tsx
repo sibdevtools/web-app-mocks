@@ -2,20 +2,18 @@ import { Button, ButtonGroup } from 'react-bootstrap';
 import { FloppyDiskIcon, TextWrapIcon } from 'hugeicons-react';
 import { downloadBase64File } from '../../../utils/files';
 import AceEditor from 'react-ace';
-import { decodeBase64ToText } from '../../../utils/base.64converters';
+import { decodeToText } from '../../../utils/base.64converters';
 import React, { useState } from 'react';
 import { loadSettings } from '../../../settings/utils';
-import { caseInsensitiveEquals } from '../../../utils/strings';
 import { mimeToAceModeMap } from '../../../const/common.const';
 import { Headers } from '../../../api/service';
+import { getContentTypeFromMap } from '../../../utils/http';
 
 export interface BodyRepresentationProps {
   invocationId: number;
   headers: Headers;
   body: string | null;
 }
-
-const textDecoder = new TextDecoder();
 
 export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
                                                                         invocationId,
@@ -27,10 +25,7 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
 
   if (!body) return 'N/A';
 
-  const contentTypeHeader = Object.entries(headers || {})
-    .find(it => caseInsensitiveEquals(it[0], 'content-type'));
-
-  const contentType = contentTypeHeader?.at(1)?.at(0) || '';
+  const contentType = getContentTypeFromMap(headers) ?? 'text/plain';
   const aceMode = mimeToAceModeMap.get(contentType) || '';
   if (!aceMode) {
     return (
@@ -64,7 +59,7 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
       mode={aceMode}
       theme={settings['aceTheme'].value}
       name="contentAceEditor"
-      value={textDecoder.decode(decodeBase64ToText(body))}
+      value={decodeToText(body)}
       fontSize={14}
       width="100%"
       height="480px"
