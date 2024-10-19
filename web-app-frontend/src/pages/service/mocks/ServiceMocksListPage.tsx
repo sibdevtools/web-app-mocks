@@ -22,7 +22,7 @@ const ServiceMocksListPage: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState<{ [key: number]: boolean }>({});
   const navigate = useNavigate();
   const { serviceId } = useParams();
-  const { service, deleteMockHandler, setEnabledMockHandler } = useServiceMocks(serviceId, setLoading);
+  const { service, mocks, deleteMockHandler, setEnabledMockHandler } = useServiceMocks(serviceId, setLoading);
 
   if (!serviceId) {
     navigate(contextPath);
@@ -91,7 +91,7 @@ const ServiceMocksListPage: React.FC = () => {
                 { key: 'enabled', label: 'Enabled' },
                 { key: 'actions', label: 'Actions' },
               ]}
-              data={service.mocks.map(mock => {
+              data={mocks.map(mock => {
                 return {
                   method: {
                     representation: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
@@ -108,8 +108,7 @@ const ServiceMocksListPage: React.FC = () => {
                       type={'switch'}
                       checked={mock.enabled}
                       onChange={e => setEnabledMockHandler(mock, e.target.checked)}
-                    />,
-                    value: mock.enabled
+                    />
                   },
                   actions: {
                     representation: <ActionButtons

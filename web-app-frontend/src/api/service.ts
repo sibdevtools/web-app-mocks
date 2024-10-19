@@ -29,7 +29,7 @@ export interface CreateServiceRq {
 
 export interface CreateServiceRs {
   success: boolean;
-  body: number
+  body: number;
 }
 
 export const createService = (rq: CreateServiceRq) => service.post<CreateServiceRs>('/services/', rq);
@@ -43,11 +43,16 @@ export interface UpdateServiceRq {
 export interface UpdateServiceRs {
   success?: boolean;
 }
-export const updateService = (serviceId: number, rq: UpdateServiceRq) => service.put<UpdateServiceRs>(`/services/${serviceId}`, rq);
+
+export const updateService = (serviceId: number, rq: UpdateServiceRq) => service.put<UpdateServiceRs>(
+  `/services/${serviceId}`,
+  rq
+);
 
 export interface DeleteServiceRs {
   success?: boolean;
 }
+
 // Delete a service (assuming you have a delete endpoint, otherwise skip this)
 export const deleteService = (serviceId: number) => service.delete<DeleteServiceRs>(`/services/${serviceId}`);
 
@@ -125,8 +130,15 @@ export const updateMock = (serviceId: number, mockId: number, rq: UpdateMockRq) 
   rq
 );
 
+export interface DeleteMockRs {
+  success: boolean;
+}
+
 // Delete a mock (assuming you have a delete endpoint, otherwise skip this)
-export const deleteMock = (serviceId: number, mockId: number) => service.delete(`/services/${serviceId}/mocks/${mockId}`);
+export const deleteMock = (
+  serviceId: number,
+  mockId: number
+) => service.delete<DeleteMockRs>(`/services/${serviceId}/mocks/${mockId}`);
 
 export interface GetMockUrlRs {
   success: boolean;
@@ -140,10 +152,16 @@ export interface SetEnabledMockRq {
   enabled: boolean;
 }
 
-export const setEnabledMock = (serviceId: number, mockId: number, rq: SetEnabledMockRq) => service.put(
-  `/services/${serviceId}/mocks/${mockId}/enabled`,
-  rq
-);
+
+export interface SetEnabledMockRs {
+  success: boolean;
+}
+
+export const setEnabledMock = (
+  serviceId: number,
+  mockId: number,
+  rq: SetEnabledMockRq
+) => service.put<SetEnabledMockRs>(`/services/${serviceId}/mocks/${mockId}/enabled`, rq);
 
 export interface MockInvocationItem {
   invocationId: number;
