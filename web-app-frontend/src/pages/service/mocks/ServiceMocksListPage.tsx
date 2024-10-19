@@ -9,7 +9,7 @@ import {
   PlusSignIcon
 } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contextPath } from '../../../const/common.const';
+import { contextPath, mockTypes } from '../../../const/common.const';
 import CustomTable from '../../../components/CustomTable';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useServiceMocks } from './serviceMocks';
@@ -102,7 +102,7 @@ const ServiceMocksListPage: React.FC = () => {
                     representation: <code>{mock.path}</code>,
                     value: mock.path
                   },
-                  type: mock.type,
+                  type: mockTypes.get(mock.type) || mock.type,
                   enabled: {
                     representation: <Form.Check
                       type={'switch'}

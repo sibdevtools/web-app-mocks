@@ -35,44 +35,49 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({ content, setConte
     <Form.Group className="mb-3">
       <Form.Label htmlFor="contentTextArea">Content</Form.Label>
 
-      <div className="position-relative">
-        {/* Word Wrap Button */}
-        <ButtonGroup className="position-absolute" style={{ top: '-20px', right: '-8px', zIndex: 3 }}>
-          <Button
-            variant="primary"
-            active={isWordWrapEnabled}
-            title={isWordWrapEnabled ? 'Unwrap' : 'Wrap'}
-            onClick={() => setIsWordWrapEnabled((prev) => !prev)}
-          >
-            <TextWrapIcon />
-          </Button>
-        </ButtonGroup>
+      {/* Word Wrap Button */}
+      <ButtonGroup className={'float-end'}>
+        <Button
+          variant="primary"
+          active={isWordWrapEnabled}
+          title={isWordWrapEnabled ? 'Unwrap' : 'Wrap'}
+          onClick={() => setIsWordWrapEnabled((prev) => !prev)}
+        >
+          <TextWrapIcon />
+        </Button>
+      </ButtonGroup>
 
-        {/* Ace Editor */}
-        <AceEditor
-          mode={aceType}
-          theme={settings['aceTheme'].value}
-          name="contentAceEditor"
-          onChange={(it) => setContent(textEncoder.encode(it))}
-          value={textDecoder.decode(content)}
-          fontSize={14}
-          width="100%"
-          height="480px"
-          showPrintMargin={true}
-          showGutter={true}
-          highlightActiveLine={true}
-          wrapEnabled={isWordWrapEnabled}
-          setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            showLineNumbers: true,
-            enableSnippets: true,
-            wrap: isWordWrapEnabled,
-            useWorker: false,
-          }}
-          editorProps={{ $blockScrolling: true }}
-        />
-      </div>
+      {/* Ace Editor */}
+      <AceEditor
+        mode={aceType}
+        theme={settings['aceTheme'].value}
+        name="contentAceEditor"
+        onChange={(it) => setContent(textEncoder.encode(it))}
+        value={textDecoder.decode(content)}
+        className={'rounded'}
+        style={{
+          resize: 'vertical',
+          overflow: 'auto',
+          height: '480px',
+          minHeight: '200px',
+        }}
+        fontSize={14}
+        width="100%"
+        height="480px"
+        showPrintMargin={true}
+        showGutter={true}
+        highlightActiveLine={true}
+        wrapEnabled={isWordWrapEnabled}
+        setOptions={{
+          enableBasicAutocompletion: true,
+          enableLiveAutocompletion: true,
+          showLineNumbers: true,
+          enableSnippets: true,
+          wrap: isWordWrapEnabled,
+          useWorker: false,
+        }}
+        editorProps={{ $blockScrolling: true }}
+      />
     </Form.Group>
   );
 };

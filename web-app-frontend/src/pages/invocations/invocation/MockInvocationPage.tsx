@@ -170,8 +170,8 @@ const MockInvocationPage: React.FC = () => {
                         </tbody>
                       </Table>
 
-                      <h4 className="mt-4">Request Body</h4>
                       <BodyRepresentation
+                        title={'Request Body'}
                         body={invocation.rqBody}
                         headers={invocation.rqHeaders}
                         invocationId={+(invocationId || '0')}
@@ -190,8 +190,8 @@ const MockInvocationPage: React.FC = () => {
                         </tbody>
                       </Table>
 
-                      <h4 className="mt-4">Response Body</h4>
                       <BodyRepresentation
+                        title={'Response Body'}
                         body={invocation.rsBody}
                         headers={invocation.rsHeaders}
                         invocationId={+(invocationId || '0')}
