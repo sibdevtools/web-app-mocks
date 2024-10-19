@@ -16,6 +16,7 @@ const ServiceListPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('add');
   const [error, setError] = useState<string | null>(null);
+  const [minorError, setMinorError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,14 +47,14 @@ const ServiceListPage: React.FC = () => {
     }
     try {
       const response = await deleteService(serviceId);
-      if (response.status !== 200) {
-        setError('Failed to delete service');
+      if (response.status !== 200 || !response.data.success) {
+        setMinorError('Failed to delete service');
         return;
       }
-      await fetchServices();
+      setServices(services.filter(it => it.serviceId != serviceId));
     } catch (error) {
       console.error('Failed to delete service:', error);
-      setError('Failed to delete service');
+      setMinorError('Failed to delete service');
     }
   };
 
@@ -70,15 +71,15 @@ const ServiceListPage: React.FC = () => {
     }
     try {
       const response = await updateService(editService.serviceId, { code: newServiceCode });
-      if (response.status !== 200) {
-        setError('Failed to update service');
+      if (response.status !== 200 || !response.data.success) {
+        setMinorError('Failed to update service');
         return;
       }
-      await fetchServices();
+      editService.code = newServiceCode
       setShowModal(false);
     } catch (error) {
       console.error('Failed to update service:', error);
-      setError('Failed to update service');
+      setMinorError('Failed to update service');
     } finally {
       setShowModal(false);
     }
@@ -93,14 +94,18 @@ const ServiceListPage: React.FC = () => {
   const handleSaveAdd = async () => {
     try {
       const response = await createService({ code: newServiceCode });
-      if (response.status !== 200) {
-        setError('Failed to add service');
+      if (response.status !== 200 || !response.data.success) {
+        setMinorError('Failed to add service');
         return;
       }
-      await fetchServices();
+      const rs = response.data.body
+      setServices([...services, {
+        serviceId: rs,
+        code: newServiceCode
+      }])
     } catch (error) {
       console.error('Failed to add service:', error);
-      setError('Failed to add service');
+      setMinorError('Failed to add service');
     } finally {
       setShowModal(false);
     }
@@ -140,6 +145,11 @@ const ServiceListPage: React.FC = () => {
                 {error && (
                   <Alert variant="danger" onClose={() => setError(null)} dismissible>
                     {error}
+                  </Alert>
+                )}
+                {minorError && (
+                  <Alert variant="danger" onClose={() => setMinorError(null)} dismissible>
+                    {minorError}
                   </Alert>
                 )}
                 {!error && (
