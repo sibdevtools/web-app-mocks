@@ -37,11 +37,15 @@ const ServiceMocksListPage: React.FC = () => {
     navigate(`${contextPath}service/${service.serviceId}/mocks/invocations/${mock.mockId}`);
   };
 
-  const handleCopy = async (service: Service, mock: Mock) => {
+  const handleCopy = async (service: Service, mock: Mock, newPage: boolean) => {
     try {
       const rs = await getMockUrl(service.serviceId, mock.mockId);
       if (rs.data.success) {
         const body = rs.data.body;
+        if (newPage) {
+          window?.open(body, '_blank')?.focus();
+          return;
+        }
         await navigator.clipboard.writeText(body);
 
         setShowTooltip(prev => ({ ...prev, [mock.mockId]: true }));
@@ -115,7 +119,7 @@ const ServiceMocksListPage: React.FC = () => {
                       mock={mock}
                       onInvocations={() => handleInvocations(service, mock)}
                       onEdit={() => handleEdit(service, mock)}
-                      onCopy={() => handleCopy(service, mock)}
+                      onCopy={(e) => handleCopy(service, mock, e.ctrlKey)}
                       onDelete={() => deleteMockHandler(mock)}
                       showTooltip={showTooltip}
                     />

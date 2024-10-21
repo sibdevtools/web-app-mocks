@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Clock01Icon, Copy01Icon, Delete01Icon, PencilEdit01Icon, WorkHistoryIcon } from 'hugeicons-react';
 import { Mock } from '../../../api/service';
@@ -8,7 +8,7 @@ export interface ActionButtonsProps {
   mock: Mock;
   onInvocations: () => void;
   onEdit: () => void;
-  onCopy: () => void;
+  onCopy: (e: MouseEvent<HTMLButtonElement>) => void;
   onDelete: () => void;
   showTooltip: { [key: number]: boolean };
 }
