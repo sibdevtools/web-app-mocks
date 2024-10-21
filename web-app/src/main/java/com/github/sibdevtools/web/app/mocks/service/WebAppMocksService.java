@@ -193,11 +193,11 @@ public class WebAppMocksService {
         httpMockEntityRepository.deleteById(mockId);
     }
 
-    private BucketFile getBucketFile(String invocation) {
-        if (invocation == null) {
+    private BucketFile getBucketFile(String storageId) {
+        if (storageId == null) {
             return null;
         }
-        var getBucketFileRs = storageService.get(invocation);
+        var getBucketFileRs = storageService.get(storageId);
         return getBucketFileRs.getBody();
     }
 }
