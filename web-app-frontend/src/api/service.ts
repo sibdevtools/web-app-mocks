@@ -250,14 +250,27 @@ export interface ExportedService {
   mocks: ExportedMock[];
 }
 
-export interface ExportRs {
-  success: boolean;
-  body: {
-    version: string;
-    createdAt: string;
-    services: ExportedService[]
-  };
+export interface Exported {
+  version: string;
+  createdAt: string;
+  services: ExportedService[];
 }
 
-// Fetch mocks for a service
+export interface ExportRs {
+  success: boolean;
+  body: Exported;
+}
+
+// Export selected mocks
 export const exportMocks = (rq: ExportRq) => service.post<ExportRs>(`/share/v1/export`, rq);
+
+export interface ImportRq {
+  services: ExportedService[];
+}
+
+export interface ImportRs {
+  success: boolean;
+}
+
+// Import mocks
+export const importMocks = (rq: ImportRq) => service.post<ImportRs>(`/share/v1/import`, rq);

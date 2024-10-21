@@ -10,7 +10,8 @@ import AddMockPage from './pages/mock/AddEditMockPage';
 import AddEditMockPage from './pages/mock/AddEditMockPage';
 import MockInvocationListPage from './pages/invocations/MockInvocationListPage';
 import MockInvocationPage from './pages/invocations/invocation/MockInvocationPage';
-import ServiceMocksListExportPage from './pages/share/ServiceMocksListSharePage';
+import ServiceMocksListExportPage from './pages/share/ServiceMocksListExportPage';
+import ServiceMocksListImportPage from './pages/share/ServiceMocksListImportPage';
 
 
 const App: React.FC = () => {
@@ -34,8 +35,10 @@ const App: React.FC = () => {
                   </Route>
                 </Route>
                 <Route path={'export'} element={<ServiceMocksListExportPage />} />
+                <Route path={'import'} element={<ServiceMocksListImportPage />} />
               </Route>
             </Route>
+            <Route path={'import'} element={<ServiceMocksListImportPage />} />
           </Route>
         </Route>
       </Routes>

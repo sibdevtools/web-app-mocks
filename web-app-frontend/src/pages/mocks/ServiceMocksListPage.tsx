@@ -6,7 +6,7 @@ import {
 } from '../../api/service';
 import {
   ArrowLeft01Icon, Download05Icon,
-  PlusSignIcon
+  PlusSignIcon, Upload05Icon
 } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath, mockTypes } from '../../const/common.const';
@@ -86,6 +86,12 @@ const ServiceMocksListPage: React.FC = () => {
                   onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/export`)}
                 >
                   <Download05Icon />
+                </Button>
+                <Button
+                  variant={'outline-info'}
+                  onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/import`)}
+                >
+                  <Upload05Icon />
                 </Button>
               </ButtonGroup>
             </Col>
