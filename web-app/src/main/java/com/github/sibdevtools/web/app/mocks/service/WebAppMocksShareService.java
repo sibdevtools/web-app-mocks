@@ -9,6 +9,7 @@ import com.github.sibdevtools.web.app.mocks.exception.MockNotFoundException;
 import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
 import com.github.sibdevtools.web.app.mocks.mapper.MapperUtils;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
+import com.github.sibdevtools.web.app.mocks.repository.HttpServiceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMocksShareService {
     private final HttpMockEntityRepository httpMockEntityRepository;
+    private final HttpServiceEntityRepository httpServiceEntityRepository;
+    private final WebAppMocksService webAppMocksService;
+    private final WebAppMocksServicesService webAppMocksServicesService;
     private final StorageService storageService;
+    private final Base64.Decoder decoder = Base64.getDecoder();
     private final Base64.Encoder encoder = Base64.getEncoder();
 
     /**
@@ -45,7 +50,7 @@ public class WebAppMocksShareService {
             propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.REPEATABLE_READ
     )
-    public Exported export(List<Long> mocksIds) {
+    public Exported exportMocks(List<Long> mocksIds) {
         var services = new ArrayList<ExportedService>();
 
         var found = httpMockEntityRepository.findAllById(mocksIds);
@@ -102,5 +107,37 @@ public class WebAppMocksShareService {
                 .services(services)
                 .createdAt(ZonedDateTime.now())
                 .build();
+    }
+
+    /**
+     * Import services and mocks
+     *
+     * @param services importing services and mocks
+     */
+    @Transactional(
+            propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.REPEATABLE_READ
+    )
+    public void importMocks(List<ExportedService> services) {
+        for (var service : services) {
+            var serviceEntry = webAppMocksServicesService.getOrCreate(service.getCode());
+            var mocks = service.getMocks();
+            for (var mock : mocks) {
+                var content = mock.getContent();
+                var decoded = decoder.decode(content);
+                webAppMocksService.create(
+                        serviceEntry.getId(),
+                        mock.getMethod(),
+                        mock.getName(),
+                        mock.getPath(),
+                        mock.getType(),
+                        mock.getDelay(),
+                        mock.isEnabled(),
+                        mock.getContentMetadata(),
+                        decoded
+                );
+            }
+        }
+
     }
 }

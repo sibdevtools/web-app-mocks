@@ -50,6 +50,7 @@ public class WebAppMocksRestController {
                 rq.getPath(),
                 rq.getType(),
                 rq.getDelay(),
+                true,
                 rq.getMeta(),
                 B64_DECODER.decode(content)
         );

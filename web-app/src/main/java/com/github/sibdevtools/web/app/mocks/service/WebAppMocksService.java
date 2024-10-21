@@ -52,6 +52,7 @@ public class WebAppMocksService {
                                  String path,
                                  String type,
                                  long delay,
+                                 boolean enabled,
                                  Map<String, String> meta,
                                  byte[] content) {
         if (!webAppMocksHandlerTypes.contains(type)) {
@@ -71,6 +72,7 @@ public class WebAppMocksService {
         var saveFileRs = storageService.save(saveRq);
         var contentId = saveFileRs.getBody();
 
+        var now = ZonedDateTime.now();
         var httpMockEntity = HttpMockEntity.builder()
                 .method(method)
                 .name(name)
@@ -78,11 +80,11 @@ public class WebAppMocksService {
                 .service(serviceEntity)
                 .type(type)
                 .delay(delay)
-                .enabled(true)
+                .enabled(enabled)
                 .storageType("LOCAL")
                 .storageId(contentId)
-                .createdAt(ZonedDateTime.now())
-                .modifiedAt(ZonedDateTime.now())
+                .createdAt(now)
+                .modifiedAt(now)
                 .build();
         return httpMockEntityRepository.save(httpMockEntity);
     }

@@ -4,6 +4,7 @@ import com.github.sibdevtools.web.app.mocks.api.mock.dto.HttpServiceMocksDto;
 import com.github.sibdevtools.web.app.mocks.api.service.dto.HttpServiceDto;
 import com.github.sibdevtools.web.app.mocks.entity.HttpServiceEntity;
 import com.github.sibdevtools.web.app.mocks.exception.ServiceNotFoundException;
+import com.github.sibdevtools.web.app.mocks.exception.UnexpectedErrorException;
 import com.github.sibdevtools.web.app.mocks.mapper.HttpServiceMocksDtoMapper;
 import com.github.sibdevtools.web.app.mocks.repository.HttpMockEntityRepository;
 import com.github.sibdevtools.web.app.mocks.repository.HttpServiceEntityRepository;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
@@ -36,12 +38,28 @@ public class WebAppMocksServicesService {
      * @return service instance
      */
     public HttpServiceEntity create(String code) {
+        var now = ZonedDateTime.now();
         var serviceEntity = HttpServiceEntity.builder()
                 .code(code)
-                .createdAt(ZonedDateTime.now())
-                .modifiedAt(ZonedDateTime.now())
+                .createdAt(now)
+                .modifiedAt(now)
                 .build();
         return serviceEntityRepository.save(serviceEntity);
+    }
+
+    /**
+     * Get or create service
+     *
+     * @param code service code
+     * @return service instance
+     */
+    @Transactional(
+            propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.REPEATABLE_READ
+    )
+    public HttpServiceEntity getOrCreate(String code) {
+        return serviceEntityRepository.findByCode(code)
+                .orElseGet(() -> create(code));
     }
 
     /**
