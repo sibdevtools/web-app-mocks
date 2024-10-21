@@ -49,6 +49,7 @@ const ServiceMocksListPage: React.FC = () => {
               <Button
                 variant={'outline-primary'}
                 onClick={() => navigate(`${contextPath}service/${serviceId}/mocks`)}
+                title={'Back'}
               >
                 <ArrowLeft01Icon />
               </Button>
@@ -59,6 +60,7 @@ const ServiceMocksListPage: React.FC = () => {
             <Col md={{ span: 1, offset: 1 }}>
               <Button variant={'outline-primary'}
                       onClick={() => onSave()}
+                      title={'Download'}
               >
                 <Download05Icon />
               </Button>

@@ -123,6 +123,7 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                   variant="danger"
                   onClick={() => removeHeader(index)}
                   disabled={headers.length === 1}
+                  title={'Remove'}
                 >
                   <MinusSignIcon />
                 </Button>
@@ -130,6 +131,7 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                   variant="primary"
                   onClick={addHeader}
                   disabled={index !== headers.length - 1 || notFilledExist}
+                  title={'Add'}
                 >
                   <PlusSignIcon />
                 </Button>

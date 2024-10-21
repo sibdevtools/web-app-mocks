@@ -111,6 +111,7 @@ const ServiceMocksListImportPage: React.FC = () => {
           <Button
             variant={'outline-primary'}
             onClick={() => navigate(serviceId ? `${contextPath}service/${serviceId}/mocks` : contextPath)}
+            title={'Back'}
           >
             <ArrowLeft01Icon />
           </Button>
@@ -119,7 +120,11 @@ const ServiceMocksListImportPage: React.FC = () => {
           <span className={'h2'}>Import HTTP Mocks</span>
         </Col>
         <Col md={{ span: 1, offset: 1 }}>
-          <Button variant="outline-primary" onClick={handleImport}>
+          <Button
+            variant="outline-primary"
+            onClick={handleImport}
+            title={'Import'}
+          >
             <Upload05Icon />
           </Button>
         </Col>

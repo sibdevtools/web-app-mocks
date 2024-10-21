@@ -67,6 +67,7 @@ const ServiceMocksListPage: React.FC = () => {
               <Button
                 variant={'outline-primary'}
                 onClick={() => navigate(contextPath)}
+                title={'Back'}
               >
                 <ArrowLeft01Icon />
               </Button>
@@ -76,20 +77,24 @@ const ServiceMocksListPage: React.FC = () => {
             </Col>
             <Col md={{ span: 1, offset: 1 }}>
               <ButtonGroup>
-                <Button variant={'outline-success'}
-                        onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/add`)}
+                <Button
+                  variant={'outline-success'}
+                  onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/add`)}
+                  title={'Add'}
                 >
                   <PlusSignIcon />
                 </Button>
                 <Button
                   variant={'outline-primary'}
                   onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/export`)}
+                  title={'Export'}
                 >
                   <Download05Icon />
                 </Button>
                 <Button
                   variant={'outline-info'}
                   onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/import`)}
+                  title={'Import'}
                 >
                   <Upload05Icon />
                 </Button>

@@ -83,6 +83,7 @@ const MockInvocationListPage: React.FC = () => {
             variant={'outline-primary'}
             type={'button'}
             onClick={handleBack}
+            title={'Back'}
           >
             <ArrowLeft01Icon />
           </Button>

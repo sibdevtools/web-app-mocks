@@ -131,12 +131,17 @@ const ServiceListPage: React.FC = () => {
         </Col>
         <Col md={{ span: 1, offset: 1 }}>
           <ButtonGroup>
-            <Button variant="outline-success" onClick={handleAddClick}>
+            <Button
+              variant="outline-success"
+              onClick={handleAddClick}
+              title={'Add'}
+            >
               <PlusSignIcon />
             </Button>
             <Button
               variant={'outline-info'}
               onClick={() => navigate(`${contextPath}service/import`)}
+              title={'Import'}
             >
               <Upload05Icon />
             </Button>
@@ -177,10 +182,18 @@ const ServiceListPage: React.FC = () => {
                         actions: {
                           representation:
                             <ButtonGroup>
-                              <Button variant={'primary'} onClick={() => handleEditClick(service)}>
+                              <Button
+                                variant={'primary'}
+                                onClick={() => handleEditClick(service)}
+                                title={'Edit'}
+                              >
                                 <PencilEdit01Icon />
                               </Button>
-                              <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
+                              <Button
+                                variant={'danger'}
+                                onClick={() => handleDelete(service.serviceId)}
+                                title={'Delete'}
+                              >
                                 <Delete01Icon />
                               </Button>
                             </ButtonGroup>
