@@ -137,7 +137,7 @@ const ServiceMocksListPage: React.FC = () => {
                       mock={mock}
                       onInvocations={() => handleInvocations(service, mock)}
                       onEdit={() => handleEdit(service, mock)}
-                      onCopy={(e) => handleCopy(service, mock, e.ctrlKey)}
+                      onCopy={(e) => handleCopy(service, mock, e.ctrlKey || e.altKey || e.shiftKey)}
                       onDelete={() => deleteMockHandler(mock)}
                       showTooltip={showTooltip}
                     />
