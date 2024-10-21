@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { deleteMock, getMocksByService, Mock, setEnabledMock } from '../../../api/service';
+import { deleteMock, getMocksByService, Mock, setEnabledMock } from '../../api/service';
 
 
 export interface Service {

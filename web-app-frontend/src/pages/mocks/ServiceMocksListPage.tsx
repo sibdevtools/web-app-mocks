@@ -3,18 +3,18 @@ import {
   getMockUrl,
   Mock,
   Service,
-} from '../../../api/service';
+} from '../../api/service';
 import {
   ArrowLeft01Icon,
   PlusSignIcon
 } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contextPath, mockTypes } from '../../../const/common.const';
-import CustomTable from '../../../components/CustomTable';
+import { contextPath, mockTypes } from '../../const/common.const';
+import CustomTable from '../../components/CustomTable';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useServiceMocks } from './serviceMocks';
 import { ActionButtons } from './ActionButtons';
-import { Loader } from '../../../components/Loader';
+import { Loader } from '../../components/Loader';
 
 
 const ServiceMocksListPage: React.FC = () => {
@@ -40,20 +40,19 @@ const ServiceMocksListPage: React.FC = () => {
   const handleCopy = async (service: Service, mock: Mock, newPage: boolean) => {
     try {
       const rs = await getMockUrl(service.serviceId, mock.mockId);
-      if (rs.data.success) {
-        const body = rs.data.body;
-        if (newPage) {
-          window?.open(body, '_blank')?.focus();
-          return;
-        }
-        await navigator.clipboard.writeText(body);
-
-        setShowTooltip(prev => ({ ...prev, [mock.mockId]: true }));
-
-        setTimeout(() => {
-          setShowTooltip(prev => ({ ...prev, [mock.mockId]: false }));
-        }, 3000);
+      if (!rs.data.success) {
+        return;
       }
+      const body = rs.data.body;
+      if (newPage) {
+        window?.open(body, '_blank')?.focus();
+        return;
+      }
+      await navigator.clipboard.writeText(body);
+      setShowTooltip(prev => ({ ...prev, [mock.mockId]: true }));
+      setTimeout(() => {
+        setShowTooltip(prev => ({ ...prev, [mock.mockId]: false }));
+      }, 3000);
     } catch (error) {
       console.error('Failed to fetch services:', error);
     }

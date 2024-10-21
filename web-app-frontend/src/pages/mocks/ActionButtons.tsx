@@ -1,7 +1,7 @@
 import React, { MouseEvent } from 'react';
 import { Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Clock01Icon, Copy01Icon, Delete01Icon, PencilEdit01Icon, WorkHistoryIcon } from 'hugeicons-react';
-import { Mock } from '../../../api/service';
+import { Mock } from '../../api/service';
 
 
 export interface ActionButtonsProps {
