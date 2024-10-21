@@ -6,6 +6,8 @@ import com.github.sibdevtools.localization.mutable.api.source.LocalizationJsonSo
 import com.github.sibdevtools.webapp.api.dto.HealthStatus;
 import com.github.sibdevtools.webapp.api.dto.WebApplication;
 import jakarta.annotation.Nonnull;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.Set;
  * @author sibmaks
  * @since 0.0.1
  */
+@Getter
 @Component
 @LocalizationJsonSource(
         systemCode = "WEB.APP.MOCKS",
@@ -29,6 +32,9 @@ import java.util.Set;
 )
 public class MocksWebApplication implements WebApplication {
     private static final LocalizationSourceId LOCALIZATION_SOURCE_ID = new LocalizationSourceId("WEB.APP.MOCKS");
+
+    @Value("${web.app.mocks.version}")
+    private String version;
 
     @Nonnull
     @Override
