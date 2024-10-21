@@ -87,7 +87,11 @@ const MockInvocationPage: React.FC = () => {
     <Container className="mt-4 mb-4">
       <Row>
         <Col md={{ span: 1, offset: 2 }} className={'mb-2'}>
-          <Button variant={'outline-primary'} type={'button'} onClick={handleBack}>
+          <Button
+            variant={'outline-primary'}
+            type={'button'} onClick={handleBack}
+            title={'Back'}
+          >
             <ArrowLeft01Icon />
           </Button>
         </Col>

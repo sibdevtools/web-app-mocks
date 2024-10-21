@@ -228,3 +228,49 @@ export interface GetInvocationRs {
 // Fetch invocation
 export const getInvocation = (serviceId: number, mockId: number, invocationId: number) =>
   service.get<GetInvocationRs>(`/services/${serviceId}/mocks/${mockId}/history/invocation/${invocationId}`);
+
+
+export interface ExportRq {
+  mocksIds: number[];
+}
+
+export interface ExportedMock {
+  method: string;
+  name: string;
+  path: string;
+  type: string;
+  delay: number;
+  enabled: boolean;
+  content: string;
+  contentMetadata: { [key: string]: string };
+}
+
+export interface ExportedService {
+  code: string;
+  mocks: ExportedMock[];
+}
+
+export interface Exported {
+  version: string;
+  createdAt: string;
+  services: ExportedService[];
+}
+
+export interface ExportRs {
+  success: boolean;
+  body: Exported;
+}
+
+// Export selected mocks
+export const exportMocks = (rq: ExportRq) => service.post<ExportRs>(`/share/v1/export`, rq);
+
+export interface ImportRq {
+  services: ExportedService[];
+}
+
+export interface ImportRs {
+  success: boolean;
+}
+
+// Import mocks
+export const importMocks = (rq: ImportRq) => service.post<ImportRs>(`/share/v1/import`, rq);

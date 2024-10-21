@@ -1,58 +1,43 @@
 import React, { useState } from 'react';
 import {
-  getMockUrl,
-  Mock,
-  Service,
-} from '../../../api/service';
-import {
-  ArrowLeft01Icon,
-  PlusSignIcon
+  ArrowLeft01Icon, Download05Icon
 } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contextPath, mockTypes } from '../../../const/common.const';
-import CustomTable from '../../../components/CustomTable';
+import { contextPath, mockTypes } from '../../const/common.const';
+import CustomTable from '../../components/CustomTable';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useServiceMocks } from './serviceMocks';
-import { ActionButtons } from './ActionButtons';
-import { Loader } from '../../../components/Loader';
+import { Loader } from '../../components/Loader';
+import { exportMocks } from '../../api/service';
 
 
 const ServiceMocksListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [showTooltip, setShowTooltip] = useState<{ [key: number]: boolean }>({});
   const navigate = useNavigate();
   const { serviceId } = useParams();
-  const { service, mocks, deleteMockHandler, setEnabledMockHandler } = useServiceMocks(serviceId, setLoading);
+  const { service, mocks, setExportingMockHandler } = useServiceMocks(serviceId, setLoading);
 
   if (!serviceId) {
     navigate(contextPath);
     return;
   }
 
-  const handleEdit = async (service: Service, mock: Mock) => {
-    navigate(`${contextPath}service/${service.serviceId}/mocks/edit/${mock.mockId}`);
-  };
-
-  const handleInvocations = async (service: Service, mock: Mock) => {
-    navigate(`${contextPath}service/${service.serviceId}/mocks/invocations/${mock.mockId}`);
-  };
-
-  const handleCopy = async (service: Service, mock: Mock) => {
-    try {
-      const rs = await getMockUrl(service.serviceId, mock.mockId);
-      if (rs.data.success) {
-        const body = rs.data.body;
-        await navigator.clipboard.writeText(body);
-
-        setShowTooltip(prev => ({ ...prev, [mock.mockId]: true }));
-
-        setTimeout(() => {
-          setShowTooltip(prev => ({ ...prev, [mock.mockId]: false }));
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Failed to fetch services:', error);
+  const onSave = async () => {
+    const mocksIds = mocks.filter(it => it.exporting)
+      .map(it => it.mockId);
+    if (!mocksIds || mocksIds.length === 0) {
+      return;
     }
+
+    const rs = await exportMocks({ mocksIds });
+    if (!rs.data.success) {
+      return;
+    }
+    const body = JSON.stringify(rs.data.body);
+    const link = document.createElement('a');
+    link.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(body);
+    link.download = `exported-${new Date().toISOString()}.json`;
+    link.click();
   };
 
   return (
@@ -63,19 +48,21 @@ const ServiceMocksListPage: React.FC = () => {
             <Col md={{ span: 1, offset: 2 }} className={'mb-2'}>
               <Button
                 variant={'outline-primary'}
-                onClick={() => navigate(contextPath)}
+                onClick={() => navigate(`${contextPath}service/${serviceId}/mocks`)}
+                title={'Back'}
               >
                 <ArrowLeft01Icon />
               </Button>
             </Col>
             <Col md={6}>
-              <span className={'h2'}>HTTP Service <code>{service.code}</code> Mocks</span>
+              <span className={'h2'}>Export HTTP Service <code>{service.code}</code> Mocks</span>
             </Col>
             <Col md={{ span: 1, offset: 1 }}>
-              <Button variant={'outline-success'}
-                      onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/add`)}
+              <Button variant={'outline-primary'}
+                      onClick={() => onSave()}
+                      title={'Download'}
               >
-                <PlusSignIcon />
+                <Download05Icon />
               </Button>
             </Col>
           </Row>
@@ -84,15 +71,22 @@ const ServiceMocksListPage: React.FC = () => {
             :
             <CustomTable
               columns={[
+                { key: 'export', label: 'Export' },
                 { key: 'method', label: 'Method' },
                 { key: 'name', label: 'Name' },
                 { key: 'path', label: 'Path' },
                 { key: 'type', label: 'Type' },
                 { key: 'enabled', label: 'Enabled' },
-                { key: 'actions', label: 'Actions' },
               ]}
               data={mocks.map(mock => {
                 return {
+                  export: {
+                    representation: <Form.Check
+                      type={'switch'}
+                      checked={mock.exporting}
+                      onChange={e => setExportingMockHandler(mock, e.target.checked)}
+                    />
+                  },
                   method: {
                     representation: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
                     value: mock.method
@@ -107,19 +101,9 @@ const ServiceMocksListPage: React.FC = () => {
                     representation: <Form.Check
                       type={'switch'}
                       checked={mock.enabled}
-                      onChange={e => setEnabledMockHandler(mock, e.target.checked)}
+                      readOnly={true}
                     />
                   },
-                  actions: {
-                    representation: <ActionButtons
-                      mock={mock}
-                      onInvocations={() => handleInvocations(service, mock)}
-                      onEdit={() => handleEdit(service, mock)}
-                      onCopy={() => handleCopy(service, mock)}
-                      onDelete={() => deleteMockHandler(mock)}
-                      showTooltip={showTooltip}
-                    />
-                  }
                 };
               })}
               sortableColumns={['method', 'name', 'path', 'type']}

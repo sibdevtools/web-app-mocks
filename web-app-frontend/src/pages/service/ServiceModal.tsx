@@ -37,10 +37,18 @@ export const ServiceModal: React.FC<ServiceModal> = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button
+          variant="secondary"
+          onClick={() => setShowModal(false)}
+          title={'Cancel'}
+        >
           <Cancel01Icon />
         </Button>
-        <Button variant="primary" onClick={handleSave}>
+        <Button
+          variant="primary"
+          onClick={handleSave}
+          title={'Save'}
+        >
           <FloppyDiskIcon />
         </Button>
       </Modal.Footer>

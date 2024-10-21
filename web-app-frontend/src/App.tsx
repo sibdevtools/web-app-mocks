@@ -4,12 +4,14 @@ import 'hugeicons-react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import ServiceListPage from './pages/service/ServiceListPage';
-import ServiceMocksListPage from './pages/service/mocks/ServiceMocksListPage';
+import ServiceMocksListPage from './pages/mocks/ServiceMocksListPage';
 import { contextPath } from './const/common.const';
 import AddMockPage from './pages/mock/AddEditMockPage';
 import AddEditMockPage from './pages/mock/AddEditMockPage';
 import MockInvocationListPage from './pages/invocations/MockInvocationListPage';
 import MockInvocationPage from './pages/invocations/invocation/MockInvocationPage';
+import ServiceMocksListExportPage from './pages/share/ServiceMocksListExportPage';
+import ServiceMocksListImportPage from './pages/share/ServiceMocksListImportPage';
 
 
 const App: React.FC = () => {
@@ -32,8 +34,11 @@ const App: React.FC = () => {
                     <Route path={':invocationId'} element={<MockInvocationPage />} />
                   </Route>
                 </Route>
+                <Route path={'export'} element={<ServiceMocksListExportPage />} />
+                <Route path={'import'} element={<ServiceMocksListImportPage />} />
               </Route>
             </Route>
+            <Route path={'import'} element={<ServiceMocksListImportPage />} />
           </Route>
         </Route>
       </Routes>

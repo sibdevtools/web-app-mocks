@@ -65,7 +65,11 @@ export const MockForm: React.FC<MockFormProps> = ({
     <Container className="mt-4 mb-4">
       <Row className="mb-2">
         <Col md={{ span: 1, offset: 2 }}>
-          <Button variant="outline-primary" onClick={navigateBack}>
+          <Button
+            variant="outline-primary"
+            onClick={navigateBack}
+            title={'Back'}
+          >
             <ArrowLeft01Icon />
           </Button>
         </Col>
@@ -185,7 +189,11 @@ export const MockForm: React.FC<MockFormProps> = ({
                   creation={!isEditMode} />
               )}
 
-              {mockType === 'STATIC_FILE' && <StaticFileMockContent setContent={setContent} />}
+              {mockType === 'STATIC_FILE' && <StaticFileMockContent
+                content={content}
+                setContent={setContent}
+                isEditMode={isEditMode}
+              />}
 
               {(mockType === 'JS' || mockType === 'PYTHON') && (
                 <GraalVMMockContent
@@ -198,7 +206,11 @@ export const MockForm: React.FC<MockFormProps> = ({
               {/* Submit Button */}
               <Row>
                 <Col className="d-flex justify-content-end">
-                  <Button variant="primary" type="submit">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    title={'Save'}
+                  >
                     <FloppyDiskIcon />
                   </Button>
                 </Col>

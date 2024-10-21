@@ -38,6 +38,7 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
           <Button
             variant="outline-primary"
             onClick={() => downloadBase64File(body, `file.${invocationId}.bin`, contentType)}
+            title={'Save'}
           >
             <FloppyDiskIcon />
           </Button>
@@ -60,6 +61,7 @@ export const BodyRepresentation: React.FC<BodyRepresentationProps> = ({
       <Button
         variant="outline-primary"
         onClick={() => downloadBase64File(body, `file.${invocationId}.bin`, contentType)}
+        title={'Save'}
       >
         <FloppyDiskIcon />
       </Button>

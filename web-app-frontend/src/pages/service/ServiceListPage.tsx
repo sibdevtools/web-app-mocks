@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ButtonGroup, Button, Container, Row, Col, Alert } from 'react-bootstrap';
-import { Delete01Icon, PencilEdit01Icon, PlusSignIcon } from 'hugeicons-react';
+import { Delete01Icon, PencilEdit01Icon, PlusSignIcon, Upload05Icon } from 'hugeicons-react';
 import { getAllServices, deleteService, updateService, createService, Service } from '../../api/service';
 import CustomTable, { Cell, Row as TableRow } from '../../components/CustomTable';
 import { Loader } from '../../components/Loader';
@@ -75,7 +75,7 @@ const ServiceListPage: React.FC = () => {
         setMinorError('Failed to update service');
         return;
       }
-      editService.code = newServiceCode
+      editService.code = newServiceCode;
       setShowModal(false);
     } catch (error) {
       console.error('Failed to update service:', error);
@@ -98,11 +98,11 @@ const ServiceListPage: React.FC = () => {
         setMinorError('Failed to add service');
         return;
       }
-      const rs = response.data.body
+      const rs = response.data.body;
       setServices([...services, {
         serviceId: rs,
         code: newServiceCode
-      }])
+      }]);
     } catch (error) {
       console.error('Failed to add service:', error);
       setMinorError('Failed to add service');
@@ -130,9 +130,22 @@ const ServiceListPage: React.FC = () => {
           <span className={'h2'}>HTTP Services</span>
         </Col>
         <Col md={{ span: 1, offset: 1 }}>
-          <Button variant="outline-success" onClick={handleAddClick}>
-            <PlusSignIcon />
-          </Button>
+          <ButtonGroup>
+            <Button
+              variant="outline-success"
+              onClick={handleAddClick}
+              title={'Add'}
+            >
+              <PlusSignIcon />
+            </Button>
+            <Button
+              variant={'outline-info'}
+              onClick={() => navigate(`${contextPath}service/import`)}
+              title={'Import'}
+            >
+              <Upload05Icon />
+            </Button>
+          </ButtonGroup>
         </Col>
       </Row>
       <Row>
@@ -169,10 +182,18 @@ const ServiceListPage: React.FC = () => {
                         actions: {
                           representation:
                             <ButtonGroup>
-                              <Button variant={'primary'} onClick={() => handleEditClick(service)}>
+                              <Button
+                                variant={'primary'}
+                                onClick={() => handleEditClick(service)}
+                                title={'Edit'}
+                              >
                                 <PencilEdit01Icon />
                               </Button>
-                              <Button variant={'danger'} onClick={() => handleDelete(service.serviceId)}>
+                              <Button
+                                variant={'danger'}
+                                onClick={() => handleDelete(service.serviceId)}
+                                title={'Delete'}
+                              >
                                 <Delete01Icon />
                               </Button>
                             </ButtonGroup>

@@ -32,6 +32,8 @@ const headerValueSuggestions: { [key: string]: string[] } = {
 };
 
 const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
+  const [notFilledExist, setNotFilledExist] = useState(false);
+
   const initialHeaders = meta['HTTP_HEADERS']
     ? JSON.parse(meta['HTTP_HEADERS'] as string)
     : {};
@@ -79,12 +81,18 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
     updateMetaHeaders(updatedHeaders);
   };
 
+  useEffect(() => {
+    const notFilledExist = headers.filter(it => it.key === '')
+      .find(it => it);
+    setNotFilledExist(notFilledExist !== undefined);
+  }, [headers]);
+
   return (
     <>
       {headers.map((header, index) => (
         <Row key={index} className="mb-3">
           {/* Header Key Input */}
-          <Col md={5}>
+          <Col md={12}>
             <Form.Group>
               <InputGroup>
                 <Form.Control
@@ -99,14 +107,6 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                     <option key={i} value={headerName} />
                   ))}
                 </datalist>
-              </InputGroup>
-            </Form.Group>
-          </Col>
-
-          {/* Header Value Input */}
-          <Col md={5}>
-            <Form.Group>
-              <InputGroup>
                 <Form.Control
                   type="text"
                   list={`value-suggestions-${index}`}
@@ -119,25 +119,24 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                     <option key={i} value={valueSuggestion} />
                   ))}
                 </datalist>
+                <Button
+                  variant="danger"
+                  onClick={() => removeHeader(index)}
+                  disabled={headers.length === 1}
+                  title={'Remove'}
+                >
+                  <MinusSignIcon />
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={addHeader}
+                  disabled={index !== headers.length - 1 || notFilledExist}
+                  title={'Add'}
+                >
+                  <PlusSignIcon />
+                </Button>
               </InputGroup>
             </Form.Group>
-          </Col>
-
-          {/* Action Buttons: Remove/Add */}
-          <Col md={2} className="d-flex align-items-center">
-            <Button
-              variant="danger"
-              onClick={() => removeHeader(index)}
-              disabled={headers.length === 1}
-              className="me-2"
-            >
-              <MinusSignIcon />
-            </Button>
-            {index === headers.length - 1 && (
-              <Button variant="primary" onClick={addHeader}>
-                <PlusSignIcon />
-              </Button>
-            )}
           </Col>
         </Row>
       ))}

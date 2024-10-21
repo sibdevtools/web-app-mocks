@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * Http services entity repository
@@ -15,6 +16,14 @@ import java.time.ZonedDateTime;
  * @since 0.0.1
  */
 public interface HttpServiceEntityRepository extends JpaRepository<HttpServiceEntity, Long> {
+
+    /**
+     * Get service by code
+     *
+     * @param code service code
+     * @return optional service
+     */
+    Optional<HttpServiceEntity> findByCode(String code);
 
     /**
      * Update service code by id
