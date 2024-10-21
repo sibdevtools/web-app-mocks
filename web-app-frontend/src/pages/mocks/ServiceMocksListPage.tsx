@@ -5,13 +5,13 @@ import {
   Service,
 } from '../../api/service';
 import {
-  ArrowLeft01Icon,
+  ArrowLeft01Icon, Download05Icon,
   PlusSignIcon
 } from 'hugeicons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath, mockTypes } from '../../const/common.const';
 import CustomTable from '../../components/CustomTable';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Container, Form, Row } from 'react-bootstrap';
 import { useServiceMocks } from './serviceMocks';
 import { ActionButtons } from './ActionButtons';
 import { Loader } from '../../components/Loader';
@@ -75,11 +75,19 @@ const ServiceMocksListPage: React.FC = () => {
               <span className={'h2'}>HTTP Service <code>{service.code}</code> Mocks</span>
             </Col>
             <Col md={{ span: 1, offset: 1 }}>
-              <Button variant={'outline-success'}
-                      onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/add`)}
-              >
-                <PlusSignIcon />
-              </Button>
+              <ButtonGroup>
+                <Button variant={'outline-success'}
+                        onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/add`)}
+                >
+                  <PlusSignIcon />
+                </Button>
+                <Button
+                  variant={'outline-primary'}
+                  onClick={() => navigate(`${contextPath}service/${service.serviceId}/mocks/export`)}
+                >
+                  <Download05Icon />
+                </Button>
+              </ButtonGroup>
             </Col>
           </Row>
           {loading ?
