@@ -8,9 +8,9 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +36,10 @@ public final class HttpUtils {
             if (rqInputStream == null) {
                 return new byte[0];
             }
-            byte[] rqBody = rqInputStream.readAllBytes();
+            var rqBody = rqInputStream.readAllBytes();
+            if (rq instanceof ContentCachingRequestWrapper requestWrapper) {
+                return requestWrapper.getContentAsByteArray();
+            }
             if (rqBody == null || rqBody.length == 0) {
                 return new byte[0];
             }
