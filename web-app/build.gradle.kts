@@ -5,6 +5,7 @@ plugins {
     id("java")
     id("jacoco")
     id("maven-publish")
+    alias(libs.plugins.spring.dependency.managment)
 }
 
 dependencies {
@@ -12,7 +13,7 @@ dependencies {
     compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     annotationProcessor("org.projectlombok:lombok")
-    annotationProcessor("org.mapstruct:mapstruct-processor:${project.property("lib_mapstruct_version")}")
+    annotationProcessor(libs.mapstruct.processor)
 
     implementation("org.springframework:spring-aspects")
     implementation("org.springframework:spring-context")
@@ -35,20 +36,12 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("jakarta.persistence:jakarta.persistence-api")
 
-    implementation("org.graalvm.js:js:${project.property("lib_graalvm_js")}")
-    implementation("org.graalvm.js:js-scriptengine:${project.property("lib_graalvm_js")}")
+    implementation(libs.bundles.graalvm)
 
-    implementation("org.graalvm.python:python:${project.property("lib_graalvm_python")}")
+    implementation(libs.mapstruct)
+    implementation(libs.mapstruct.lombok.binding)
 
-    implementation("org.mapstruct:mapstruct:${project.property("lib_mapstruct_version")}")
-    implementation("org.projectlombok:lombok-mapstruct-binding:${project.property("lib_mapstruct_lombok_binding_version")}")
-
-    implementation("com.github.sibdevtools:api-common:${project.property("lib_api_common_version")}")
-    implementation("com.github.sibdevtools:api-error:${project.property("lib_api_error_version")}")
-    implementation("com.github.sibdevtools:api-localization:${project.property("lib_api_localization_version")}")
-    implementation("com.github.sibdevtools:api-session:${project.property("lib_api_session_version")}")
-    implementation("com.github.sibdevtools:api-storage:${project.property("lib_api_storage_version")}")
-    implementation("com.github.sibdevtools:api-web-app:${project.property("lib_api_web_app_version")}")
+    implementation(libs.bundles.service.api)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
@@ -62,6 +55,36 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+val targetJavaVersion = (libs.versions.java.get()).toInt()
+val javaVersion = JavaVersion.toVersion(targetJavaVersion)
+
+java {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    withSourcesJar()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${libs.versions.spring.framework.get()}")
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
 }
 
 tasks.withType<Test> {

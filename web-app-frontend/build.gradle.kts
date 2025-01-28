@@ -10,13 +10,9 @@ node {
   download.set(true)
 }
 
-tasks.register<NpmTask>("buildFrontend") {
+tasks.register<NpmTask>("build") {
   group = "build"
   description = "Builds the React frontend using npm."
   dependsOn("npmInstall")
   args.set(listOf("run", "build"))
-}
-
-tasks.named("build") {
-  dependsOn("buildFrontend")
 }
