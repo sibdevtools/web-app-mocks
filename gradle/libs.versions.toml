@@ -15,8 +15,10 @@ localization-api = "0.0.7"
 error-api = "0.0.16"
 session-api = "0.0.15"
 storage-api = "0.0.13"
+async-api = "0.0.6"
 web-app-api = "0.0.6"
 
+async-embedded = "0.0.10"
 session-embedded = "0.0.10"
 storage-embedded = "0.1.16"
 
@@ -26,8 +28,10 @@ localization-api = { module = "com.github.sibdevtools:api-localization", version
 error-api = { module = "com.github.sibdevtools:api-error", version.ref = "error-api" }
 session-api = { module = "com.github.sibdevtools:api-session", version.ref = "session-api" }
 storage-api = { module = "com.github.sibdevtools:api-storage", version.ref = "storage-api" }
+async-api = { module = "com.github.sibdevtools:api-async", version.ref = "async-api" }
 web-app-api = { module = "com.github.sibdevtools:api-web-app", version.ref = "web-app-api" }
 
+async-embedded = { module = "com.github.sibdevtools:service-async-embedded", version.ref = "async-embedded" }
 session-embedded = { module = "com.github.sibdevtools:service-session-embedded", version.ref = "session-embedded" }
 storage-embedded = { module = "com.github.sibdevtools:service-storage-embedded", version.ref = "storage-embedded" }
 
@@ -48,6 +52,7 @@ service-api = [
     "error-api",
     "session-api",
     "storage-api",
+    "async-api",
     "web-app-api"
 ]
 graalvm = [

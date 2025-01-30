@@ -22,4 +22,5 @@ import java.time.temporal.ChronoUnit;
 public class WebAppMocksObsoleteCleanUpProperties {
     private ChronoUnit ttlType = ChronoUnit.DAYS;
     private long ttl = 3;
+    private int maxDeleteBatch = 128;
 }
