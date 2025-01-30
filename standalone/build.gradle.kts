@@ -25,6 +25,7 @@ dependencies {
 
     implementation("com.h2database:h2")
 
+    implementation(libs.async.embedded)
     implementation(libs.session.embedded)
     implementation(libs.storage.embedded)
 

@@ -32,12 +32,13 @@ chmod +x gradlew
 
 ### Obsolete invokes
 
-| Code                                             | Value           | Description                                                                                 |
-|--------------------------------------------------|-----------------|---------------------------------------------------------------------------------------------|
-| `web.app.mocks.props.clean-up.obsolete.enabled`  | `false`         | Enabler                                                                                     |
-| `web.app.mocks.props.clean-up.obsolete.cron`     | `0 0 */6 * * *` | Scheduling clean up CRON                                                                    |
-| `web.app.mocks.props.clean-up.obsolete.ttl`      | `3`             | Invokes ttl to remove                                                                       |
-| `web.app.mocks.props.clean-up.obsolete.ttl-type` | `DAYS`          | Invokes ttl type to remove:<br/>* DAYS<br/>* HOURS<br/>* MINUTES<br/>* SECONDS<br/>* MILLIS |
+| Code                                                     | Value           | Description                                                                                 |
+|----------------------------------------------------------|-----------------|---------------------------------------------------------------------------------------------|
+| `web.app.mocks.props.clean-up.obsolete.enabled`          | `false`         | Enabler                                                                                     |
+| `web.app.mocks.props.clean-up.obsolete.cron`             | `0 0 */6 * * *` | Scheduling clean up CRON                                                                    |
+| `web.app.mocks.props.clean-up.obsolete.ttl`              | `3`             | Invokes ttl to remove                                                                       |
+| `web.app.mocks.props.clean-up.obsolete.ttl-type`         | `DAYS`          | Invokes ttl type to remove:<br/>* DAYS<br/>* HOURS<br/>* MINUTES<br/>* SECONDS<br/>* MILLIS |
+| `web.app.mocks.props.clean-up.obsolete.max-delete-batch` | `128`           | Max row's amount to delete per iteration                                                    |
 
 ### Store only last N invokes
 

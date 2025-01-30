@@ -1,5 +1,7 @@
 package com.github.sibdevtools.web.app.mocks.service;
 
+import com.github.sibdevtools.async.api.rq.CreateAsyncTaskRq;
+import com.github.sibdevtools.async.api.service.AsyncTaskService;
 import com.github.sibdevtools.storage.api.dto.BucketFile;
 import com.github.sibdevtools.storage.api.rq.SaveFileRq;
 import com.github.sibdevtools.storage.api.service.StorageService;
@@ -24,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author sibmaks
@@ -38,6 +41,7 @@ public class WebAppMocksService {
     private final HttpMockEntityRepository httpMockEntityRepository;
     private final StorageService storageService;
     private final HttpMockDtoMapper httpMockDtoMapper;
+    private final AsyncTaskService asyncTaskService;
 
     @Value("${web.app.mocks.props.bucket.code}")
     private String bucketCode;
@@ -63,14 +67,7 @@ public class WebAppMocksService {
         meta = meta == null ? Collections.emptyMap() : meta;
         var contentName = "%s-%s-%s".formatted(method, serviceEntity.getCode(), type);
 
-        var saveRq = SaveFileRq.builder()
-                .bucket(bucketCode)
-                .name(contentName)
-                .meta(meta)
-                .data(content)
-                .build();
-        var saveFileRs = storageService.save(saveRq);
-        var contentId = saveFileRs.getBody();
+        var contentId = saveFile(meta, content, contentName);
 
         var now = ZonedDateTime.now();
         var httpMockEntity = HttpMockEntity.builder()
@@ -107,14 +104,9 @@ public class WebAppMocksService {
         var serviceEntity = httpMockEntity.getService();
         var contentName = "%s-%s-%s".formatted(method, serviceEntity.getCode(), type);
 
-        var saveRq = SaveFileRq.builder()
-                .bucket(bucketCode)
-                .name(contentName)
-                .meta(meta)
-                .data(content)
-                .build();
-        var saveFileRs = storageService.save(saveRq);
-        var contentId = saveFileRs.getBody();
+        registerCleanUpTask(mockId, httpMockEntity);
+
+        var contentId = saveFile(meta, content, contentName);
 
         httpMockEntity.setMethod(method);
         httpMockEntity.setName(name);
@@ -126,6 +118,17 @@ public class WebAppMocksService {
         httpMockEntity.setModifiedAt(ZonedDateTime.now());
 
         return httpMockEntityRepository.save(httpMockEntity);
+    }
+
+    private String saveFile(Map<String, String> meta, byte[] content, String contentName) {
+        var saveRq = SaveFileRq.builder()
+                .bucket(bucketCode)
+                .name(contentName)
+                .meta(meta)
+                .data(content)
+                .build();
+        var saveFileRs = storageService.save(saveRq);
+        return saveFileRs.getBody();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -192,7 +195,34 @@ public class WebAppMocksService {
      * @param mockId mock identifier
      */
     public void deleteMockById(long mockId) {
+        var httpMockEntity = httpMockEntityRepository.findById(mockId)
+                .orElse(null);
+
+        if (httpMockEntity == null) {
+            return;
+        }
+
+        registerCleanUpTask(mockId, httpMockEntity);
+
         httpMockEntityRepository.deleteById(mockId);
+    }
+
+    private void registerCleanUpTask(long mockId, HttpMockEntity httpMockEntity) {
+        var cleanUpTaskRs = asyncTaskService.registerTask(
+                CreateAsyncTaskRq.builder()
+                        .uid(UUID.randomUUID().toString())
+                        .type("web-app-mocks.clean-up-removed-file")
+                        .version("v1")
+                        .scheduledStartTime(ZonedDateTime.now().plusSeconds(10))
+                        .parameters(Map.ofEntries(
+                                Map.entry("mockId", Long.toString(mockId)),
+                                Map.entry("storageId", httpMockEntity.getStorageId())
+                        ))
+                        .build()
+        );
+        if (!cleanUpTaskRs.isSuccess() || !cleanUpTaskRs.getBody()) {
+            throw new RuntimeException("Failed to schedule cleanup task");
+        }
     }
 
     private BucketFile getBucketFile(String storageId) {
