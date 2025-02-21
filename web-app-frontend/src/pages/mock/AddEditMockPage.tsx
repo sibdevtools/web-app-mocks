@@ -37,7 +37,7 @@ const AddEditMockPage: React.FC = () => {
       const body = response.data.body;
       setMockName(body.name);
       setMethod(body.method);
-      setPath(body.path);
+      setPath(body.path.slice(1));
       setDelay(body.delay);
       setMockType(body.type);
       setMeta(body.meta);
@@ -60,7 +60,7 @@ const AddEditMockPage: React.FC = () => {
       const mockData = {
         name: mockName,
         method,
-        path,
+        path: '/' + path,
         type: mockType,
         delay: delay,
         meta,

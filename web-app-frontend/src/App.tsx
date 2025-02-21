@@ -20,7 +20,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path={contextPath}>
           <Route index element={<ServiceListPage />} />
-          <Route path="service">
+          <Route path={'service'}>
             <Route path={':serviceId'}>
               <Route path={'mocks'}>
                 <Route index element={<ServiceMocksListPage />} />

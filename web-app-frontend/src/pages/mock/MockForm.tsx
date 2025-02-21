@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Button, Col, Container, Form, InputGroup, OverlayTrigger, Row, Table, Tooltip } from 'react-bootstrap';
 import { Method, methods, MockType, mockTypes, StatusCode, statusCodes } from '../../const/common.const';
 import HttpHeadersForm from '../../components/HttpHeadersForm';
 import StaticMockContent from '../../components/StaticMockContent';
@@ -7,6 +7,7 @@ import GraalVMMockContent from '../../components/GraalVMMockContent';
 import StaticFileMockContent from '../../components/StaticFileMockContent';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
 import { Loader } from '../../components/Loader';
+import './MockForm.css';
 
 type MockFormProps = {
   loading: boolean;
@@ -61,6 +62,37 @@ export const MockForm: React.FC<MockFormProps> = ({
     setMockType(e.target.value as MockType);
   };
 
+  const pathTooltip = (
+    <Tooltip id="pathTooltip" className={'wide-tooltip'}>
+      <Table variant={'dark'} borderless={true} responsive={true}>
+        <thead>
+        <tr>
+          <th>Wildcard</th>
+          <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><code>?</code></td>
+          <td>Matches exactly one character.</td>
+        </tr>
+        <tr>
+          <td><code>*</code></td>
+          <td>Matches zero or more characters.</td>
+        </tr>
+        <tr>
+          <td><code>**</code></td>
+          <td>Matches zero or more 'directories' in a path</td>
+        </tr>
+        <tr>
+          <td><code>&#123;spring:[a-z]+&#125;</code></td>
+          <td>Matches regExp <code>[a-z]+</code> as a path variable named <code>"spring"</code></td>
+        </tr>
+        </tbody>
+      </Table>
+    </Tooltip>
+  );
+
   return (
     <Container className="mt-4 mb-4">
       <Row className="mb-2">
@@ -114,13 +146,22 @@ export const MockForm: React.FC<MockFormProps> = ({
                 <Col md={10} sm={9}>
                   <Form.Group controlId="pathInput">
                     <Form.Label>Path</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={path}
-                      onChange={(e) => setPath(e.target.value)}
-                      placeholder="Ant pattern or path, starting with /"
-                      required
-                    />
+                    <InputGroup>
+                      <InputGroup.Text>/</InputGroup.Text>
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={pathTooltip}
+                        delay={{ show: 25, hide: 250 }}
+                      >
+                        <Form.Control
+                          type="text"
+                          value={path}
+                          onChange={(e) => setPath(e.target.value)}
+                          placeholder="Ant pattern or path"
+                          required
+                        />
+                      </OverlayTrigger>
+                    </InputGroup>
                   </Form.Group>
                 </Col>
               </Row>
