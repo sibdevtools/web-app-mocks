@@ -5,7 +5,7 @@ spring-framework = "3.3.3"
 spring-openapi-doc = "2.6.0"
 spring-dependency-managment = "1.1.6"
 
-graalvm = "24.1.0"
+graalvm = "24.1.2"
 mapstruct = "1.6.2"
 mapstruct-lombok-binding = "0.2.0"
 
@@ -37,6 +37,7 @@ storage-embedded = { module = "com.github.sibdevtools:service-storage-embedded",
 
 spring-openapi-starter = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-openapi-doc" }
 
+graalvm-api = { module = "org.graalvm.truffle:truffle-api", version.ref = "graalvm" }
 graalvm-js = { module = "org.graalvm.js:js", version.ref = "graalvm" }
 graalvm-js-scriptengine = { module = "org.graalvm.js:js-scriptengine", version.ref = "graalvm" }
 graalvm-python = { module = "org.graalvm.python:python", version.ref = "graalvm" }
@@ -56,6 +57,7 @@ service-api = [
     "web-app-api"
 ]
 graalvm = [
+    "graalvm-api",
     "graalvm-js",
     "graalvm-js-scriptengine",
     "graalvm-python"
