@@ -51,7 +51,7 @@ public class RequestDispatcher {
         var httpMocks = httpMockEntityRepository.findAllByMethodAndServiceCodeAndEnabledIsTrue(method, serviceCode);
         for (var httpMock : httpMocks) {
             var mockPath = httpMock.getPath();
-            if (!mockPath.equals(path) || !antPathMatcher.match(mockPath, path)) {
+            if (!mockPath.equals(path) && !antPathMatcher.match(mockPath, path)) {
                 continue;
             }
             var type = httpMock.getType();

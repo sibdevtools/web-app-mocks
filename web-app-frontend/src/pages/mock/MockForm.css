@@ -1,0 +1,6 @@
+.wide-tooltip .tooltip-inner {
+  max-width: none; /* Remove the default max-width */
+  width: auto; /* Allow the tooltip to grow based on content */
+  white-space: nowrap; /* Prevent text wrapping */
+  padding: 8px; /* Add some padding for better appearance */
+}

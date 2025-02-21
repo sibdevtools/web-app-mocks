@@ -5,8 +5,6 @@ plugins {
     alias(libs.plugins.spring.dependency.managment)
 }
 
-apply(plugin = "io.spring.dependency-management")
-
 dependencies {
     compileOnly("org.projectlombok:lombok")
     compileOnly("jakarta.servlet:jakarta.servlet-api")
