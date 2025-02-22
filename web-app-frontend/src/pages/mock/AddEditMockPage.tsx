@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createMock, getMock, updateMock } from '../../api/service';
 import { useNavigate, useParams } from 'react-router-dom';
 import { contextPath, Method, methods, MockType } from '../../const/common.const';
-import { decodeToBuffer, encode } from '../../utils/base.64converters';
+import { decodeToBuffer, encode } from '../../utils/base64';
 import MockForm from './MockForm';
 
 const AddEditMockPage: React.FC = () => {

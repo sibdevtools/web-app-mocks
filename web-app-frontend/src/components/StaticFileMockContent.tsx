@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { Download05Icon } from 'hugeicons-react';
 import { downloadBase64File } from '../utils/files';
-import { encode } from '../utils/base.64converters';
+import { encode } from '../utils/base64';
 
 export interface StaticMockBinaryContentProps {
   isEditMode: boolean;

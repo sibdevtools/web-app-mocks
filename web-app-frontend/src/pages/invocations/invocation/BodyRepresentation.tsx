@@ -2,7 +2,7 @@ import { Button, ButtonGroup, FormLabel } from 'react-bootstrap';
 import { FloppyDiskIcon, TextWrapIcon } from 'hugeicons-react';
 import { downloadBase64File } from '../../../utils/files';
 import AceEditor from 'react-ace';
-import { decodeToText } from '../../../utils/base.64converters';
+import { decodeToText } from '../../../utils/base64';
 import React, { useState } from 'react';
 import { loadSettings } from '../../../settings/utils';
 import { mimeToAceModeMap } from '../../../const/common.const';
