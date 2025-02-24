@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Col, Container, Form, InputGroup, OverlayTrigger, Row, Table, Tooltip } from 'react-bootstrap';
-import { Method, methods, MockType, mockTypes, StatusCode, statusCodes } from '../../const/common.const';
+import { methods, MockType, mockTypes, StatusCode, statusCodes } from '../../const/common.const';
 import HttpHeadersForm from '../../components/HttpHeadersForm';
 import StaticMockContent from '../../components/StaticMockContent';
 import GraalVMMockContent from '../../components/GraalVMMockContent';
@@ -8,18 +8,20 @@ import StaticFileMockContent from '../../components/StaticFileMockContent';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
 import { Loader } from '../../components/Loader';
 import './MockForm.css';
+import CodeDocumentation from './CodeDocumentation';
+import SuggestiveInput from '../../components/suggestive-input/SuggestiveInput';
 
 type MockFormProps = {
   loading: boolean;
   mockName: string;
-  method: Method;
+  method: string;
   path: string;
   delay: number;
   mockType: MockType;
   meta: { [key: string]: string };
   content: ArrayBuffer;
   setMockName: (name: string) => void;
-  setMethod: (method: Method) => void;
+  setMethod: (method: string) => void;
   setPath: (path: string) => void;
   setDelay: (delay: number) => void;
   setMockType: (type: MockType) => void;
@@ -117,13 +119,20 @@ export const MockForm: React.FC<MockFormProps> = ({
             <Form className="mt-4" onSubmit={onSubmit}>
               {/* Mock Name Input */}
               <Form.Group className="mb-3" controlId="mockNameInput">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mockName}
-                  onChange={(e) => setMockName(e.target.value)}
-                  required
-                />
+                <Row>
+                  <Col lg={2}>
+                    <Form.Label htmlFor={'nameInput'}>Name</Form.Label>
+                  </Col>
+                  <Col lg={10}>
+                    <Form.Control
+                      type="text"
+                      id={'nameInput'}
+                      value={mockName}
+                      onChange={(e) => setMockName(e.target.value)}
+                      required
+                    />
+                  </Col>
+                </Row>
               </Form.Group>
 
               {/* Method and Path Fields */}
@@ -131,21 +140,22 @@ export const MockForm: React.FC<MockFormProps> = ({
                 <Col md={2} sm={3}>
                   <Form.Group controlId="httpMethodSelect">
                     <Form.Label>HTTP Method</Form.Label>
-                    <Form.Select
+                    <SuggestiveInput
+                      mode={'free'}
                       value={method}
-                      onChange={(e) => setMethod(methods[e.target.selectedIndex])}
-                      required
-                    >
-                      {methods.map((it) => (
-                        <option key={it} value={it}>{it}</option>
-                      ))}
-                    </Form.Select>
+                      onChange={it => setMethod(it.value)}
+                      required={true}
+                      suggestions={methods.map(it => {
+                        return { key: it, value: it };
+                      })}
+                      maxSuggestions={methods.length}
+                    />
                   </Form.Group>
                 </Col>
 
                 <Col md={10} sm={9}>
                   <Form.Group controlId="pathInput">
-                    <Form.Label>Path</Form.Label>
+                    <Form.Label htmlFor={'pathInput'}>Path</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>/</InputGroup.Text>
                       <OverlayTrigger
@@ -155,6 +165,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                       >
                         <Form.Control
                           type="text"
+                          id={'pathInput'}
                           value={path}
                           onChange={(e) => setPath(e.target.value)}
                           placeholder="Ant pattern or path"
@@ -176,8 +187,9 @@ export const MockForm: React.FC<MockFormProps> = ({
               <Row className="mb-3">
                 <Col md={8}>
                   <Form.Group controlId="statusSelect">
-                    <Form.Label>Status</Form.Label>
+                    <Form.Label htmlFor={'statusSelect'}>Status</Form.Label>
                     <Form.Select
+                      id={'statusSelect'}
                       value={meta['STATUS_CODE']}
                       onChange={onStatusChange}
                       required
@@ -191,19 +203,24 @@ export const MockForm: React.FC<MockFormProps> = ({
                   </Form.Group>
                 </Col>
                 <Col md={2}>
-                  <Form.Label>Delay (ms)</Form.Label>
-                  <Form.Control
-                    type={'number'}
-                    min={0}
-                    value={`${delay}`}
-                    onChange={(e) => setDelay(+e.target.value)}
-                    required
-                  />
+                  <Form.Label htmlFor={'delayInput'}>Delay</Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type={'number'}
+                      id={'delayInput'}
+                      min={0}
+                      value={`${delay}`}
+                      onChange={(e) => setDelay(+e.target.value)}
+                      required
+                    />
+                    <InputGroup.Text>ms</InputGroup.Text>
+                  </InputGroup>
                 </Col>
                 <Col md={2}>
                   <Form.Group controlId="mockTypeSelect">
-                    <Form.Label>Type</Form.Label>
+                    <Form.Label htmlFor={'typeSelect'}>Type</Form.Label>
                     <Form.Select
+                      id={'typeSelect'}
                       value={mockType}
                       onChange={onMockTypeChange}
                       required
@@ -245,7 +262,7 @@ export const MockForm: React.FC<MockFormProps> = ({
               )}
 
               {/* Submit Button */}
-              <Row>
+              <Row className="mb-3">
                 <Col className="d-flex justify-content-end">
                   <Button
                     variant="primary"
@@ -256,6 +273,10 @@ export const MockForm: React.FC<MockFormProps> = ({
                   </Button>
                 </Col>
               </Row>
+
+              {(mockType === 'JS' || mockType === 'PYTHON') && (
+                <CodeDocumentation mode={mockType === 'JS' ? 'javascript' : 'python'} />
+              )}
             </Form>
           </Col>
         </Row>

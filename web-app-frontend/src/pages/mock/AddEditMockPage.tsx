@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createMock, getMock, updateMock } from '../../api/service';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contextPath, Method, methods, MockType } from '../../const/common.const';
+import { contextPath, methods, MockType } from '../../const/common.const';
 import { decodeToBuffer, encode } from '../../utils/base64';
 import MockForm from './MockForm';
 
@@ -11,7 +11,7 @@ const AddEditMockPage: React.FC = () => {
   const { serviceId, mockId } = useParams();
 
   const [mockName, setMockName] = useState('');
-  const [method, setMethod] = useState<Method>(methods[0]);
+  const [method, setMethod] = useState<string>(methods[0]);
   const [path, setPath] = useState('');
   const [delay, setDelay] = useState<number>(0);
   const [mockType, setMockType] = useState<MockType>('STATIC');

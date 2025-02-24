@@ -71,7 +71,6 @@ const GraalVMMockContent: React.FC<GraalVMMockContentProps> = ({
           editorProps={{ $blockScrolling: true }}
         />
       </Form.Group>
-      <CodeDocumentation mode={mode} />
     </>
   );
 };

@@ -9,8 +9,6 @@ export const methods = [
   'DELETE'
 ] as const;
 
-export type Method = typeof methods[number];
-
 export const statusCodes = new Map([
     [100, 'Continue'] as const,
     [101, 'Switching Protocols'] as const,
