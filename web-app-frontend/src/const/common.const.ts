@@ -75,8 +75,6 @@ export const statusCodes = new Map([
 
 export type MapKey<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never
 
-export type StatusCode = MapKey<typeof statusCodes>
-
 export const mimeToAceModeMap = new Map<string, string>([
     ['text/html', 'html'] as const,
     ['text/css', 'css'] as const,

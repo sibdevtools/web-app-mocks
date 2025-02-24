@@ -15,6 +15,8 @@ export interface SuggestedItem {
 }
 
 interface SuggestiveInputProps {
+  id?: string;
+  type?: 'text' | 'number'
   value?: string;
   suggestions: SuggestiveItem[];
   maxSuggestions?: number;
@@ -29,6 +31,8 @@ interface SuggestiveInputProps {
 }
 
 const SuggestiveInput: React.FC<SuggestiveInputProps> = ({
+                                                           id,
+                                                           type = 'text',
                                                            value,
                                                            suggestions,
                                                            maxSuggestions = 5,
@@ -97,7 +101,7 @@ const SuggestiveInput: React.FC<SuggestiveInputProps> = ({
   };
 
   const handleSuggestionClick = (suggestion: SuggestiveItem) => {
-    handleValueChange(suggestion.value);
+    handleValueChange(suggestion.key);
     setShowSuggestions(false);
     onChange(suggestion);
   };
@@ -110,7 +114,8 @@ const SuggestiveInput: React.FC<SuggestiveInputProps> = ({
     <>
       <FormControl
         ref={inputRef}
-        type="text"
+        id={id}
+        type={type}
         value={inputValue}
         onChange={handleInputChange}
         onFocus={() => setShowSuggestions(filteredSuggestions.length > 0)}
