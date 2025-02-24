@@ -40,6 +40,10 @@ export interface CustomTableProps {
   columns: TableColumn[];
   data: Array<Row>;
   sortableColumns?: string[];
+  sortByDefault?: {
+    column: string;
+    direction?: 'asc' | 'desc';
+  };
   filterableColumns?: string[];
   styleProps?: StyleProps;
   onRowClick?: (row: Row) => void;
@@ -49,6 +53,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                                    columns,
                                                    data,
                                                    sortableColumns = [],
+                                                   sortByDefault = {
+                                                     column: '',
+                                                     direction: 'asc'
+                                                   },
                                                    filterableColumns = [],
                                                    styleProps = {
                                                      centerHeaders: true,
@@ -57,8 +65,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                                    onRowClick = null,
                                                  }) => {
   const [filter, setFilter] = useState<{ [key: string]: string }>({});
-  const [sortColumn, setSortColumn] = useState<string>('');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<string>(sortByDefault.column);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(sortByDefault.direction ?? 'asc');
 
   // Handle filter changes
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, columnKey: string) => {

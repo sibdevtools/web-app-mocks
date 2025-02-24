@@ -201,6 +201,7 @@ const ServiceListPage: React.FC = () => {
                       };
                     })}
                     sortableColumns={['code']}
+                    sortByDefault={{column: 'serviceId'}}
                     filterableColumns={['code']}
                     styleProps={{
                       centerHeaders: true,
