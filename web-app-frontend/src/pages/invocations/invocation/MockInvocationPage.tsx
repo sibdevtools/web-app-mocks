@@ -115,7 +115,7 @@ const MockInvocationPage: React.FC = () => {
                 {!error && (
                   <Row>
                     <Col md={{ offset: 1, span: 10 }}>
-                      <Table striped bordered hover>
+                      <Table striped bordered hover responsive>
                         <tbody>
                         <tr>
                           <td><strong>Remote Client Host</strong></td>
@@ -149,7 +149,7 @@ const MockInvocationPage: React.FC = () => {
                       </Table>
 
                       <h4 className="mt-4">Query Params</h4>
-                      <Table striped bordered hover>
+                      <Table striped bordered hover responsive>
                         <thead>
                         <tr>
                           <th>Key</th>
@@ -162,7 +162,7 @@ const MockInvocationPage: React.FC = () => {
                       </Table>
 
                       <h4 className="mt-4">Request Headers</h4>
-                      <Table striped bordered hover>
+                      <Table striped bordered hover responsive>
                         <thead>
                         <tr>
                           <th>Key</th>
@@ -182,7 +182,7 @@ const MockInvocationPage: React.FC = () => {
                       />
 
                       <h4 className="mt-4">Response Headers</h4>
-                      <Table striped bordered hover>
+                      <Table striped bordered hover responsive>
                         <thead>
                         <tr>
                           <th>Key</th>
