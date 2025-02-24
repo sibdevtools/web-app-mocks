@@ -139,6 +139,7 @@ const MockInvocationListPage: React.FC = () => {
                     })}
                     onRowClick={handleRowClick}
                     sortableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
+                    sortByDefault={{column: 'createdAt', direction: 'desc'}}
                     filterableColumns={['method', 'path', 'timing', 'status', 'createdAt']}
                     styleProps={{
                       centerHeaders: true,

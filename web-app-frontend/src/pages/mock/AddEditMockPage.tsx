@@ -1,22 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { createMock, getMock, updateMock } from '../../api/service';
+import { createMock, getMock, MockMeta, updateMock } from '../../api/service';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contextPath, Method, methods, MockType } from '../../const/common.const';
+import { contextPath, methods, MockType } from '../../const/common.const';
 import { decodeToBuffer, encode } from '../../utils/base64';
 import MockForm from './MockForm';
+
+export interface ModifyingMock {
+  name: string;
+  method: string;
+  path: string;
+  type: MockType;
+  delay: number;
+  meta: MockMeta;
+  content: ArrayBuffer;
+}
 
 const AddEditMockPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { serviceId, mockId } = useParams();
 
-  const [mockName, setMockName] = useState('');
-  const [method, setMethod] = useState<Method>(methods[0]);
-  const [path, setPath] = useState('');
-  const [delay, setDelay] = useState<number>(0);
-  const [mockType, setMockType] = useState<MockType>('STATIC');
-  const [meta, setMeta] = useState<{ [key: string]: string }>({ STATUS_CODE: '200' });
-  const [content, setContent] = useState(new ArrayBuffer(0));
+  const [modifyingMock, setModifyingMock] = useState<ModifyingMock>({
+    name: '',
+    method: methods[0],
+    path: '',
+    type: 'STATIC',
+    delay: 0,
+    meta: {
+      STATUS_CODE: '200'
+    },
+    content: new ArrayBuffer(0)
+  });
 
   useEffect(() => {
     if (mockId) {
@@ -35,13 +49,15 @@ const AddEditMockPage: React.FC = () => {
     try {
       const response = await getMock(+serviceId, +mockId);
       const body = response.data.body;
-      setMockName(body.name);
-      setMethod(body.method);
-      setPath(body.path.slice(1));
-      setDelay(body.delay);
-      setMockType(body.type);
-      setMeta(body.meta);
-      setContent(decodeToBuffer(body.content));
+      setModifyingMock({
+        name: body.name,
+        method: body.method,
+        path: body.path.slice(1),
+        delay: body.delay,
+        type: body.type,
+        meta: body.meta,
+        content: decodeToBuffer(body.content)
+      })
     } catch (error) {
       console.error('Failed to fetch mock:', error);
     } finally {
@@ -58,13 +74,13 @@ const AddEditMockPage: React.FC = () => {
     e.preventDefault();
     try {
       const mockData = {
-        name: mockName,
-        method,
-        path: '/' + path,
-        type: mockType,
-        delay: delay,
-        meta,
-        content: encode(content)
+        name: modifyingMock.name,
+        method: modifyingMock.method,
+        path: '/' + modifyingMock.path,
+        type: modifyingMock.type,
+        delay: modifyingMock.delay,
+        meta: modifyingMock.meta,
+        content: encode(modifyingMock.content)
       };
       if (mockId) {
         await updateMock(+serviceId, +mockId, mockData);
@@ -84,20 +100,8 @@ const AddEditMockPage: React.FC = () => {
   return (
     <MockForm
       loading={loading}
-      mockName={mockName}
-      method={method}
-      path={path}
-      delay={delay}
-      mockType={mockType}
-      meta={meta}
-      content={content}
-      setMockName={setMockName}
-      setMethod={setMethod}
-      setPath={setPath}
-      setDelay={setDelay}
-      setMockType={setMockType}
-      setMeta={setMeta}
-      setContent={setContent}
+      modifyingMock={modifyingMock}
+      setModifyingMock={setModifyingMock}
       onSubmit={handleSubmit}
       isEditMode={!!mockId}
       navigateBack={navigateBack}

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Method, MockType } from '../const/common.const';
+import { MockType } from '../const/common.const';
 
 const service = axios.create({
   baseURL: '/web/app/mocks/rest/api',
@@ -86,7 +86,7 @@ export interface MockMeta {
 
 export interface CreateMockRq {
   name: string;
-  method: Method;
+  method: string;
   path: string;
   type: MockType;
   delay: number,
@@ -102,7 +102,7 @@ export interface GetMockRs {
   body: {
     serviceId: number;
     mockId: number;
-    method: Method;
+    method: string;
     name: string;
     path: string;
     type: MockType;
@@ -117,7 +117,7 @@ export const getMock = (serviceId: number, mockId: number) => service.get<GetMoc
 
 export interface UpdateMockRq {
   name: string;
-  method: Method;
+  method: string;
   path: string;
   type: MockType;
   delay: number;

@@ -166,6 +166,7 @@ const ServiceMocksListImportPage: React.FC = () => {
                           { key: 'enabled', label: 'Enabled' },
                         ]}
                         data={service.mocks.map((mock, mockIndex) => ({
+                          mockIndex: mockIndex,
                           import: {
                             representation: (
                               <Form.Check
@@ -192,6 +193,7 @@ const ServiceMocksListImportPage: React.FC = () => {
                           },
                         }))}
                         sortableColumns={['method', 'name', 'path', 'type']}
+                        sortByDefault={{column: 'mockIndex'}}
                         filterableColumns={['method', 'name', 'path', 'type']}
                         styleProps={{ centerHeaders: true, textCenterValues: true }}
                       />

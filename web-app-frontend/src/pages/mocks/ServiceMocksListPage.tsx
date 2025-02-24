@@ -115,6 +115,7 @@ const ServiceMocksListPage: React.FC = () => {
               ]}
               data={mocks.map(mock => {
                 return {
+                  mockId: mock.mockId,
                   method: {
                     representation: <span className={'badge text-bg-primary align-middle'}>{mock.method}</span>,
                     value: mock.method
@@ -145,6 +146,7 @@ const ServiceMocksListPage: React.FC = () => {
                 };
               })}
               sortableColumns={['method', 'name', 'path', 'type']}
+              sortByDefault={{column: 'mockId'}}
               filterableColumns={['method', 'name', 'path', 'type']}
               styleProps={{
                 centerHeaders: true,

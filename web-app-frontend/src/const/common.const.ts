@@ -9,8 +9,6 @@ export const methods = [
   'DELETE'
 ] as const;
 
-export type Method = typeof methods[number];
-
 export const statusCodes = new Map([
     [100, 'Continue'] as const,
     [101, 'Switching Protocols'] as const,
@@ -76,8 +74,6 @@ export const statusCodes = new Map([
 );
 
 export type MapKey<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never
-
-export type StatusCode = MapKey<typeof statusCodes>
 
 export const mimeToAceModeMap = new Map<string, string>([
     ['text/html', 'html'] as const,

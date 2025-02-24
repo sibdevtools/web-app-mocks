@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Col, Container, Form, InputGroup, OverlayTrigger, Row, Table, Tooltip } from 'react-bootstrap';
-import { Method, methods, MockType, mockTypes, StatusCode, statusCodes } from '../../const/common.const';
+import { methods, MockType, mockTypes, statusCodes } from '../../const/common.const';
 import HttpHeadersForm from '../../components/HttpHeadersForm';
 import StaticMockContent from '../../components/StaticMockContent';
 import GraalVMMockContent from '../../components/GraalVMMockContent';
@@ -8,23 +8,14 @@ import StaticFileMockContent from '../../components/StaticFileMockContent';
 import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
 import { Loader } from '../../components/Loader';
 import './MockForm.css';
+import CodeDocumentation from './CodeDocumentation';
+import SuggestiveInput from '../../components/suggestive-input/SuggestiveInput';
+import { ModifyingMock } from './AddEditMockPage';
 
 type MockFormProps = {
   loading: boolean;
-  mockName: string;
-  method: Method;
-  path: string;
-  delay: number;
-  mockType: MockType;
-  meta: { [key: string]: string };
-  content: ArrayBuffer;
-  setMockName: (name: string) => void;
-  setMethod: (method: Method) => void;
-  setPath: (path: string) => void;
-  setDelay: (delay: number) => void;
-  setMockType: (type: MockType) => void;
-  setMeta: (meta: { [key: string]: string }) => void;
-  setContent: (content: ArrayBuffer) => void;
+  modifyingMock: ModifyingMock;
+  setModifyingMock: (value: ModifyingMock) => void;
   onSubmit: (e: React.FormEvent) => void;
   isEditMode: boolean;
   navigateBack: () => void;
@@ -32,34 +23,15 @@ type MockFormProps = {
 
 export const MockForm: React.FC<MockFormProps> = ({
                                                     loading,
-                                                    mockName,
-                                                    method,
-                                                    path,
-                                                    delay,
-                                                    mockType,
-                                                    meta,
-                                                    content,
-                                                    setMockName,
-                                                    setMethod,
-                                                    setPath,
-                                                    setDelay,
-                                                    setMockType,
-                                                    setMeta,
-                                                    setContent,
+                                                    modifyingMock,
+                                                    setModifyingMock,
                                                     onSubmit,
                                                     isEditMode,
                                                     navigateBack
                                                   }) => {
 
-  const onStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatusCode = +e.target.value as StatusCode;
-    if (newStatusCode) {
-      setMeta({ ...meta, STATUS_CODE: `${newStatusCode}` });
-    }
-  };
-
   const onMockTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setMockType(e.target.value as MockType);
+    setModifyingMock({...modifyingMock, type: e.target.value as MockType})
   };
 
   const pathTooltip = (
@@ -117,35 +89,43 @@ export const MockForm: React.FC<MockFormProps> = ({
             <Form className="mt-4" onSubmit={onSubmit}>
               {/* Mock Name Input */}
               <Form.Group className="mb-3" controlId="mockNameInput">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mockName}
-                  onChange={(e) => setMockName(e.target.value)}
-                  required
-                />
+                <Row className="align-items-center">
+                  <Col lg={2} md={3} sm={3}>
+                    <Form.Label htmlFor={'nameInput'}>Name</Form.Label>
+                  </Col>
+                  <Col lg={10} md={9} sm={9} xs={12}>
+                    <Form.Control
+                      type="text"
+                      id={'nameInput'}
+                      value={modifyingMock.name}
+                      onChange={(e) => setModifyingMock({...modifyingMock, name: e.target.value})}
+                      required
+                    />
+                  </Col>
+                </Row>
               </Form.Group>
 
               {/* Method and Path Fields */}
               <Row className="mb-3">
-                <Col md={2} sm={3}>
+                <Col lg={2} md={3} sm={3} xs={12}>
                   <Form.Group controlId="httpMethodSelect">
                     <Form.Label>HTTP Method</Form.Label>
-                    <Form.Select
-                      value={method}
-                      onChange={(e) => setMethod(methods[e.target.selectedIndex])}
-                      required
-                    >
-                      {methods.map((it) => (
-                        <option key={it} value={it}>{it}</option>
-                      ))}
-                    </Form.Select>
+                    <SuggestiveInput
+                      mode={'free'}
+                      value={modifyingMock.method}
+                      onChange={it => setModifyingMock({...modifyingMock, method: it.value})}
+                      required={true}
+                      suggestions={methods.map(it => {
+                        return { key: it, value: it };
+                      })}
+                      maxSuggestions={methods.length}
+                    />
                   </Form.Group>
                 </Col>
 
-                <Col md={10} sm={9}>
+                <Col lg={10} md={9} sm={9} xs={12}>
                   <Form.Group controlId="pathInput">
-                    <Form.Label>Path</Form.Label>
+                    <Form.Label htmlFor={'pathInput'}>Path</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>/</InputGroup.Text>
                       <OverlayTrigger
@@ -155,8 +135,9 @@ export const MockForm: React.FC<MockFormProps> = ({
                       >
                         <Form.Control
                           type="text"
-                          value={path}
-                          onChange={(e) => setPath(e.target.value)}
+                          id={'pathInput'}
+                          value={modifyingMock.path}
+                          onChange={e => setModifyingMock({...modifyingMock, path: e.target.value})}
                           placeholder="Ant pattern or path"
                           required
                         />
@@ -169,83 +150,113 @@ export const MockForm: React.FC<MockFormProps> = ({
               {/* HTTP Headers */}
               <Form.Group className="mb-3">
                 <Form.Label>Http Headers</Form.Label>
-                <HttpHeadersForm meta={meta} setMeta={setMeta} />
+                <HttpHeadersForm
+                  meta={modifyingMock.meta}
+                  setMeta={it => setModifyingMock({...modifyingMock, meta: it})}
+                />
               </Form.Group>
 
               {/* Status and Mock Type Fields */}
               <Row className="mb-3">
-                <Col md={8}>
+                <Col lg={4} md={12}>
                   <Form.Group controlId="statusSelect">
-                    <Form.Label>Status</Form.Label>
-                    <Form.Select
-                      value={meta['STATUS_CODE']}
-                      onChange={onStatusChange}
-                      required
-                    >
-                      {Array.from(statusCodes.keys()).map((it) => (
-                        <option key={it} value={it}>
-                          {it}: {statusCodes.get(it)}
-                        </option>
-                      ))}
-                    </Form.Select>
+                    <Row className="align-items-center">
+                      <Col xxl={2} lg={3}>
+                        <Form.Label htmlFor={'statusSelect'}>Status</Form.Label>
+                      </Col>
+                      <Col xxl={10} lg={9}>
+                        <SuggestiveInput
+                          id={'statusSelect'}
+                          type={'number'}
+                          mode={'free'}
+                          value={modifyingMock.meta['STATUS_CODE']}
+                          onChange={it => setModifyingMock({...modifyingMock, meta: {
+                            ...modifyingMock.meta,
+                              STATUS_CODE: `${it.key ?? it.value}`
+                            }})}
+                          required={true}
+                          suggestions={Array.from(statusCodes).map(([key, value]) => {
+                            return { key: `${key}`, value: `${key}: ${value}` };
+                          })}
+                          maxSuggestions={10}
+                        />
+                      </Col>
+                    </Row>
                   </Form.Group>
                 </Col>
-                <Col md={2}>
-                  <Form.Label>Delay (ms)</Form.Label>
-                  <Form.Control
-                    type={'number'}
-                    min={0}
-                    value={`${delay}`}
-                    onChange={(e) => setDelay(+e.target.value)}
-                    required
-                  />
+                <Col lg={4} md={12}>
+                  <Row className="align-items-center">
+                    <Col xxl={2} lg={3}>
+                      <Form.Label htmlFor={'delayInput'}>Delay</Form.Label>
+                    </Col>
+                    <Col xxl={10} lg={9}>
+                      <InputGroup>
+                        <Form.Control
+                          type={'number'}
+                          id={'delayInput'}
+                          min={0}
+                          value={`${modifyingMock.delay}`}
+                          onChange={e => setModifyingMock({...modifyingMock, delay: +e.target.value})}
+                          required
+                        />
+                        <InputGroup.Text>ms</InputGroup.Text>
+                      </InputGroup>
+                    </Col>
+                  </Row>
                 </Col>
-                <Col md={2}>
-                  <Form.Group controlId="mockTypeSelect">
-                    <Form.Label>Type</Form.Label>
-                    <Form.Select
-                      value={mockType}
-                      onChange={onMockTypeChange}
-                      required
-                    >
-                      {
-                        Array.from(mockTypes.keys()).map(
-                          it => (
-                            <option key={it} value={it}>{mockTypes.get(it)}</option>
-                          )
-                        )
-                      }
-                    </Form.Select>
+                <Col lg={4} md={12}>
+                  <Form.Group controlId="modifyingMock.typeSelect">
+                    <Row className="align-items-center">
+                      <Col xxl={2} lg={3}>
+                        <Form.Label htmlFor={'typeSelect'}>Type</Form.Label>
+                      </Col>
+                      <Col xxl={10} lg={9}>
+                        <Form.Select
+                          id={'typeSelect'}
+                          value={modifyingMock.type}
+                          onChange={onMockTypeChange}
+                          required
+                        >
+                          {
+                            Array.from(mockTypes).map(
+                              ([key, value]) => (
+                                <option key={key} value={key}>{value}</option>
+                              )
+                            )
+                          }
+                        </Form.Select>
+                      </Col>
+                    </Row>
                   </Form.Group>
                 </Col>
               </Row>
 
               {/* Content Section Based on Mock Type */}
-              {mockType === 'STATIC' && (
+              {modifyingMock.type === 'STATIC' && (
                 <StaticMockContent
-                  content={content}
-                  setContent={setContent}
-                  meta={meta}
-                  setMeta={setMeta}
+                  content={modifyingMock.content}
+                  setContent={it => setModifyingMock({...modifyingMock, content: it})}
+                  meta={modifyingMock.meta}
+                  setMeta={it => setModifyingMock({...modifyingMock, meta: it})}
                   creation={!isEditMode} />
               )}
 
-              {mockType === 'STATIC_FILE' && <StaticFileMockContent
-                content={content}
-                setContent={setContent}
+              {modifyingMock.type === 'STATIC_FILE' && <StaticFileMockContent
+                content={modifyingMock.content}
+                setContent={it => setModifyingMock({...modifyingMock, content: it})}
                 isEditMode={isEditMode}
               />}
 
-              {(mockType === 'JS' || mockType === 'PYTHON') && (
+              {(modifyingMock.type === 'JS' || modifyingMock.type === 'PYTHON') && (
                 <GraalVMMockContent
-                  mode={mockType === 'JS' ? 'javascript' : 'python'}
-                  content={content}
-                  setContent={setContent}
+                  mode={modifyingMock.type === 'JS' ? 'javascript' : 'python'}
+                  content={modifyingMock.content}
+                  setContent={it => setModifyingMock({...modifyingMock, content: it})}
                 />
               )}
 
               {/* Submit Button */}
-              <Row>
+              <Row className="mb-3">
                 <Col className="d-flex justify-content-end">
                   <Button
                     variant="primary"
@@ -256,6 +267,10 @@ export const MockForm: React.FC<MockFormProps> = ({
                   </Button>
                 </Col>
               </Row>
+
+              {(modifyingMock.type === 'JS' || modifyingMock.type === 'PYTHON') && (
+                <CodeDocumentation mode={modifyingMock.type === 'JS' ? 'javascript' : 'python'} />
+              )}
             </Form>
           </Col>
         </Row>

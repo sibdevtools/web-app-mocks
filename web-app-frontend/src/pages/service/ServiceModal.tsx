@@ -25,7 +25,7 @@ export const ServiceModal: React.FC<ServiceModal> = ({
         <Modal.Title>{modalMode === 'edit' ? 'Edit Service' : 'Add New Service'}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={it => {handleSave(); return false;}}>
           <Form.Group controlId="serviceCode">
             <Form.Label>Service Code</Form.Label>
             <Form.Control
