@@ -9,6 +9,7 @@ import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.polyglot.HostAccess;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,9 @@ import java.util.Map;
  * @since 0.0.1
  */
 @Slf4j
+@Component
 @AllArgsConstructor
-public class GraalVMSessions {
+public class WebApplicationMocksGraalVMSessions {
     private final SessionService sessionService;
 
     @HostAccess.Export

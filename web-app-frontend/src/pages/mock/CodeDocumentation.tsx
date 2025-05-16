@@ -1,10 +1,11 @@
-import React from 'react';
-import { Accordion, Table } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Accordion, Button, Table } from 'react-bootstrap';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import 'react-syntax-highlighter/dist/esm/languages/hljs/python';
-
+import { Task01Icon, TaskDone01Icon } from 'hugeicons-react';
+import './CodeDocumentation.css';
 
 type ExampleCode = {
   description: string,
@@ -528,6 +529,127 @@ session.remove("sectionKey", "attributeKey1")`
   },
 ];
 
+const kafkaExamples = [
+  {
+    description: 'Get Kafka service',
+    implementations: {
+      javascript: `const kafka = wam.kafka();`,
+      python: `kafka = wam.kafka()`
+    }
+  },
+];
+
+const kafkaPublishingExamples = [
+  {
+    description: 'Publish message into group',
+    implementations: {
+      javascript: `const publishRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    partition: 0, // optional
+    timestamp: 0, // optional
+    key: [48, 49], // bytes array, optional
+    value: [48, 49], // bytes array, optional
+    headers: {
+      headerKey: [48, 49] // bytes array, optional
+    },
+    maxTimeout: 30000 // optional
+};
+const publishRs = kafka.publish(publishRq);`,
+      python: `publishRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    "partition": 0, # optional
+    "timestamp": 0, # optional
+    "key": [48, 49], # bytes array, optional
+    "value": [48, 49], # bytes array, optional
+    "headers": {
+      "headerKey": [48, 49] # bytes array, optional
+    },
+    "maxTimeout": 30000 # optional
+}
+publishRs = kafka.publish(publishRq)`
+    }
+  },
+  {
+    description: 'Publish template message into group',
+    implementations: {
+      javascript: `const publishRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    templateCode: "template-code",
+    partition: 0, // optional
+    timestamp: 0, // optional
+    key: [48, 49], // bytes array, optional
+    input: { // input depends on template
+      param1: "value",
+      param2: 123
+    },
+    headers: {
+      headerKey: [48, 49] // bytes array, optional
+    },
+    maxTimeout: 30000 // optional
+};
+const publishRs = kafka.publishTemplate(publishRq);`,
+      python: `publishRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    templateCode: "template-code",
+    "partition": 0, # optional
+    "timestamp": 0, # optional
+    "key": [48, 49], # bytes array, optional
+    "input": { # input depends on template
+      "param1": "value",
+      "param2": 123
+    },
+    "headers": {
+      "headerKey": [48, 49] # bytes array, optional
+    },
+    "maxTimeout": 30000 # optional
+}
+publishRs = kafka.publishTemplate(publishRq)`
+    }
+  },
+];
+
+const kafkaPublishingResponseExamples = [
+  {
+    description: 'Message offset',
+    implementations: {
+      javascript: `const offset = publishRs.offset();`,
+      python: `offset = publishRs.offset()`,
+    }
+  },
+  {
+    description: 'Message timestamp',
+    implementations: {
+      javascript: `const timestamp = publishRs.timestamp();`,
+      python: `timestamp = publishRs.timestamp()`,
+    }
+  },
+  {
+    description: 'Message serialized key size',
+    implementations: {
+      javascript: `const serializedKeySize = publishRs.serializedKeySize();`,
+      python: `serializedKeySize = publishRs.serializedKeySize()`,
+    }
+  },
+  {
+    description: 'Message serialized value size',
+    implementations: {
+      javascript: `const serializedValueSize = publishRs.serializedValueSize();`,
+      python: `serializedValueSize = publishRs.serializedValueSize()`,
+    }
+  },
+  {
+    description: 'Message partition',
+    implementations: {
+      javascript: `const partition = publishRs.partition();`,
+      python: `partition = publishRs.partition()`,
+    }
+  },
+];
+
 const allExamples: ExampleSection = {
   name: 'Examples',
   sections: [
@@ -585,6 +707,22 @@ const allExamples: ExampleSection = {
           ]
         }
       ]
+    },
+    {
+      name: 'Kafka',
+      examples: kafkaExamples,
+      sections: [
+        {
+          name: 'Publishing',
+          examples: kafkaPublishingExamples,
+          sections: [
+            {
+              name: 'Publish result',
+              examples: kafkaPublishingResponseExamples
+            }
+          ]
+        }
+      ]
     }
   ]
 };
@@ -593,6 +731,8 @@ const CodeDocumentation: React.FC<{ mode: 'javascript' | 'python', section?: Exa
                                                                                                     mode,
                                                                                                     section = allExamples
                                                                                                   }) => {
+  const [copied, setCopied] = useState<Array<any>>([]);
+
   return (
     <Accordion className={'mb-2'}>
       <Accordion.Item eventKey={`examples-${section.name}`}>
@@ -614,14 +754,44 @@ const CodeDocumentation: React.FC<{ mode: 'javascript' | 'python', section?: Exa
                       <td>{it.description}</td>
                       <td>
                         {'implementation' in it && (
-                          <SyntaxHighlighter language={mode} style={docco}>
-                            {it.implementation}
-                          </SyntaxHighlighter>
+                          <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                            <Button
+                              variant={'link'}
+                              className={'text-secondary code-clipboard-btn'}
+                              size={'sm'}
+                              onClick={async () => {
+                                const copiedNew = [...copied, it];
+                                setCopied(copiedNew);
+                                await navigator.clipboard.writeText(it.implementation);
+                                setTimeout(() => setCopied(copied.filter(e => e !== it)), 1500);
+                              }}
+                            >
+                              {copied.some(e => e === it) ? (<TaskDone01Icon size={16} />) : (<Task01Icon size={16} />)}
+                            </Button>
+                            <SyntaxHighlighter language={mode} style={docco}>
+                              {it.implementation}
+                            </SyntaxHighlighter>
+                          </div>
                         )}
                         {'implementations' in it && (
-                          <SyntaxHighlighter language={mode} style={docco}>
-                            {it.implementations[mode]}
-                          </SyntaxHighlighter>
+                          <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                            <Button
+                              variant={'link'}
+                              className={'text-secondary code-clipboard-btn'}
+                              size={'sm'}
+                              onClick={async () => {
+                                const copiedNew = [...copied, it];
+                                setCopied(copiedNew);
+                                await navigator.clipboard.writeText(it.implementations[mode]);
+                                setTimeout(() => setCopied(copied.filter(e => e !== it)), 1500);
+                              }}
+                            >
+                              {copied.some(e => e === it) ? (<TaskDone01Icon size={16} />) : (<Task01Icon size={16} />)}
+                            </Button>
+                            <SyntaxHighlighter language={mode} style={docco}>
+                              {it.implementations[mode]}
+                            </SyntaxHighlighter>
+                          </div>
                         )}
                       </td>
                     </tr>

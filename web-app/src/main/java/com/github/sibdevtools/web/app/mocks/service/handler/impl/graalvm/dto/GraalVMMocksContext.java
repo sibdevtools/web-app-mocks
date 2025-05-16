@@ -1,5 +1,6 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto;
 
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka.WebApplicationMocksGraalVMKafka;
 import lombok.Builder;
 import org.graalvm.polyglot.HostAccess;
 
@@ -10,5 +11,6 @@ import org.graalvm.polyglot.HostAccess;
 @Builder
 public record GraalVMMocksContext(@HostAccess.Export GraalVMRequest request,
                                   @HostAccess.Export GraalVMResponse response,
-                                  @HostAccess.Export GraalVMSessions sessions) {
+                                  @HostAccess.Export WebApplicationMocksGraalVMSessions sessions,
+                                  @HostAccess.Export WebApplicationMocksGraalVMKafka kafka) {
 }

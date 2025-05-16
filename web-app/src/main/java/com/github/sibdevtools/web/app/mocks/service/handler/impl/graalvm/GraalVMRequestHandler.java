@@ -1,15 +1,12 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sibdevtools.session.api.service.SessionService;
 import com.github.sibdevtools.storage.api.service.StorageService;
 import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
 import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.CommonResponsePreparer;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMMocksContext;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMRequest;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMResponse;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.GraalVMSessions;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.*;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka.WebApplicationMocksGraalVMKafka;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,7 +27,8 @@ import java.nio.charset.StandardCharsets;
 public abstract class GraalVMRequestHandler implements RequestHandler {
     protected final String language;
     protected final StorageService storageService;
-    protected final SessionService sessionService;
+    protected final WebApplicationMocksGraalVMSessions graalVMSessions;
+    protected final WebApplicationMocksGraalVMKafka graalVMKafka;
     protected final ObjectMapper objectMapper;
     protected final CommonResponsePreparer commonResponsePreparer;
 
@@ -51,7 +49,8 @@ public abstract class GraalVMRequestHandler implements RequestHandler {
         var context = GraalVMMocksContext.builder()
                 .request(new GraalVMRequest(objectMapper, path, rq))
                 .response(new GraalVMResponse(objectMapper, rs))
-                .sessions(new GraalVMSessions(sessionService))
+                .sessions(graalVMSessions)
+                .kafka(graalVMKafka)
                 .build();
 
         try (var js = Context.newBuilder(language)
