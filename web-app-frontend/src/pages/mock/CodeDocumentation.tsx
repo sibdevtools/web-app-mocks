@@ -541,7 +541,38 @@ const kafkaExamples = [
 
 const kafkaPublishingExamples = [
   {
-    description: 'Publish message into group',
+    description: 'Publish message',
+    implementations: {
+      javascript: `const publishRq = {
+    bootstrapServers: ["localhost:9092"],
+    topic: "topic-to-publish",
+    maxTimeout: 30000,
+    partition: 0, // optional
+    timestamp: 0, // optional
+    key: [48, 49], // bytes array, optional
+    value: [48, 49], // bytes array, optional
+    headers: {
+      headerKey: [48, 49] // bytes array, optional
+    }
+};
+const publishRs = kafka.publish(publishRq);`,
+      python: `publishRq = {
+    "bootstrapServers": ["localhost:9092"],
+    "topic": "topic-to-publish",
+    "maxTimeout": 30000,
+    "partition": 0, # optional
+    "timestamp": 0, # optional
+    "key": [48, 49], # bytes array, optional
+    "value": [48, 49], # bytes array, optional
+    "headers": {
+      "headerKey": [48, 49] # bytes array, optional
+    }
+}
+publishRs = kafka.publish(publishRq)`
+    }
+  },
+  {
+    description: 'Publish message into existed bootstrap group',
     implementations: {
       javascript: `const publishRq = {
     groupCode: "kafkaGroupCode",

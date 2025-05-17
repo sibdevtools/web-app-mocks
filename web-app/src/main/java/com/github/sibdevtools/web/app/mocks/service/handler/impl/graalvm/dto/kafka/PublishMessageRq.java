@@ -1,5 +1,6 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,6 +9,7 @@ import java.util.Map;
  */
 public record PublishMessageRq(
         String groupCode,
+        List<String> bootstrapServers,
         String topic,
         //asd
         Integer partition,

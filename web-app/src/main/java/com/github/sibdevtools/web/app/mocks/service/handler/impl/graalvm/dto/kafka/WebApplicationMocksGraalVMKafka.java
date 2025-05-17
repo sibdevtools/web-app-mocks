@@ -1,6 +1,7 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.sibdevtools.service.kafka.client.api.dto.RecordMetadataDto;
 import com.github.sibdevtools.service.kafka.client.api.rq.SendTemplateMessageRq;
 import com.github.sibdevtools.service.kafka.client.service.BootstrapGroupService;
 import com.github.sibdevtools.service.kafka.client.service.MessageConsumerService;
@@ -27,12 +28,37 @@ public class WebApplicationMocksGraalVMKafka {
     protected final MessagePublisherService messagePublisherService;
     protected final TemplateMessageService templateMessageService;
 
+    private static PublishMessageRs getPublishMessageRs(RecordMetadataDto it) {
+        return new PublishMessageRs(
+                it.getOffset(),
+                it.getTimestamp(),
+                it.getSerializedKeySize(),
+                it.getSerializedValueSize(),
+                it.getPartition()
+        );
+    }
+
     @HostAccess.Export
     public PublishMessageRs publish(@Nonnull Object arg) {
         var rq = objectMapper.convertValue(arg, PublishMessageRq.class);
-        var bootstrapGroup = bootstrapGroupService.getByCode(rq.groupCode());
+        var groupCode = rq.groupCode();
+        if (groupCode != null) {
+            var bootstrapGroup = bootstrapGroupService.getByCode(groupCode);
+            return messagePublisherService.sendMessage(
+                            bootstrapGroup.getId(),
+                            rq.topic(),
+                            rq.partition(),
+                            rq.timestamp(),
+                            rq.key(),
+                            rq.value(),
+                            rq.headers(),
+                            rq.maxTimeout()
+                    )
+                    .map(WebApplicationMocksGraalVMKafka::getPublishMessageRs)
+                    .orElse(null);
+        }
         return messagePublisherService.sendMessage(
-                        bootstrapGroup.getId(),
+                        rq.bootstrapServers(),
                         rq.topic(),
                         rq.partition(),
                         rq.timestamp(),
@@ -41,13 +67,7 @@ public class WebApplicationMocksGraalVMKafka {
                         rq.headers(),
                         rq.maxTimeout()
                 )
-                .map(it -> new PublishMessageRs(
-                        it.getOffset(),
-                        it.getTimestamp(),
-                        it.getSerializedKeySize(),
-                        it.getSerializedValueSize(),
-                        it.getPartition()
-                ))
+                .map(WebApplicationMocksGraalVMKafka::getPublishMessageRs)
                 .orElse(null);
     }
 
@@ -69,13 +89,7 @@ public class WebApplicationMocksGraalVMKafka {
                                 rq.maxTimeout()
                         )
                 )
-                .map(it -> new PublishMessageRs(
-                        it.getOffset(),
-                        it.getTimestamp(),
-                        it.getSerializedKeySize(),
-                        it.getSerializedValueSize(),
-                        it.getPartition()
-                ))
+                .map(WebApplicationMocksGraalVMKafka::getPublishMessageRs)
                 .orElse(null);
     }
 
