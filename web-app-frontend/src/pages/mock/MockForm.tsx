@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button, Col, Container, Form, InputGroup, OverlayTrigger, Row, Table, Tooltip } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import { methods, MockType, mockTypes, statusCodes } from '../../const/common.const';
 import HttpHeadersForm from '../../components/HttpHeadersForm';
 import StaticMockContent from '../../components/StaticMockContent';
 import GraalVMMockContent from '../../components/GraalVMMockContent';
 import StaticFileMockContent from '../../components/StaticFileMockContent';
-import { ArrowLeft01Icon, FloppyDiskIcon } from 'hugeicons-react';
+import { ArrowLeft01Icon, FloppyDiskIcon, InformationCircleIcon } from 'hugeicons-react';
 import { Loader } from '../../components/Loader';
 import './MockForm.css';
 import CodeDocumentation from './CodeDocumentation';
@@ -29,41 +29,11 @@ export const MockForm: React.FC<MockFormProps> = ({
                                                     isEditMode,
                                                     navigateBack
                                                   }) => {
+  const [showPathHint, setShowPathHint] = useState(false);
 
   const onMockTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setModifyingMock({...modifyingMock, type: e.target.value as MockType})
+    setModifyingMock({ ...modifyingMock, type: e.target.value as MockType });
   };
-
-  const pathTooltip = (
-    <Tooltip id="pathTooltip" className={'wide-tooltip'}>
-      <Table variant={'dark'} borderless={true} responsive={true}>
-        <thead>
-        <tr>
-          <th>Wildcard</th>
-          <th>Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td><code>?</code></td>
-          <td>Matches exactly one character.</td>
-        </tr>
-        <tr>
-          <td><code>*</code></td>
-          <td>Matches zero or more characters.</td>
-        </tr>
-        <tr>
-          <td><code>**</code></td>
-          <td>Matches zero or more 'directories' in a path</td>
-        </tr>
-        <tr>
-          <td><code>&#123;spring:[a-z]+&#125;</code></td>
-          <td>Matches regExp <code>[a-z]+</code> as a path variable named <code>"spring"</code></td>
-        </tr>
-        </tbody>
-      </Table>
-    </Tooltip>
-  );
 
   return (
     <Container className="mt-4 mb-4">
@@ -98,7 +68,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                       type="text"
                       id={'nameInput'}
                       value={modifyingMock.name}
-                      onChange={(e) => setModifyingMock({...modifyingMock, name: e.target.value})}
+                      onChange={(e) => setModifyingMock({ ...modifyingMock, name: e.target.value })}
                       required
                     />
                   </Col>
@@ -113,7 +83,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                     <SuggestiveInput
                       mode={'free'}
                       value={modifyingMock.method}
-                      onChange={it => setModifyingMock({...modifyingMock, method: it.value})}
+                      onChange={it => setModifyingMock({ ...modifyingMock, method: it.value })}
                       required={true}
                       suggestions={methods.map(it => {
                         return { key: it, value: it };
@@ -128,22 +98,54 @@ export const MockForm: React.FC<MockFormProps> = ({
                     <Form.Label htmlFor={'pathInput'}>Path</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>/</InputGroup.Text>
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={pathTooltip}
-                        delay={{ show: 25, hide: 250 }}
+                      <Form.Control
+                        type="text"
+                        id={'pathInput'}
+                        value={modifyingMock.path}
+                        onChange={e => setModifyingMock({ ...modifyingMock, path: e.target.value })}
+                        placeholder="Ant pattern or path"
+                        required
+                      />
+                      <Button
+                        onClick={() => setShowPathHint(!showPathHint)}
+                        active={showPathHint}
                       >
-                        <Form.Control
-                          type="text"
-                          id={'pathInput'}
-                          value={modifyingMock.path}
-                          onChange={e => setModifyingMock({...modifyingMock, path: e.target.value})}
-                          placeholder="Ant pattern or path"
-                          required
-                        />
-                      </OverlayTrigger>
+                        <InformationCircleIcon />
+                      </Button>
                     </InputGroup>
                   </Form.Group>
+
+                  {/* Path Hint */}
+                  {showPathHint && (
+                    <Row className="mb-3">
+                      <Table responsive={true} hover={true}>
+                        <thead>
+                        <tr>
+                          <th>Wildcard</th>
+                          <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td><code>?</code></td>
+                          <td>Matches exactly one character</td>
+                        </tr>
+                        <tr>
+                          <td><code>*</code></td>
+                          <td>Matches zero or more characters</td>
+                        </tr>
+                        <tr>
+                          <td><code>**</code></td>
+                          <td>Matches zero or more 'directories' in a path</td>
+                        </tr>
+                        <tr>
+                          <td><code>&#123;spring:[a-z]+&#125;</code></td>
+                          <td>Matches regExp <code>[a-z]+</code> as a path variable named <code>"spring"</code></td>
+                        </tr>
+                        </tbody>
+                      </Table>
+                    </Row>
+                  )}
                 </Col>
               </Row>
 
@@ -152,7 +154,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                 <Form.Label>Http Headers</Form.Label>
                 <HttpHeadersForm
                   meta={modifyingMock.meta}
-                  setMeta={it => setModifyingMock({...modifyingMock, meta: it})}
+                  setMeta={it => setModifyingMock({ ...modifyingMock, meta: it })}
                 />
               </Form.Group>
 
@@ -170,10 +172,12 @@ export const MockForm: React.FC<MockFormProps> = ({
                           type={'number'}
                           mode={'free'}
                           value={modifyingMock.meta['STATUS_CODE']}
-                          onChange={it => setModifyingMock({...modifyingMock, meta: {
-                            ...modifyingMock.meta,
+                          onChange={it => setModifyingMock({
+                            ...modifyingMock, meta: {
+                              ...modifyingMock.meta,
                               STATUS_CODE: `${it.key ?? it.value}`
-                            }})}
+                            }
+                          })}
                           required={true}
                           suggestions={Array.from(statusCodes).map(([key, value]) => {
                             return { key: `${key}`, value: `${key}: ${value}` };
@@ -196,7 +200,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                           id={'delayInput'}
                           min={0}
                           value={`${modifyingMock.delay}`}
-                          onChange={e => setModifyingMock({...modifyingMock, delay: +e.target.value})}
+                          onChange={e => setModifyingMock({ ...modifyingMock, delay: +e.target.value })}
                           required
                         />
                         <InputGroup.Text>ms</InputGroup.Text>
@@ -235,15 +239,15 @@ export const MockForm: React.FC<MockFormProps> = ({
               {modifyingMock.type === 'STATIC' && (
                 <StaticMockContent
                   content={modifyingMock.content}
-                  setContent={it => setModifyingMock({...modifyingMock, content: it})}
+                  setContent={it => setModifyingMock({ ...modifyingMock, content: it })}
                   meta={modifyingMock.meta}
-                  setMeta={it => setModifyingMock({...modifyingMock, meta: it})}
+                  setMeta={it => setModifyingMock({ ...modifyingMock, meta: it })}
                   creation={!isEditMode} />
               )}
 
               {modifyingMock.type === 'STATIC_FILE' && <StaticFileMockContent
                 content={modifyingMock.content}
-                setContent={it => setModifyingMock({...modifyingMock, content: it})}
+                setContent={it => setModifyingMock({ ...modifyingMock, content: it })}
                 isEditMode={isEditMode}
               />}
 
@@ -251,7 +255,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                 <GraalVMMockContent
                   mode={modifyingMock.type === 'JS' ? 'javascript' : 'python'}
                   content={modifyingMock.content}
-                  setContent={it => setModifyingMock({...modifyingMock, content: it})}
+                  setContent={it => setModifyingMock({ ...modifyingMock, content: it })}
                 />
               )}
 
