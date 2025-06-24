@@ -1,10 +1,11 @@
-import React from 'react';
-import { Accordion, Table } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Accordion, Button, Table } from 'react-bootstrap';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import 'react-syntax-highlighter/dist/esm/languages/hljs/python';
-
+import { Task01Icon, TaskDone01Icon } from 'hugeicons-react';
+import './CodeDocumentation.css';
 
 type ExampleCode = {
   description: string,
@@ -528,6 +529,361 @@ session.remove("sectionKey", "attributeKey1")`
   },
 ];
 
+const kafkaExamples = [
+  {
+    description: 'Get Kafka service',
+    implementations: {
+      javascript: `const kafka = wam.kafka();`,
+      python: `kafka = wam.kafka()`
+    }
+  },
+];
+
+const kafkaPublishingExamples = [
+  {
+    description: 'Publish message',
+    implementations: {
+      javascript: `const publishRq = {
+    bootstrapServers: ["localhost:9092"],
+    topic: "topic-to-publish",
+    maxTimeout: 30000,
+    partition: 0, // optional
+    timestamp: 0, // optional
+    key: [48, 49], // bytes array, optional
+    value: [48, 49], // bytes array, optional
+    headers: {
+      headerKey: [48, 49] // bytes array, optional
+    }
+};
+const publishRs = kafka.publish(publishRq);`,
+      python: `publishRq = {
+    "bootstrapServers": ["localhost:9092"],
+    "topic": "topic-to-publish",
+    "maxTimeout": 30000,
+    "partition": 0, # optional
+    "timestamp": 0, # optional
+    "key": [48, 49], # bytes array, optional
+    "value": [48, 49], # bytes array, optional
+    "headers": {
+      "headerKey": [48, 49] # bytes array, optional
+    }
+}
+publishRs = kafka.publish(publishRq)`
+    }
+  },
+  {
+    description: 'Publish message into existed bootstrap group',
+    implementations: {
+      javascript: `const publishRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    partition: 0, // optional
+    timestamp: 0, // optional
+    key: [48, 49], // bytes array, optional
+    value: [48, 49], // bytes array, optional
+    headers: {
+      headerKey: [48, 49] // bytes array, optional
+    },
+    maxTimeout: 30000 // optional
+};
+const publishRs = kafka.publish(publishRq);`,
+      python: `publishRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    "partition": 0, # optional
+    "timestamp": 0, # optional
+    "key": [48, 49], # bytes array, optional
+    "value": [48, 49], # bytes array, optional
+    "headers": {
+      "headerKey": [48, 49] # bytes array, optional
+    },
+    "maxTimeout": 30000 # optional
+}
+publishRs = kafka.publish(publishRq)`
+    }
+  },
+  {
+    description: 'Publish template message into group',
+    implementations: {
+      javascript: `const publishRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    templateCode: "template-code",
+    partition: 0, // optional
+    timestamp: 0, // optional
+    key: [48, 49], // bytes array, optional
+    input: { // input depends on template
+      param1: "value",
+      param2: 123
+    },
+    headers: {
+      headerKey: [48, 49] // bytes array, optional
+    },
+    maxTimeout: 30000 // optional
+};
+const publishRs = kafka.publishTemplate(publishRq);`,
+      python: `publishRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    templateCode: "template-code",
+    "partition": 0, # optional
+    "timestamp": 0, # optional
+    "key": [48, 49], # bytes array, optional
+    "input": { # input depends on template
+      "param1": "value",
+      "param2": 123
+    },
+    "headers": {
+      "headerKey": [48, 49] # bytes array, optional
+    },
+    "maxTimeout": 30000 # optional
+}
+publishRs = kafka.publishTemplate(publishRq)`
+    }
+  },
+];
+
+const kafkaConsumingExamples = [
+  {
+    description: 'Consume at most 5 messages from the beginning',
+    implementations: {
+      javascript: `const consumeRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    maxMessages: 5,
+    maxTimeout: 30000,
+};
+const consumeRs = kafka.getMessages(consumeRq);`,
+      python: `consumeRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    "maxMessages": 5,
+    "maxTimeout": 30000,
+}
+consumeRs = kafka.getMessages(consumeRq)`
+    }
+  },
+  {
+    description: 'Consume at most 5 messages from group from the end',
+    implementations: {
+      javascript: `const consumeRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    maxMessages: 5,
+    maxTimeout: 30000,
+    direction: "LATEST",
+};
+const consumeRs = kafka.getMessages(consumeRq);`,
+      python: `consumeRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    "maxMessages": 5,
+    "maxTimeout": 30000,
+    "direction": "LATEST",
+}
+consumeRs = kafka.getMessages(consumeRq)`
+    }
+  },
+  {
+    description: 'Consume messages with fixed bootstrap servers',
+    implementations: {
+      javascript: `const consumeRq = {
+    bootstrapServers: ["localhost:9092"],
+    topic: "topic-to-publish",
+    maxMessages: 5,
+    maxTimeout: 30000,
+};
+const consumeRs = kafka.getMessages(consumeRq);`,
+      python: `consumeRq = {
+    "bootstrapServers": ["localhost:9092"],
+    "topic": "topic-to-publish",
+    "maxMessages": 5,
+    "maxTimeout": 30000,
+}
+consumeRs = kafka.getMessages(consumeRq)`
+    }
+  },
+];
+
+const kafkaConsumingResponseExamples = [
+  {
+    description: 'Topic name',
+    implementations: {
+      javascript: `const topic = consumeRs.topic();`,
+      python: `topic = consumeRs.topic()`
+    }
+  },
+  {
+    description: 'Messages list',
+    implementations: {
+      javascript: `const messages = consumeRs.messages();`,
+      python: `messages = consumeRs.messages()`
+    }
+  },
+];
+
+const kafkaConsumedMessageResponseExamples = [
+  {
+    description: 'Partition',
+    implementations: {
+      javascript: `const partition = messages[0].partition();`,
+      python: `partition = messages[0].partition()`
+    }
+  },
+  {
+    description: 'Offset',
+    implementations: {
+      javascript: `const offset = messages[0].offset();`,
+      python: `offset = messages[0].offset()`
+    }
+  },
+  {
+    description: 'Timestamp',
+    implementations: {
+      javascript: `const timestamp = messages[0].timestamp();`,
+      python: `timestamp = messages[0].timestamp()`
+    }
+  },
+  {
+    description: 'Timestamp Type',
+    implementations: {
+      javascript: `const timestampType = messages[0].timestampType();`,
+      python: `timestampType = messages[0].timestampType()`
+    }
+  },
+];
+
+const kafkaConsumedMessageHeadersResponseExamples = [
+  {
+    description: 'Headers dictionary',
+    implementations: {
+      javascript: `const headers = messages[0].headers();`,
+      python: `headers = messages[0].headers()`
+    }
+  },
+  {
+    description: 'Header binary value',
+    implementations: {
+      javascript: `const header = messages[0].header("header-key");`,
+      python: `header = messages[0].header("header-key")`
+    }
+  },
+  {
+    description: 'Header text value',
+    implementations: {
+      javascript: `const header = messages[0].headerText("header-key");`,
+      python: `header = messages[0].headerText("header-key")`
+    }
+  },
+  {
+    description: 'Header JSON value',
+    implementations: {
+      javascript: `const header = messages[0].headerJson("header-key");`,
+      python: `header = messages[0].headerJson("header-key")`
+    }
+  },
+];
+
+const kafkaConsumedMessageKeyResponseExamples = [
+  {
+    description: 'Serialized Key Size',
+    implementations: {
+      javascript: `const serializedKeySize = messages[0].serializedKeySize();`,
+      python: `serializedKeySize = messages[0].serializedKeySize()`
+    }
+  },
+  {
+    description: 'Message binary key',
+    implementations: {
+      javascript: `const key = messages[0].key();`,
+      python: `key = messages[0].key()`
+    }
+  },
+  {
+    description: 'Message text key',
+    implementations: {
+      javascript: `const key = messages[0].textKey();`,
+      python: `key = messages[0].textKey()`
+    }
+  },
+  {
+    description: 'Message JSON key',
+    implementations: {
+      javascript: `const key = messages[0].jsonKey();`,
+      python: `key = messages[0].jsonKey()`
+    }
+  },
+];
+
+const kafkaConsumedMessageValueResponseExamples = [
+  {
+    description: 'Serialized Value Size',
+    implementations: {
+      javascript: `const serializedValueSize = messages[0].serializedValueSize();`,
+      python: `serializedValueSize = messages[0].serializedValueSize()`
+    }
+  },
+  {
+    description: 'Message binary value',
+    implementations: {
+      javascript: `const value = messages[0].value(); // [72, 105, 33]`,
+      python: `value = messages[0].value() # [72, 105, 33]`
+    }
+  },
+  {
+    description: 'Message text value',
+    implementations: {
+      javascript: `const value = messages[0].textValue(); // 'Hi!'`,
+      python: `value = messages[0].textValue() # "Hi!"`
+    }
+  },
+  {
+    description: 'Message JSON value',
+    implementations: {
+      javascript: `const value = messages[0].jsonValue(); // '"Hi!"'`,
+      python: `value = messages[0].jsonValue() # '"Hi!"'`
+    }
+  },
+];
+
+const kafkaPublishingResponseExamples = [
+  {
+    description: 'Message offset',
+    implementations: {
+      javascript: `const offset = publishRs.offset();`,
+      python: `offset = publishRs.offset()`,
+    }
+  },
+  {
+    description: 'Message timestamp',
+    implementations: {
+      javascript: `const timestamp = publishRs.timestamp();`,
+      python: `timestamp = publishRs.timestamp()`,
+    }
+  },
+  {
+    description: 'Message serialized key size',
+    implementations: {
+      javascript: `const serializedKeySize = publishRs.serializedKeySize();`,
+      python: `serializedKeySize = publishRs.serializedKeySize()`,
+    }
+  },
+  {
+    description: 'Message serialized value size',
+    implementations: {
+      javascript: `const serializedValueSize = publishRs.serializedValueSize();`,
+      python: `serializedValueSize = publishRs.serializedValueSize()`,
+    }
+  },
+  {
+    description: 'Message partition',
+    implementations: {
+      javascript: `const partition = publishRs.partition();`,
+      python: `partition = publishRs.partition()`,
+    }
+  },
+];
+
 const allExamples: ExampleSection = {
   name: 'Examples',
   sections: [
@@ -585,6 +941,52 @@ const allExamples: ExampleSection = {
           ]
         }
       ]
+    },
+    {
+      name: 'Kafka',
+      examples: kafkaExamples,
+      sections: [
+        {
+          name: 'Publishing',
+          examples: kafkaPublishingExamples,
+          sections: [
+            {
+              name: 'Publish result',
+              examples: kafkaPublishingResponseExamples
+            }
+          ]
+        },
+        {
+          name: 'Consuming',
+          examples: kafkaConsumingExamples,
+          sections: [
+            {
+              name: 'Consuming result',
+              examples: kafkaConsumingResponseExamples,
+              sections: [
+                {
+                  name: 'Message',
+                  examples: kafkaConsumedMessageResponseExamples,
+                  sections: [
+                    {
+                      name: 'Headers',
+                      examples: kafkaConsumedMessageHeadersResponseExamples
+                    },
+                    {
+                      name: 'Key',
+                      examples: kafkaConsumedMessageKeyResponseExamples
+                    },
+                    {
+                      name: 'Value',
+                      examples: kafkaConsumedMessageValueResponseExamples
+                    }
+                  ]
+                },
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 };
@@ -593,6 +995,8 @@ const CodeDocumentation: React.FC<{ mode: 'javascript' | 'python', section?: Exa
                                                                                                     mode,
                                                                                                     section = allExamples
                                                                                                   }) => {
+  const [copied, setCopied] = useState<Array<any>>([]);
+
   return (
     <Accordion className={'mb-2'}>
       <Accordion.Item eventKey={`examples-${section.name}`}>
@@ -614,14 +1018,44 @@ const CodeDocumentation: React.FC<{ mode: 'javascript' | 'python', section?: Exa
                       <td>{it.description}</td>
                       <td>
                         {'implementation' in it && (
-                          <SyntaxHighlighter language={mode} style={docco}>
-                            {it.implementation}
-                          </SyntaxHighlighter>
+                          <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                            <Button
+                              variant={'link'}
+                              className={'text-secondary code-clipboard-btn'}
+                              size={'sm'}
+                              onClick={async () => {
+                                const copiedNew = [...copied, it];
+                                setCopied(copiedNew);
+                                await navigator.clipboard.writeText(it.implementation);
+                                setTimeout(() => setCopied(copied.filter(e => e !== it)), 1500);
+                              }}
+                            >
+                              {copied.some(e => e === it) ? (<TaskDone01Icon size={16} />) : (<Task01Icon size={16} />)}
+                            </Button>
+                            <SyntaxHighlighter language={mode} style={docco}>
+                              {it.implementation}
+                            </SyntaxHighlighter>
+                          </div>
                         )}
                         {'implementations' in it && (
-                          <SyntaxHighlighter language={mode} style={docco}>
-                            {it.implementations[mode]}
-                          </SyntaxHighlighter>
+                          <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                            <Button
+                              variant={'link'}
+                              className={'text-secondary code-clipboard-btn'}
+                              size={'sm'}
+                              onClick={async () => {
+                                const copiedNew = [...copied, it];
+                                setCopied(copiedNew);
+                                await navigator.clipboard.writeText(it.implementations[mode]);
+                                setTimeout(() => setCopied(copied.filter(e => e !== it)), 1500);
+                              }}
+                            >
+                              {copied.some(e => e === it) ? (<TaskDone01Icon size={16} />) : (<Task01Icon size={16} />)}
+                            </Button>
+                            <SyntaxHighlighter language={mode} style={docco}>
+                              {it.implementations[mode]}
+                            </SyntaxHighlighter>
+                          </div>
                         )}
                       </td>
                     </tr>

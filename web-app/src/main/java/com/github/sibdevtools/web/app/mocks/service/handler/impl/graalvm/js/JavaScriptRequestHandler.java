@@ -1,10 +1,11 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.js;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sibdevtools.session.api.service.SessionService;
 import com.github.sibdevtools.storage.api.service.StorageService;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.CommonResponsePreparer;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.GraalVMRequestHandler;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.WebApplicationMocksGraalVMSessions;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka.WebApplicationMocksGraalVMKafka;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,11 +21,12 @@ public class JavaScriptRequestHandler extends GraalVMRequestHandler {
 
     @Autowired
     public JavaScriptRequestHandler(StorageService storageService,
-                                    SessionService sessionService,
+                                    WebApplicationMocksGraalVMSessions graalVMSessions,
+                                    WebApplicationMocksGraalVMKafka graalVMKafka,
                                     @Qualifier("webAppMocksObjectMapper")
                                     ObjectMapper objectMapper,
                                     CommonResponsePreparer commonResponsePreparer) {
-        super("js", storageService, sessionService, objectMapper, commonResponsePreparer);
+        super("js", storageService, graalVMSessions, graalVMKafka, objectMapper, commonResponsePreparer);
     }
 
     @Override

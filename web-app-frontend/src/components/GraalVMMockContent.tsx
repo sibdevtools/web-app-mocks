@@ -4,13 +4,13 @@ import AceEditor from 'react-ace';
 
 import '../const/ace.imports';
 import { loadSettings } from '../settings/utils';
-import { Button, ButtonGroup, Form, Table } from 'react-bootstrap';
-import CodeDocumentation from '../pages/mock/CodeDocumentation';
+import { Button, ButtonGroup, Form } from 'react-bootstrap';
 
 export interface GraalVMMockContentProps {
   mode: 'javascript' | 'python';
   content: ArrayBuffer;
   setContent: (content: ArrayBuffer) => void;
+  disabled?: boolean;
 }
 
 const textEncoder = new TextEncoder();
@@ -18,6 +18,7 @@ const GraalVMMockContent: React.FC<GraalVMMockContentProps> = ({
                                                                  mode,
                                                                  content,
                                                                  setContent,
+                                                                 disabled,
                                                                }) => {
   const settings = loadSettings();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
@@ -56,6 +57,7 @@ const GraalVMMockContent: React.FC<GraalVMMockContentProps> = ({
           fontSize={14}
           width="100%"
           height="480px"
+          readOnly={disabled}
           showPrintMargin={true}
           showGutter={true}
           highlightActiveLine={true}

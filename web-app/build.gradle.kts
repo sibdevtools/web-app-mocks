@@ -36,12 +36,16 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("jakarta.persistence:jakarta.persistence-api")
 
+    implementation("org.apache.kafka:kafka-clients")
+
     implementation(libs.bundles.graalvm)
 
     implementation(libs.mapstruct)
     implementation(libs.mapstruct.lombok.binding)
 
     implementation(libs.bundles.service.api)
+
+    implementation(libs.kafka.client.service)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")

@@ -22,6 +22,8 @@ async-embedded = "0.0.10"
 session-embedded = "0.0.10"
 storage-embedded = "0.1.16"
 
+kafka-client-service = "0.0.18"
+
 [libraries]
 common-api = { module = "com.github.sibdevtools:api-common", version.ref = "common-api" }
 localization-api = { module = "com.github.sibdevtools:api-localization", version.ref = "localization-api" }
@@ -34,6 +36,8 @@ web-app-api = { module = "com.github.sibdevtools:api-web-app", version.ref = "we
 async-embedded = { module = "com.github.sibdevtools:service-async-embedded", version.ref = "async-embedded" }
 session-embedded = { module = "com.github.sibdevtools:service-session-embedded", version.ref = "session-embedded" }
 storage-embedded = { module = "com.github.sibdevtools:service-storage-embedded", version.ref = "storage-embedded" }
+
+kafka-client-service = { module = "com.github.sibdevtools:service-kafka-client", version.ref = "kafka-client-service" }
 
 spring-openapi-starter = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-openapi-doc" }
 

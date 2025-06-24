@@ -17,6 +17,8 @@ export interface ModifyingMock {
 
 const AddEditMockPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const navigate = useNavigate();
   const { serviceId, mockId } = useParams();
 
@@ -57,7 +59,7 @@ const AddEditMockPage: React.FC = () => {
         type: body.type,
         meta: body.meta,
         content: decodeToBuffer(body.content)
-      })
+      });
     } catch (error) {
       console.error('Failed to fetch mock:', error);
     } finally {
@@ -72,6 +74,8 @@ const AddEditMockPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
+    setSaved(false);
     try {
       const mockData = {
         name: modifyingMock.name,
@@ -87,9 +91,14 @@ const AddEditMockPage: React.FC = () => {
       } else {
         await createMock(+serviceId, mockData);
       }
-      navigate(`${contextPath}service/${serviceId}/mocks`);
+      setSaved(true);
+      if (mockId === undefined) {
+        navigate(`${contextPath}service/${serviceId}/mocks`);
+      }
     } catch (error) {
       console.error('Failed to submit mock:', error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -105,6 +114,8 @@ const AddEditMockPage: React.FC = () => {
       onSubmit={handleSubmit}
       isEditMode={!!mockId}
       navigateBack={navigateBack}
+      saving={saving}
+      saved={saved}
     />
   );
 };

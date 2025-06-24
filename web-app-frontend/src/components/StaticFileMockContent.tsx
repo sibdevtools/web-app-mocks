@@ -8,12 +8,14 @@ export interface StaticMockBinaryContentProps {
   isEditMode: boolean;
   content: ArrayBuffer;
   setContent: (content: ArrayBuffer) => void;
+  disabled?: boolean;
 }
 
 const StaticFileMockContent: React.FC<StaticMockBinaryContentProps> = ({
                                                                          isEditMode,
                                                                          content,
-                                                                         setContent
+                                                                         setContent,
+                                                                         disabled
                                                                        }) => {
   const getFileContent = useCallback((file: File): Promise<ArrayBuffer> => {
     return new Promise((resolve, reject) => {
@@ -47,9 +49,11 @@ const StaticFileMockContent: React.FC<StaticMockBinaryContentProps> = ({
         <InputGroup>
           <Form.Control
             type="file"
+            disabled={disabled}
             onChange={handleFileChange}
           />
           <Button
+            disabled={disabled}
             variant={'outline-secondary'}
             onClick={downloadFile}
             title={'Download'}
