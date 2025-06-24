@@ -11,8 +11,16 @@ import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.GraalVM
 import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Headers;
 import org.graalvm.polyglot.HostAccess;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author sibmaks
@@ -93,5 +101,73 @@ public class WebApplicationMocksGraalVMKafka {
                 .orElse(null);
     }
 
+    @HostAccess.Export
+    public ConsumeMessagesRs getMessages(@Nonnull Object arg) {
+        val rq = objectMapper.convertValue(arg, ConsumeMessagesRq.class);
+        val bootstrapServers = getBootstrapServers(rq);
+        val messages = getConsumerRecords(rq, bootstrapServers);
+
+        val consumed = messages.stream()
+                .map(it -> ConsumedMessage.builder()
+                        .objectMapper(objectMapper)
+                        .partition(it.partition())
+                        .offset(it.offset())
+                        .timestamp(it.timestamp())
+                        .timestampType(it.timestampType().name)
+                        .serializedKeySize(it.serializedKeySize())
+                        .serializedValueSize(it.serializedValueSize())
+                        .headers(buildHeadersMap(it.headers()))
+                        .key(it.key())
+                        .value(it.value())
+                        .build())
+                .toList();
+
+        return ConsumeMessagesRs.builder()
+                .topic(rq.topic())
+                .messages(consumed)
+                .build();
+    }
+
+    private List<ConsumerRecord<byte[], byte[]>> getConsumerRecords(
+            ConsumeMessagesRq rq,
+            List<String> bootstrapServers
+    ) {
+        if (rq.direction() == ConsumeMessagesRq.Direction.EARLIEST) {
+            return messageConsumerService.getMessages(
+                            bootstrapServers,
+                            rq.topic(),
+                            rq.maxMessages(),
+                            rq.maxTimeout()
+                    )
+                    .orElseGet(Collections::emptyList);
+        }
+        return messageConsumerService.getLastNMessages(
+                        bootstrapServers,
+                        rq.topic(),
+                        rq.maxMessages(),
+                        rq.maxTimeout()
+                )
+                .orElseGet(Collections::emptyList);
+
+    }
+
+    private List<String> getBootstrapServers(ConsumeMessagesRq rq) {
+        val groupCode = rq.groupCode();
+        if (groupCode != null) {
+            val bootstrapGroup = bootstrapGroupService.getByCode(groupCode);
+            return bootstrapGroup.getBootstrapServers();
+        }
+        return rq.bootstrapServers();
+    }
+
+    private Map<String, byte[]> buildHeadersMap(Headers headers) {
+        val headersMap = new HashMap<String, byte[]>();
+
+        for (val header : headers) {
+            headersMap.put(header.key(), header.value());
+        }
+
+        return headersMap;
+    }
 
 }

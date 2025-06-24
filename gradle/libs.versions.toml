@@ -22,7 +22,7 @@ async-embedded = "0.0.10"
 session-embedded = "0.0.10"
 storage-embedded = "0.1.16"
 
-kafka-client-service = "0.0.17"
+kafka-client-service = "0.0.18"
 
 [libraries]
 common-api = { module = "com.github.sibdevtools:api-common", version.ref = "common-api" }

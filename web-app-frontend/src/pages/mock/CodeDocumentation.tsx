@@ -643,6 +643,209 @@ publishRs = kafka.publishTemplate(publishRq)`
   },
 ];
 
+const kafkaConsumingExamples = [
+  {
+    description: 'Consume at most 5 messages from the beginning',
+    implementations: {
+      javascript: `const consumeRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    maxMessages: 5,
+    maxTimeout: 30000,
+};
+const consumeRs = kafka.getMessages(consumeRq);`,
+      python: `consumeRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    "maxMessages": 5,
+    "maxTimeout": 30000,
+}
+consumeRs = kafka.getMessages(consumeRq)`
+    }
+  },
+  {
+    description: 'Consume at most 5 messages from group from the end',
+    implementations: {
+      javascript: `const consumeRq = {
+    groupCode: "kafkaGroupCode",
+    topic: "topic-to-publish",
+    maxMessages: 5,
+    maxTimeout: 30000,
+    direction: "LATEST",
+};
+const consumeRs = kafka.getMessages(consumeRq);`,
+      python: `consumeRq = {
+    "groupCode": "kafkaGroupCode",
+    "topic": "topic-to-publish",
+    "maxMessages": 5,
+    "maxTimeout": 30000,
+    "direction": "LATEST",
+}
+consumeRs = kafka.getMessages(consumeRq)`
+    }
+  },
+  {
+    description: 'Consume messages with fixed bootstrap servers',
+    implementations: {
+      javascript: `const consumeRq = {
+    bootstrapServers: ["localhost:9092"],
+    topic: "topic-to-publish",
+    maxMessages: 5,
+    maxTimeout: 30000,
+};
+const consumeRs = kafka.getMessages(consumeRq);`,
+      python: `consumeRq = {
+    "bootstrapServers": ["localhost:9092"],
+    "topic": "topic-to-publish",
+    "maxMessages": 5,
+    "maxTimeout": 30000,
+}
+consumeRs = kafka.getMessages(consumeRq)`
+    }
+  },
+];
+
+const kafkaConsumingResponseExamples = [
+  {
+    description: 'Topic name',
+    implementations: {
+      javascript: `const topic = consumeRs.topic();`,
+      python: `topic = consumeRs.topic()`
+    }
+  },
+  {
+    description: 'Messages list',
+    implementations: {
+      javascript: `const messages = consumeRs.messages();`,
+      python: `messages = consumeRs.messages()`
+    }
+  },
+];
+
+const kafkaConsumedMessageResponseExamples = [
+  {
+    description: 'Partition',
+    implementations: {
+      javascript: `const partition = messages[0].partition();`,
+      python: `partition = messages[0].partition()`
+    }
+  },
+  {
+    description: 'Offset',
+    implementations: {
+      javascript: `const offset = messages[0].offset();`,
+      python: `offset = messages[0].offset()`
+    }
+  },
+  {
+    description: 'Timestamp',
+    implementations: {
+      javascript: `const timestamp = messages[0].timestamp();`,
+      python: `timestamp = messages[0].timestamp()`
+    }
+  },
+  {
+    description: 'Timestamp Type',
+    implementations: {
+      javascript: `const timestampType = messages[0].timestampType();`,
+      python: `timestampType = messages[0].timestampType()`
+    }
+  },
+];
+
+const kafkaConsumedMessageHeadersResponseExamples = [
+  {
+    description: 'Headers dictionary',
+    implementations: {
+      javascript: `const headers = messages[0].headers();`,
+      python: `headers = messages[0].headers()`
+    }
+  },
+  {
+    description: 'Header binary value',
+    implementations: {
+      javascript: `const header = messages[0].header("header-key");`,
+      python: `header = messages[0].header("header-key")`
+    }
+  },
+  {
+    description: 'Header text value',
+    implementations: {
+      javascript: `const header = messages[0].headerText("header-key");`,
+      python: `header = messages[0].headerText("header-key")`
+    }
+  },
+  {
+    description: 'Header JSON value',
+    implementations: {
+      javascript: `const header = messages[0].headerJson("header-key");`,
+      python: `header = messages[0].headerJson("header-key")`
+    }
+  },
+];
+
+const kafkaConsumedMessageKeyResponseExamples = [
+  {
+    description: 'Serialized Key Size',
+    implementations: {
+      javascript: `const serializedKeySize = messages[0].serializedKeySize();`,
+      python: `serializedKeySize = messages[0].serializedKeySize()`
+    }
+  },
+  {
+    description: 'Message binary key',
+    implementations: {
+      javascript: `const key = messages[0].key();`,
+      python: `key = messages[0].key()`
+    }
+  },
+  {
+    description: 'Message text key',
+    implementations: {
+      javascript: `const key = messages[0].textKey();`,
+      python: `key = messages[0].textKey()`
+    }
+  },
+  {
+    description: 'Message JSON key',
+    implementations: {
+      javascript: `const key = messages[0].jsonKey();`,
+      python: `key = messages[0].jsonKey()`
+    }
+  },
+];
+
+const kafkaConsumedMessageValueResponseExamples = [
+  {
+    description: 'Serialized Value Size',
+    implementations: {
+      javascript: `const serializedValueSize = messages[0].serializedValueSize();`,
+      python: `serializedValueSize = messages[0].serializedValueSize()`
+    }
+  },
+  {
+    description: 'Message binary value',
+    implementations: {
+      javascript: `const value = messages[0].value(); // [72, 105, 33]`,
+      python: `value = messages[0].value() # [72, 105, 33]`
+    }
+  },
+  {
+    description: 'Message text value',
+    implementations: {
+      javascript: `const value = messages[0].textValue(); // 'Hi!'`,
+      python: `value = messages[0].textValue() # "Hi!"`
+    }
+  },
+  {
+    description: 'Message JSON value',
+    implementations: {
+      javascript: `const value = messages[0].jsonValue(); // '"Hi!"'`,
+      python: `value = messages[0].jsonValue() # '"Hi!"'`
+    }
+  },
+];
+
 const kafkaPublishingResponseExamples = [
   {
     description: 'Message offset',
@@ -750,6 +953,36 @@ const allExamples: ExampleSection = {
             {
               name: 'Publish result',
               examples: kafkaPublishingResponseExamples
+            }
+          ]
+        },
+        {
+          name: 'Consuming',
+          examples: kafkaConsumingExamples,
+          sections: [
+            {
+              name: 'Consuming result',
+              examples: kafkaConsumingResponseExamples,
+              sections: [
+                {
+                  name: 'Message',
+                  examples: kafkaConsumedMessageResponseExamples,
+                  sections: [
+                    {
+                      name: 'Headers',
+                      examples: kafkaConsumedMessageHeadersResponseExamples
+                    },
+                    {
+                      name: 'Key',
+                      examples: kafkaConsumedMessageKeyResponseExamples
+                    },
+                    {
+                      name: 'Value',
+                      examples: kafkaConsumedMessageValueResponseExamples
+                    }
+                  ]
+                },
+              ]
             }
           ]
         }

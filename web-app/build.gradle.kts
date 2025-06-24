@@ -36,6 +36,8 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("jakarta.persistence:jakarta.persistence-api")
 
+    implementation("org.apache.kafka:kafka-clients")
+
     implementation(libs.bundles.graalvm)
 
     implementation(libs.mapstruct)
