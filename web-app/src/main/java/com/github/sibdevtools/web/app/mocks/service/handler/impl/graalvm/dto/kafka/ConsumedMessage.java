@@ -9,7 +9,9 @@ import org.graalvm.polyglot.HostAccess;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author sibmaks
@@ -28,6 +30,36 @@ public record ConsumedMessage(
         @HostAccess.Export byte[] key,
         @HostAccess.Export byte[] value
 ) {
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        val that = (ConsumedMessage) o;
+        return offset == that.offset &&
+                partition == that.partition &&
+                timestamp == that.timestamp &&
+                serializedKeySize == that.serializedKeySize &&
+                serializedValueSize == that.serializedValueSize &&
+                Arrays.equals(key, that.key) &&
+                Arrays.equals(value, that.value) &&
+                Objects.equals(timestampType, that.timestampType) &&
+                Objects.equals(headers, that.headers);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = partition;
+        result = 31 * result + Long.hashCode(offset);
+        result = 31 * result + Long.hashCode(timestamp);
+        result = 31 * result + Objects.hashCode(timestampType);
+        result = 31 * result + serializedKeySize;
+        result = 31 * result + serializedValueSize;
+        result = 31 * result + Objects.hashCode(headers);
+        result = 31 * result + Arrays.hashCode(key);
+        result = 31 * result + Arrays.hashCode(value);
+        return result;
+    }
+
     /**
      * Get key as string
      *
