@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import { methods, MockType, mockTypes, statusCodes } from '../../const/common.const';
 import HttpHeadersForm from '../../components/HttpHeadersForm';
 import StaticMockContent from '../../components/StaticMockContent';
@@ -18,6 +18,8 @@ type MockFormProps = {
   setModifyingMock: (value: ModifyingMock) => void;
   onSubmit: (e: React.FormEvent) => void;
   isEditMode: boolean;
+  saving: boolean;
+  saved: boolean;
   navigateBack: () => void;
 };
 
@@ -27,6 +29,8 @@ export const MockForm: React.FC<MockFormProps> = ({
                                                     setModifyingMock,
                                                     onSubmit,
                                                     isEditMode,
+                                                    saving,
+                                                    saved,
                                                     navigateBack
                                                   }) => {
   const [showPathHint, setShowPathHint] = useState(false);
@@ -69,7 +73,8 @@ export const MockForm: React.FC<MockFormProps> = ({
                       id={'nameInput'}
                       value={modifyingMock.name}
                       onChange={(e) => setModifyingMock({ ...modifyingMock, name: e.target.value })}
-                      required
+                      required={true}
+                      disabled={saving}
                     />
                   </Col>
                 </Row>
@@ -85,6 +90,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                       value={modifyingMock.method}
                       onChange={it => setModifyingMock({ ...modifyingMock, method: it.value })}
                       required={true}
+                      disabled={saving}
                       suggestions={methods.map(it => {
                         return { key: it, value: it };
                       })}
@@ -105,6 +111,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                         onChange={e => setModifyingMock({ ...modifyingMock, path: e.target.value })}
                         placeholder="Ant pattern or path"
                         required
+                        disabled={saving}
                       />
                       <Button
                         onClick={() => setShowPathHint(!showPathHint)}
@@ -153,6 +160,7 @@ export const MockForm: React.FC<MockFormProps> = ({
               <Form.Group className="mb-3">
                 <Form.Label>Http Headers</Form.Label>
                 <HttpHeadersForm
+                  disabled={saving}
                   meta={modifyingMock.meta}
                   setMeta={it => setModifyingMock({ ...modifyingMock, meta: it })}
                 />
@@ -179,6 +187,7 @@ export const MockForm: React.FC<MockFormProps> = ({
                             }
                           })}
                           required={true}
+                          disabled={saving}
                           suggestions={Array.from(statusCodes).map(([key, value]) => {
                             return { key: `${key}`, value: `${key}: ${value}` };
                           })}
@@ -201,7 +210,8 @@ export const MockForm: React.FC<MockFormProps> = ({
                           min={0}
                           value={`${modifyingMock.delay}`}
                           onChange={e => setModifyingMock({ ...modifyingMock, delay: +e.target.value })}
-                          required
+                          required={true}
+                          disabled={saving}
                         />
                         <InputGroup.Text>ms</InputGroup.Text>
                       </InputGroup>
@@ -219,7 +229,8 @@ export const MockForm: React.FC<MockFormProps> = ({
                           id={'typeSelect'}
                           value={modifyingMock.type}
                           onChange={onMockTypeChange}
-                          required
+                          required={true}
+                          disabled={saving}
                         >
                           {
                             Array.from(mockTypes).map(
@@ -238,6 +249,7 @@ export const MockForm: React.FC<MockFormProps> = ({
               {/* Content Section Based on Mock Type */}
               {modifyingMock.type === 'STATIC' && (
                 <StaticMockContent
+                  disabled={saving}
                   content={modifyingMock.content}
                   setContent={it => setModifyingMock({ ...modifyingMock, content: it })}
                   meta={modifyingMock.meta}
@@ -246,6 +258,7 @@ export const MockForm: React.FC<MockFormProps> = ({
               )}
 
               {modifyingMock.type === 'STATIC_FILE' && <StaticFileMockContent
+                disabled={saving}
                 content={modifyingMock.content}
                 setContent={it => setModifyingMock({ ...modifyingMock, content: it })}
                 isEditMode={isEditMode}
@@ -254,23 +267,31 @@ export const MockForm: React.FC<MockFormProps> = ({
               {(modifyingMock.type === 'JS' || modifyingMock.type === 'PYTHON') && (
                 <GraalVMMockContent
                   mode={modifyingMock.type === 'JS' ? 'javascript' : 'python'}
+                  disabled={saving}
                   content={modifyingMock.content}
                   setContent={it => setModifyingMock({ ...modifyingMock, content: it })}
                 />
               )}
 
-              {/* Submit Button */}
+              {/* Save Button */}
               <Row className="mb-3">
                 <Col className="d-flex justify-content-end">
                   <Button
                     variant="primary"
                     type="submit"
                     title={'Save'}
+                    disabled={saving}
                   >
                     <FloppyDiskIcon />
                   </Button>
                 </Col>
               </Row>
+
+              {saved && (
+                <Alert variant={'success'}>
+                  Saved successfully.
+                </Alert>
+              )}
 
               {(modifyingMock.type === 'JS' || modifyingMock.type === 'PYTHON') && (
                 <CodeDocumentation mode={modifyingMock.type === 'JS' ? 'javascript' : 'python'} />

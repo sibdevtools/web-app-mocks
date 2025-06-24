@@ -11,6 +11,7 @@ interface Header {
 interface HttpHeadersFormProps {
   meta: { [key: string]: string };
   setMeta: (newMeta: { [key: string]: string }) => void;
+  disabled?: boolean;
 }
 
 const commonHeaders = [
@@ -31,7 +32,11 @@ const headerValueSuggestions: { [key: string]: string[] } = {
   'Cache-Control': ['no-cache', 'no-store', 'must-revalidate', 'public', 'private'],
 };
 
-const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
+const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({
+                                                           meta,
+                                                           setMeta,
+                                                           disabled
+                                                         }) => {
   const [notFilledExist, setNotFilledExist] = useState(false);
 
   const initialHeaders = meta['HTTP_HEADERS']
@@ -101,6 +106,7 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                   placeholder="Header Key"
                   value={header.key}
                   onChange={(e) => handleHeaderChange(index, 'key', e.target.value)}
+                  disabled={disabled}
                 />
                 <datalist id="header-suggestions">
                   {commonHeaders.map((headerName, i) => (
@@ -113,6 +119,7 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                   placeholder="Header Value"
                   value={header.value}
                   onChange={(e) => handleHeaderChange(index, 'value', e.target.value)}
+                  disabled={disabled}
                 />
                 <datalist id={`value-suggestions-${index}`}>
                   {(headerValueSuggestions[header.key] || []).map((valueSuggestion, i) => (
@@ -122,7 +129,7 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                 <Button
                   variant="danger"
                   onClick={() => removeHeader(index)}
-                  disabled={headers.length === 1}
+                  disabled={disabled || headers.length === 1}
                   title={'Remove'}
                 >
                   <MinusSignIcon />
@@ -130,7 +137,7 @@ const HttpHeadersForm: React.FC<HttpHeadersFormProps> = ({ meta, setMeta }) => {
                 <Button
                   variant="primary"
                   onClick={addHeader}
-                  disabled={index !== headers.length - 1 || notFilledExist}
+                  disabled={disabled || index !== headers.length - 1 || notFilledExist}
                   title={'Add'}
                 >
                   <PlusSignIcon />

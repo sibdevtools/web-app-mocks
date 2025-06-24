@@ -14,12 +14,18 @@ export interface StaticMockContentProps {
   meta: { [key: string]: string };
   setMeta: (meta: { [key: string]: string }) => void;
   creation: boolean;
+  disabled?: boolean;
 }
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
-const StaticMockContent: React.FC<StaticMockContentProps> = ({ content, setContent, meta }) => {
+const StaticMockContent: React.FC<StaticMockContentProps> = ({
+                                                               content,
+                                                               setContent,
+                                                               meta,
+                                                               disabled
+                                                             }) => {
   const [aceType, setAceType] = useState('text');
   const settings = loadSettings();
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(true);
@@ -64,6 +70,7 @@ const StaticMockContent: React.FC<StaticMockContentProps> = ({ content, setConte
         fontSize={14}
         width="100%"
         height="480px"
+        readOnly={disabled}
         showPrintMargin={true}
         showGutter={true}
         highlightActiveLine={true}
