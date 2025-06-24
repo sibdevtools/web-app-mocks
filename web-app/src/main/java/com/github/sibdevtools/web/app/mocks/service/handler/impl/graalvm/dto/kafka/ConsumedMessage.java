@@ -35,7 +35,7 @@ public record ConsumedMessage(
      */
     @HostAccess.Export
     public String textKey() {
-        return new String(key, StandardCharsets.UTF_8);
+        return asText(key);
     }
 
     /**
@@ -45,8 +45,11 @@ public record ConsumedMessage(
      */
     @HostAccess.Export
     public Object jsonKey() {
+        return asJson(textKey());
+    }
+
+    private Object asJson(String text) {
         try {
-            var text = textKey();
             var jsonNode = objectMapper.readTree(text);
 
             if (jsonNode.isArray()) {
@@ -67,6 +70,11 @@ public record ConsumedMessage(
      */
     @HostAccess.Export
     public String textValue() {
+        return asText(value);
+    }
+
+    private String asText(byte[] value) {
+        if (value == null) return null;
         return new String(value, StandardCharsets.UTF_8);
     }
 
@@ -77,19 +85,7 @@ public record ConsumedMessage(
      */
     @HostAccess.Export
     public Object jsonValue() {
-        try {
-            var text = textValue();
-            var jsonNode = objectMapper.readTree(text);
-
-            if (jsonNode.isArray()) {
-                return objectMapper.convertValue(jsonNode, Object[].class);
-            } else if (jsonNode.isObject()) {
-                return objectMapper.convertValue(jsonNode, Map.class);
-            }
-            return jsonNode;
-        } catch (IOException e) {
-            throw new UnexpectedErrorException("Can't write to response", e);
-        }
+        return asJson(textValue());
     }
 
     /**
@@ -113,8 +109,7 @@ public record ConsumedMessage(
     @HostAccess.Export
     public String headerText(String key) {
         val value = header(key);
-        if (value == null) return null;
-        return new String(value, StandardCharsets.UTF_8);
+        return asText(value);
     }
 
     /**
@@ -124,18 +119,6 @@ public record ConsumedMessage(
      */
     @HostAccess.Export
     public Object headerJson(String key) {
-        try {
-            var text = headerText(key);
-            var jsonNode = objectMapper.readTree(text);
-
-            if (jsonNode.isArray()) {
-                return objectMapper.convertValue(jsonNode, Object[].class);
-            } else if (jsonNode.isObject()) {
-                return objectMapper.convertValue(jsonNode, Map.class);
-            }
-            return jsonNode;
-        } catch (IOException e) {
-            throw new UnexpectedErrorException("Can't write to response", e);
-        }
+        return asJson(headerText(key));
     }
 }
