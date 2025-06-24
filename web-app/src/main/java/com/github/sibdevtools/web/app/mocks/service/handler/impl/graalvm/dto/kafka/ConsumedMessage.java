@@ -60,6 +60,22 @@ public record ConsumedMessage(
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "ConsumedMessage{" +
+                "objectMapper=" + objectMapper +
+                ", partition=" + partition +
+                ", offset=" + offset +
+                ", timestamp=" + timestamp +
+                ", timestampType='" + timestampType + '\'' +
+                ", serializedKeySize=" + serializedKeySize +
+                ", serializedValueSize=" + serializedValueSize +
+                ", headers=" + headers +
+                ", key=" + Arrays.toString(key) +
+                ", value=" + Arrays.toString(value) +
+                '}';
+    }
+
     /**
      * Get key as string
      *

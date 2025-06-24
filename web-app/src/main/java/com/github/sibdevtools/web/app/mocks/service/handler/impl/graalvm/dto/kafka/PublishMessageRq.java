@@ -50,4 +50,19 @@ public record PublishMessageRq(
         result = 31 * result + Objects.hashCode(maxTimeout);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "PublishMessageRq{" +
+                "groupCode='" + groupCode + '\'' +
+                ", bootstrapServers=" + bootstrapServers +
+                ", topic='" + topic + '\'' +
+                ", partition=" + partition +
+                ", timestamp=" + timestamp +
+                ", key=" + Arrays.toString(key) +
+                ", value=" + Arrays.toString(value) +
+                ", headers=" + headers +
+                ", maxTimeout=" + maxTimeout +
+                '}';
+    }
 }

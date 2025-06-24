@@ -1,5 +1,7 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -47,5 +49,20 @@ public record PublishTemplateMessageRq(
         result = 31 * result + Objects.hashCode(headers);
         result = 31 * result + Objects.hashCode(maxTimeout);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PublishTemplateMessageRq{" +
+                "groupCode='" + groupCode + '\'' +
+                ", topic='" + topic + '\'' +
+                ", templateCode='" + templateCode + '\'' +
+                ", partition=" + partition +
+                ", timestamp=" + timestamp +
+                ", key=" + Arrays.toString(key) +
+                ", input=" + input +
+                ", headers=" + headers +
+                ", maxTimeout=" + maxTimeout +
+                '}';
     }
 }
