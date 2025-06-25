@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.async.embedded)
     implementation(libs.session.embedded)
     implementation(libs.storage.embedded)
+    implementation(libs.key.value.storage.embedded)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

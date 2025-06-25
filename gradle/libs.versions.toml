@@ -17,10 +17,12 @@ session-api = "0.0.15"
 storage-api = "0.0.13"
 async-api = "0.0.6"
 web-app-api = "0.0.6"
+key-value-storage-api = "0.0.3"
 
 async-embedded = "0.0.10"
 session-embedded = "0.0.10"
 storage-embedded = "0.1.16"
+key-value-storage-embedded = "0.0.2"
 
 kafka-client-service = "0.0.18"
 
@@ -31,10 +33,12 @@ error-api = { module = "com.github.sibdevtools:api-error", version.ref = "error-
 session-api = { module = "com.github.sibdevtools:api-session", version.ref = "session-api" }
 storage-api = { module = "com.github.sibdevtools:api-storage", version.ref = "storage-api" }
 async-api = { module = "com.github.sibdevtools:api-async", version.ref = "async-api" }
+key-value-storage-api = { module = "com.github.sibdevtools:api-key-value-storage", version.ref = "key-value-storage-api" }
 web-app-api = { module = "com.github.sibdevtools:api-web-app", version.ref = "web-app-api" }
 
 async-embedded = { module = "com.github.sibdevtools:service-async-embedded", version.ref = "async-embedded" }
 session-embedded = { module = "com.github.sibdevtools:service-session-embedded", version.ref = "session-embedded" }
+key-value-storage-embedded = { module = "com.github.sibdevtools:service-key-value-storage-embedded", version.ref = "key-value-storage-embedded" }
 storage-embedded = { module = "com.github.sibdevtools:service-storage-embedded", version.ref = "storage-embedded" }
 
 kafka-client-service = { module = "com.github.sibdevtools:service-kafka-client", version.ref = "kafka-client-service" }
@@ -58,6 +62,7 @@ service-api = [
     "session-api",
     "storage-api",
     "async-api",
+    "key-value-storage-api",
     "web-app-api"
 ]
 graalvm = [

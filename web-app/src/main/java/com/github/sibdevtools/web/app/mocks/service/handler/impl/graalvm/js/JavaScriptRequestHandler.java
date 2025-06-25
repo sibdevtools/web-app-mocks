@@ -1,14 +1,14 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.js;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sibdevtools.storage.api.service.StorageService;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.CommonResponsePreparer;
+import com.github.sibdevtools.web.app.mocks.entity.HttpMockEntity;
+import com.github.sibdevtools.web.app.mocks.service.handler.RequestHandler;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.GraalVMRequestHandler;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.WebApplicationMocksGraalVMSessions;
-import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka.WebApplicationMocksGraalVMKafka;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,16 +17,24 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class JavaScriptRequestHandler extends GraalVMRequestHandler {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class JavaScriptRequestHandler implements RequestHandler {
+    private final GraalVMRequestHandler graalVMRequestHandler;
 
-    @Autowired
-    public JavaScriptRequestHandler(StorageService storageService,
-                                    WebApplicationMocksGraalVMSessions graalVMSessions,
-                                    WebApplicationMocksGraalVMKafka graalVMKafka,
-                                    @Qualifier("webAppMocksObjectMapper")
-                                    ObjectMapper objectMapper,
-                                    CommonResponsePreparer commonResponsePreparer) {
-        super("js", storageService, graalVMSessions, graalVMKafka, objectMapper, commonResponsePreparer);
+    @Override
+    public void handle(
+            @Nonnull String path,
+            @Nonnull HttpMockEntity httpMockEntity,
+            @Nonnull HttpServletRequest rq,
+            @Nonnull HttpServletResponse rs
+    ) {
+        graalVMRequestHandler.handle(
+                "js",
+                path,
+                httpMockEntity,
+                rq,
+                rs
+        );
     }
 
     @Override
