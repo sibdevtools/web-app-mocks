@@ -1,15 +1,13 @@
 package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kvs;
 
-import java.io.Serializable;
-
 /**
  * @author sibmaks
  * @since 0.0.23
  */
-public record SetValueRq(
+public record SetValueGraalRq(
         String space,
         String key,
-        Serializable value,
+        byte[] value,
         Long expiredAt
 ) {
 }

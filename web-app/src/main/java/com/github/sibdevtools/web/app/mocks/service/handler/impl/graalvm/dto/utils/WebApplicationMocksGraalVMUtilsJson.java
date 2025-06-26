@@ -1,0 +1,40 @@
+package com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.utils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.graalvm.polyglot.HostAccess;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+/**
+ * @author sibmaks
+ * @since 0.0.24
+ */
+@Slf4j
+@Component
+public class WebApplicationMocksGraalVMUtilsJson {
+
+    @Autowired
+    @Qualifier("webAppMocksObjectMapper")
+    private ObjectMapper objectMapper;
+
+    @HostAccess.Export
+    public byte[] serialize(Object value) throws JsonProcessingException {
+        if (value == null) {
+            return null;
+        }
+        return objectMapper.writeValueAsBytes(value);
+    }
+
+    @HostAccess.Export
+    public Object deserialize(byte[] value) throws IOException {
+        if (value == null) {
+            return null;
+        }
+        return objectMapper.readValue(value, Object.class);
+    }
+}

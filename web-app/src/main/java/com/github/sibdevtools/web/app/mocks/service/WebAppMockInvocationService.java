@@ -18,6 +18,7 @@ import com.github.sibdevtools.web.app.mocks.repository.HttpMockInvocationEntityR
 import com.github.sibdevtools.web.app.mocks.utils.HttpUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,10 +43,10 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebAppMockInvocationService {
     private final HttpMockInvocationEntityRepository httpMockInvocationEntityRepository;
     private final StorageService storageService;
-    private final ObjectMapper objectMapper;
     private final HttpMockInvocationDtoMapper httpMockInvocationDtoMapper;
     private final HttpMockInvocationItemDtoMapper httpMockInvocationItemDtoMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -54,22 +55,8 @@ public class WebAppMockInvocationService {
     private String bucketCode;
 
     @Autowired
-    public WebAppMockInvocationService(
-            HttpMockInvocationEntityRepository httpMockInvocationEntityRepository,
-            StorageService storageService,
-            @Qualifier("webAppMocksObjectMapper")
-            ObjectMapper objectMapper,
-            HttpMockInvocationDtoMapper httpMockInvocationDtoMapper,
-            HttpMockInvocationItemDtoMapper httpMockInvocationItemDtoMapper,
-            ApplicationEventPublisher applicationEventPublisher
-    ) {
-        this.httpMockInvocationEntityRepository = httpMockInvocationEntityRepository;
-        this.storageService = storageService;
-        this.objectMapper = objectMapper;
-        this.httpMockInvocationDtoMapper = httpMockInvocationDtoMapper;
-        this.httpMockInvocationItemDtoMapper = httpMockInvocationItemDtoMapper;
-        this.applicationEventPublisher = applicationEventPublisher;
-    }
+    @Qualifier("webAppMocksObjectMapper")
+    private ObjectMapper objectMapper;
 
     /**
      * Get invocation history by mock id

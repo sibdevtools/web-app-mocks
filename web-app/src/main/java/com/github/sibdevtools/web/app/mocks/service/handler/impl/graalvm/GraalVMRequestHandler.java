@@ -7,6 +7,7 @@ import com.github.sibdevtools.web.app.mocks.service.handler.impl.CommonResponseP
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.*;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kafka.WebApplicationMocksGraalVMKafka;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.kvs.WebApplicationMocksGraalVMKeyValueStorage;
+import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.dto.utils.WebApplicationMocksGraalVMUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ public class GraalVMRequestHandler {
     private final WebApplicationMocksGraalVMKeyValueStorage graalVMKeyValueStorage;
     private final WebApplicationMocksGraalVMSessions graalVMSessions;
     private final WebApplicationMocksGraalVMKafka graalVMKafka;
+    private final WebApplicationMocksGraalVMUtils graalVMUtils;
     private final CommonResponsePreparer commonResponsePreparer;
 
     @Autowired
@@ -60,6 +62,7 @@ public class GraalVMRequestHandler {
                 .sessions(graalVMSessions)
                 .kafka(graalVMKafka)
                 .keyValueStorage(graalVMKeyValueStorage)
+                .utils(graalVMUtils)
                 .build();
 
         try (var js = Context.newBuilder(language)

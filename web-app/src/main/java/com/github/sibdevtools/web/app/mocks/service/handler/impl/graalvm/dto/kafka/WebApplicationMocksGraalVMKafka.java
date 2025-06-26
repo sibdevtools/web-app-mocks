@@ -9,12 +9,14 @@ import com.github.sibdevtools.service.kafka.client.service.MessagePublisherServi
 import com.github.sibdevtools.service.kafka.client.service.TemplateMessageService;
 import com.github.sibdevtools.web.app.mocks.service.handler.impl.graalvm.GraalVMConverter;
 import jakarta.annotation.Nonnull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Headers;
 import org.graalvm.polyglot.HostAccess;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -28,13 +30,16 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebApplicationMocksGraalVMKafka {
-    protected final ObjectMapper objectMapper;
     protected final BootstrapGroupService bootstrapGroupService;
     protected final MessageConsumerService messageConsumerService;
     protected final MessagePublisherService messagePublisherService;
     protected final TemplateMessageService templateMessageService;
+
+    @Autowired
+    @Qualifier("webAppMocksObjectMapper")
+    private ObjectMapper objectMapper;
 
     private static PublishMessageRs getPublishMessageRs(RecordMetadataDto it) {
         return new PublishMessageRs(
