@@ -31,6 +31,22 @@ public class WebApplicationMocksGraalVMUtilsJson {
     }
 
     @HostAccess.Export
+    public String dump(Object value) throws JsonProcessingException {
+        if (value == null) {
+            return null;
+        }
+        return objectMapper.writeValueAsString(value);
+    }
+
+    @HostAccess.Export
+    public Object parse(String value) throws IOException {
+        if (value == null) {
+            return null;
+        }
+        return objectMapper.readValue(value, Object.class);
+    }
+
+    @HostAccess.Export
     public Object deserialize(byte[] value) throws IOException {
         if (value == null) {
             return null;
